@@ -6,6 +6,22 @@ target 'reCap' do
   use_frameworks!
 
   # Pods for reCap
+pod 'Firebase/Core'
+pod 'Firebase/Auth'
+pod 'Firebase/Database'
+pod 'Firebase/Storage'
+pod 'Hero'
+pod 'SwiftLocation'
+pod 'Mapbox-iOS-SDK'
+pod 'MapboxNavigation'
+pod 'MapboxGeocoder.swift'
+pod 'ClusterKit/MapKit'
+pod 'Pageboy'
+pod 'SkyFloatingLabelTextField'
+pod 'IHKeyboardAvoiding'
+pod 'SwiftyOnboard'
+pod 'FCAlertView'
+pod  'RealmSwift'
   
 
   target 'reCapTests' do
