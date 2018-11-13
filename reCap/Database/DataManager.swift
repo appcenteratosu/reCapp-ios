@@ -13,6 +13,33 @@ import Firebase
 class DataManager {
     static var currentFBUser: User!
     static var currentAppUser: UserData!
+//        didSet {
+//            var pictures: [String] = []
+//
+//            for pic in currentAppUser.pictures {
+//                pictures.append(pic.id)
+//            }
+//
+//            var friends: [String] = []
+//            currentAppUser.friends.forEach { (user) in
+//                friends.append(user.id)
+//            }
+//
+//            let values: [String: Any] = ["id": currentFBUser.uid,
+//                        "name": currentAppUser.name,
+//                        "points": currentAppUser.points,
+//                        "pictures": pictures,
+//                        "email": currentAppUser.email,
+//                        "friends": friends,
+//                        "activeChallenge": currentAppUser.activeChallenge?.id,
+//                        "activeChallengePoints": currentAppUser.activeChallengePoints,
+//                        "state": currentAppUser.state,
+//                        "country": currentAppUser.country,
+//                        "longitude": currentAppUser.longitude,
+//                        "latitude": currentAppUser.latitude]
+//
+//            FirebaseHandler.database.child("UserData").child(currentFBUser.uid).setValue(values)
+//        }
     
     
 }

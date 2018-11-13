@@ -68,6 +68,55 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     private let chalCloseCoordThreshold = 0.005
     
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("Camera container loaded")
+        self.realm = try! Realm()
+        setupHero()
+        setupCamera(clear: false)
+        configureButton()
+        setupGestures()
+        setupDial()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.hasUpdateUserLocation = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setup()
+    }
+    
+    private func setup() {
+        FirebaseHandler.getUserData(completion: { (userData) in
+            self.userData = userData
+            if self.userData != nil {
+                // Got user data from realm database
+                self.setupProfileImage()
+                self.setupActiveChallenge()
+                self.setupLocation()
+            } else {
+                print("Did not get user data")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                if self.videoPreviewLayer != nil {
+                    self.setupOrientation()
+                    if self.session?.inputs.count == 0 {
+                        self.setupCamera(clear: false)
+                    }
+                    self.locationManager.startUpdatingHeading()
+                }
+            }
+        })
+    }
+    
     @IBAction func buttonPressed(_ sender: Any) {
         print("Button Pressed")
         if cameraButton.layer.borderColor == UIColor.red.cgColor {
@@ -151,17 +200,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             self.bearingOutlet.isHidden = false
             self.bearingPickerOutlet.isHidden = false
         })
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("Camera container loaded")
-        self.realm = try! Realm()
-        setupHero()
-        setupCamera(clear: false)
-        configureButton()
-        setupGestures()
-        setupDial()
     }
     
     
@@ -264,11 +302,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.hasUpdateUserLocation = false
-    }
-    
     func setupProfileImage() {
         if self.profileImage != nil {
             self.profileOutlet.image = self.profileImage
@@ -279,7 +312,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             self.profileOutlet.clipsToBounds = true
             self.profileOutlet.contentMode = .scaleAspectFill
         } else {
-            
             if let user = Auth.auth().currentUser {
                 FirebaseHandler.getProfilePicture(userID: user.uid, completion: { (profilePicture) in
                     if let profilePic = profilePicture {
@@ -305,45 +337,19 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
     
-    
-    func setupUserLocation() {
-        Locator.requestAuthorizationIfNeeded(.always)
-        let request = Locator.subscribePosition(accuracy: .room, onUpdate: { location in
-            let lat = location.coordinate.latitude.truncate(places: 6)
-            let long = location.coordinate.longitude.truncate(places: 6)
-            let location = CLLocation(latitude: lat, longitude: long)
-            let geocoder = CLGeocoder()
-            geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-                if error == nil {
-                    try! self.realm.write {
-                        self.userData.state = placemarks?.last?.administrativeArea
-                        self.userData.country = placemarks?.last?.country
-                    }
-                }
-                else {
-                    try! self.realm.write {
-                        self.userData.state = ""
-                        self.userData.country = ""
-                    }
-                }
-                
-                let when = DispatchTime.now() + 5 // change 2 to desired number of seconds
-                DispatchQueue.main.asyncAfter(deadline: when) {
-                    /*FBDatabase.addUpdateUser(user: self.user, with_completion: { (error) in
-                    })*/
+    func geocode(location: CLLocation, completion: @escaping (_ state: String, _ country: String)->()) {
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { (places, error) in
+            if error != nil {
+                print("ERROR geocoding:", error!.localizedDescription)
+            } else {
+                if let place = places?.last {
+                    guard let state = place.administrativeArea else { return }
+                    guard let country = place.country else { return }
                     
-                    geocoder.cancelGeocode()
+                    completion(state, country)
                 }
-                
             }
-        }, onFail: { (error, last) in
-            print(error)
-            print("DID NOT GET LOCATION")
-        })
-        
-        let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            Locator.stopRequest(request)
         }
     }
     
@@ -586,28 +592,84 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         Locator.requestAuthorizationIfNeeded(.whenInUse)
         // Azimuth
         if (CLLocationManager.headingAvailable()) {
+            locationManager.delegate = self
             locationManager.headingFilter = 1
             locationManager.startUpdatingHeading()
-            locationManager.delegate = self
+            locationManager.startUpdatingLocation()
         }
-        Locator.subscribePosition(accuracy: .room, onUpdate: { location in
+        
+//        Locator.subscribePosition(accuracy: .room, onUpdate: { location in
+//            let lat = location.coordinate.latitude.truncate(places: 6)
+//            let long = location.coordinate.longitude.truncate(places: 6)
+//            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+//
+//            let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
+//            self.locationOutlet.text = gpsString
+//            self.latToPass = lat
+//            self.longToPass = long
+//            self.locationToPass = gpsString
+//
+//            if self.activeChallengePicData != nil {
+//                let picLong = self.activeChallengePicData.longitude
+//                let picLat = self.activeChallengePicData.latitude
+//                var destination: CLLocation? = CLLocation(latitude: 0, longitude: 0)
+//                var angle: Double = 0
+//                destination = CLLocation(latitude: picLat, longitude: picLong)
+//                angle = self.getBearingBetweenTwoPoints1(point1: location, point2: destination!)
+//                self.destinationAngle = angle
+//                let longDiff = abs(picLong - long)
+//                let latDiff = abs(picLat - lat)
+//                if longDiff > self.chalCloseCoordThreshold || latDiff > self.chalCloseCoordThreshold {
+//                    self.locationOutlet.textColor = UIColor.white
+//                    self.isAtChallengeLocation = false
+//                }
+//                else if longDiff < self.chalBestCoordThreshold && latDiff < self.chalBestCoordThreshold {
+//                    self.locationOutlet.textColor = UIColor.green
+//                    self.isAtChallengeLocation = true
+//                }
+//                else if longDiff <= self.chalCloseCoordThreshold && latDiff <= self.chalCloseCoordThreshold {
+//                    self.locationOutlet.textColor = UIColor.yellow
+//                    self.isAtChallengeLocation = true
+//                }
+//            }
+//            else {
+//                self.locationOutlet.textColor = UIColor.white
+//                self.isAtChallengeLocation = false
+//            }
+//        },onFail: { (error, last) in
+//            print(error)
+//        })
+    }
+    
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
+        updateHorizontalDialValue(value: heading.magneticHeading)
+        UIView.animate(withDuration: 0.25, animations: {
+            self.arrowOutlet.transform = CGAffineTransform(rotationAngle: CGFloat((self.destinationAngle! - heading.magneticHeading) * Double.pi / 180))
+        })
+    }
+    
+    var firstRun = true
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
             let lat = location.coordinate.latitude.truncate(places: 6)
             let long = location.coordinate.longitude.truncate(places: 6)
-            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+            let newLocation = CLLocation(latitude: lat, longitude: long)
+            
+            if firstRun {
+                self.geocode(location: newLocation) { (state, country) in
+                    FirebaseHandler.updateUserLocation(state: state, country: country)
+                    FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+                }
+                firstRun = false
+            }
             
             let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
             self.locationOutlet.text = gpsString
             self.latToPass = lat
             self.longToPass = long
             self.locationToPass = gpsString
-            
-//            if !self.hasUpdateUserLocation {
-//                try! self.realm.write {
-//                    self.userData.longitude = long
-//                    self.userData.latitude = lat
-//                }
-//                self.hasUpdateUserLocation = true
-//            }
             
             if self.activeChallengePicData != nil {
                 let picLong = self.activeChallengePicData.longitude
@@ -636,20 +698,9 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                 self.locationOutlet.textColor = UIColor.white
                 self.isAtChallengeLocation = false
             }
-        },onFail: { (error, last) in
-            print(error)
-        })
-    }
-    
-    
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
-        updateHorizontalDialValue(value: heading.magneticHeading)
-        UIView.animate(withDuration: 0.25, animations: {
-            self.arrowOutlet.transform = CGAffineTransform(rotationAngle: CGFloat((self.destinationAngle! - heading.magneticHeading) * Double.pi / 180))
-        })
-        
-        
+            
+            locationManager.stopUpdatingLocation()
+        }
     }
     
     
@@ -668,42 +719,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
         videoPreviewLayer!.frame = previewView.bounds
         
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        setup()
-    }
-    
-    private func setup() {
-//        self.realm = try! Realm()
-//        let id = SyncUser.current?.identity
-        FirebaseHandler.getUserData(completion: { (userData) in
-            self.userData = userData
-            if self.userData != nil {
-                // Got user data from realm database
-                self.setupProfileImage()
-                self.setupActiveChallenge()
-                self.setupUserLocation()
-                self.setupLocation()
-            } else {
-                print("Did not get user data")
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                if self.videoPreviewLayer != nil {
-                    self.setupOrientation()
-                    if self.session?.inputs.count == 0 {
-                        self.setupCamera(clear: false)
-                    }
-                    self.locationManager.startUpdatingHeading()
-                }
-            }
-        })
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
         
     }
     

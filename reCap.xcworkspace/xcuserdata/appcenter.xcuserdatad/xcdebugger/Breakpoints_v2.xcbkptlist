@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LeaderboardFriends/LeaderboardsFriendsVC.swift"
-            timestampString = "563778515.99878"
+            timestampString = "563844286.699403"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "54"
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/Camera/CameraContainerVC.swift"
-            timestampString = "563778515.999705"
+            timestampString = "563844286.699586"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "755"
-            endingLineNumber = "755"
+            startingLineNumber = "770"
+            endingLineNumber = "770"
             landmarkName = "CameraContainerVC"
             landmarkType = "3">
          </BreakpointContent>
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LogIn/CreateAccountVC.swift"
-            timestampString = "563778516.000241"
+            timestampString = "563844286.700057"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "128"
@@ -90,12 +90,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "563778516.509279"
+                  timestampString = "563844287.195537"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
                   endingLineNumber = "128"
-                  offsetFromSymbolStart = "4484">
+                  offsetFromSymbolStart = "3680">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -105,12 +105,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "563778516.51171"
+                  timestampString = "563844287.19777"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "129"
                   endingLineNumber = "129"
-                  offsetFromSymbolStart = "109">
+                  offsetFromSymbolStart = "84">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -122,7 +122,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LogIn/CreateAccountVC.swift"
-            timestampString = "563778516.0004489"
+            timestampString = "563844286.7001131"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "129"
@@ -138,7 +138,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LogIn/CreateAccountVC.swift"
-            timestampString = "563778516.0005"
+            timestampString = "563844286.70016"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "136"
@@ -154,12 +154,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "563778516.522166"
+                  timestampString = "563844287.207139"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "136"
                   endingLineNumber = "136"
-                  offsetFromSymbolStart = "78">
+                  offsetFromSymbolStart = "60">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -169,12 +169,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "563778516.524322"
+                  timestampString = "563844287.2096339"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "137"
                   endingLineNumber = "137"
-                  offsetFromSymbolStart = "61">
+                  offsetFromSymbolStart = "52">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -186,28 +186,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LogIn/CreateAccountVC.swift"
-            timestampString = "563778516.000544"
+            timestampString = "563844286.700206"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "137"
             endingLineNumber = "137"
             landmarkName = "addPressed(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "reCap/Database/FirebaseHandler.swift"
-            timestampString = "563778516.000587"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "storeProfilePicture(image:userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -234,12 +218,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/SignInVC.swift"
-                  timestampString = "563778516.538938"
+                  timestampString = "563844287.2200691"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "129"
                   endingLineNumber = "129"
-                  offsetFromSymbolStart = "1567">
+                  offsetFromSymbolStart = "1372">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -249,12 +233,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/SignInVC.swift"
-                  timestampString = "563778516.541225"
+                  timestampString = "563844287.222176"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "130"
                   endingLineNumber = "130"
-                  offsetFromSymbolStart = "69">
+                  offsetFromSymbolStart = "56">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -330,7 +314,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LeaderboardFriends/LeaderboardsFriendsVC.swift"
-            timestampString = "563778516.001334"
+            timestampString = "563844286.700341"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "58"
@@ -346,12 +330,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/LeaderboardFriends/LeaderboardsFriendsVC.swift"
-            timestampString = "563778516.0016249"
+            timestampString = "563844286.700393"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "107"
             endingLineNumber = "107"
             landmarkName = "setupLeaderboards()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "reCap/Database/FirebaseHandler.swift"
+            timestampString = "563844286.701136"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "updateUserLocation(state:country:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "reCap/Database/FirebaseHandler.swift"
+            timestampString = "563844286.701194"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "updateUserLocation(lat:lon:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

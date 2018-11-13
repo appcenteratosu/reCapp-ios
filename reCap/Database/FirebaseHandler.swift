@@ -162,6 +162,7 @@ class FirebaseHandler {
                     if let points = data["points"] as? Int {
                         userData.points = points
                     }
+                    DataManager.currentFBUser = user
                     DataManager.currentAppUser = userData
                     CurrentUserData = userData
                     completion(userData)
@@ -177,6 +178,12 @@ class FirebaseHandler {
         database.child(UserDataString).child(DataManager.currentFBUser.uid).child("latitude").setValue(lat)
         database.child(UserDataString).child(DataManager.currentFBUser.uid).child("longitude").setValue(lon)
     }
+    
+    static func updateUserLocation(state: String, country: String) {
+        database.child(UserDataString).child(DataManager.currentFBUser.uid).child("country").setValue(country)
+        database.child(UserDataString).child(DataManager.currentFBUser.uid).child("state").setValue(state)
+    }
+    
     
     
 }

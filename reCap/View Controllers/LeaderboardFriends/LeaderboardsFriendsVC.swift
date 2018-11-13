@@ -107,6 +107,12 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         self.title = "Leaderboards"
         self.navigationItem.leftBarButtonItem = nil
         self.navigationItem.rightBarButtonItem = nil
+        
+        // State Results
+        FirebaseHandler.database.child("UserData").queryOrdered(byChild: "points")
+        // Coutry results
+        // global results
+        
         let stateResults = realm.objects(UserData.self).filter("state = '\(userData.state!)'").sorted(byKeyPath: "points", ascending: false)
         let countryResults = realm.objects(UserData.self).filter("country = '\(userData.country!)'").sorted(byKeyPath: "points", ascending: false)
         let globalResults = realm.objects(UserData.self).sorted(byKeyPath: "points", ascending: false)
@@ -117,8 +123,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                 // Can still take users in leaderboards
                 self.stateLeaderboards.append(userData)
                 count = count + 1
-            }
-            else {
+            } else {
                 // Not 50 users
                 break
             }
