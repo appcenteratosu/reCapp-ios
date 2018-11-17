@@ -9,7 +9,7 @@
 import UIKit
 import Hero
 import Firebase
-import RealmSwift
+
 
 class ProfileMenuVC: UIViewController {
     
@@ -24,7 +24,7 @@ class ProfileMenuVC: UIViewController {
     @IBOutlet weak var settingsOutlet: UIButton!
     @IBOutlet weak var aboutOutlet: UIButton!
     @IBOutlet weak var albumOutlet: UIButton!
-    private var realm: Realm!
+//    private var realm: Realm!
     
     // MARK: - Properties
     var userData: UserData!
@@ -49,11 +49,11 @@ class ProfileMenuVC: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let realm = try! Realm()
-        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
-        if self.userData != nil {
-            setupOutlets()
-        }
+//        let realm = try! Realm()
+//        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
+//        if self.userData != nil {
+//            setupOutlets()
+//        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {

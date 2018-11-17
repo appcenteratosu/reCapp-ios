@@ -11,7 +11,7 @@ import Firebase
 import SwiftLocation
 import CoreLocation
 import FCAlertView
-import RealmSwift
+
 
 class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     
@@ -108,50 +108,82 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         self.navigationItem.leftBarButtonItem = nil
         self.navigationItem.rightBarButtonItem = nil
         
+        let usersDataRef = FirebaseHandler.database.child("UserData")
         // State Results
-        FirebaseHandler.database.child("UserData").queryOrdered(byChild: "points")
+        let stateResults: [UserData] = []
+        usersDataRef.queryOrdered(byChild: "state").queryEqual(toValue: userData.state).observeSingleEvent(of: .value) { (snap) in
+            if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                for child in snaps {
+                    if let user = child.value as? [String: Any] {
+                        print("State Object:", user)
+                    }
+                }
+            }
+        }
+        
+        usersDataRef.queryOrdered(byChild: "country").queryEqual(toValue: userData.country).observeSingleEvent(of: .value) { (snap) in
+            if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                for child in snaps {
+                    if let user = child.value as? [String: Any] {
+                        print("Country User:", user)
+                    }
+                }
+            }
+        }
+        
+        usersDataRef.observeSingleEvent(of: .value) { (snap) in
+            if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                for child in snaps {
+                    if let user = child.value as? [String: Any] {
+                        print("Global:", user)
+                    }
+                }
+            }
+        }
+        
+        
         // Coutry results
         // global results
         
-        let stateResults = realm.objects(UserData.self).filter("state = '\(userData.state!)'").sorted(byKeyPath: "points", ascending: false)
-        let countryResults = realm.objects(UserData.self).filter("country = '\(userData.country!)'").sorted(byKeyPath: "points", ascending: false)
-        let globalResults = realm.objects(UserData.self).sorted(byKeyPath: "points", ascending: false)
+//        let stateResults = realm.objects(UserData.self).filter("state = '\(userData.state!)'").sorted(byKeyPath: "points", ascending: false)
+//        let countryResults = realm.objects(UserData.self).filter("country = '\(userData.country!)'").sorted(byKeyPath: "points", ascending: false)
+//        let globalResults = realm.objects(UserData.self).sorted(byKeyPath: "points", ascending: false)
         var count = 0
         let maximum = 50
-        for userData in stateResults {
-            if count < maximum {
-                // Can still take users in leaderboards
-                self.stateLeaderboards.append(userData)
-                count = count + 1
-            } else {
-                // Not 50 users
-                break
-            }
-        }
-        count = 0
-        for userData in countryResults {
-            if count < 50 {
-                // Can still take users in leaderboards
-                self.countryLeaderboards.append(userData)
-                count = count + 1
-            }
-            else {
-                // Not 50 users
-                break
-            }
-        }
-        count = 0
-        for userData in globalResults {
-            if count < 50 {
-                // Can still take users in leaderboards
-                self.globalLeaderboards.append(userData)
-                count = count + 1
-            }
-            else {
-                // Not 50 users
-                break
-            }
-        }
+//        for userData in stateResults {
+//            if count < maximum {
+//                // Can still take users in leaderboards
+//                self.stateLeaderboards.append(userData)
+//                count = count + 1
+//            } else {
+//                // Not 50 users
+//                break
+//            }
+//        }
+//        count = 0
+//        for userData in countryResults {
+//            if count < 50 {
+//                // Can still take users in leaderboards
+//                self.countryLeaderboards.append(userData)
+//                count = count + 1
+//            }
+//            else {
+//                // Not 50 users
+//                break
+//            }
+//        }
+//        count = 0
+//        for userData in globalResults {
+//            if count < 50 {
+//                // Can still take users in leaderboards
+//                self.globalLeaderboards.append(userData)
+//                count = count + 1
+//            }
+//            else {
+//                // Not 50 users
+//                break
+//            }
+//        }
         self.leaderboardsList = self.stateLeaderboards
         self.tableView.reloadData()
     }

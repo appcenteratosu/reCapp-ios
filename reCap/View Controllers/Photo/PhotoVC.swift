@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RealmSwift
+
 
 class PhotoVC: UIViewController, UIScrollViewDelegate {
     
@@ -26,11 +26,11 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     var nextPictureData: PictureData!
     
     var userData: UserData!
-    private var realm: Realm!
+//    private var realm: Realm!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setToolbarHidden(true, animated: true)
-        self.realm = try! Realm()
+//        self.realm = try! Realm()
         if image != nil, selectedPictureData != nil {
             applyBlurEffect(image: image)
             if self.mode == PhotoVC.PHOTO_LIB_MODE {
@@ -87,22 +87,22 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
      Delete button was pressed
     */
     @IBAction func deletePressed(_ sender: Any) {
-        try! self.realm.write {
-            let pictureIndex = self.userData.pictures.index(of: self.selectedPictureData)
-            self.userData.pictures.remove(at: pictureIndex!)
-            if self.nextPictureData != nil {
-                // There is another picture in the timeline, set it as the most recent picture
-                self.nextPictureData.isMostRecentPicture = true
-            }
-            let usersWithChallenge = realm.objects(UserData.self).filter("activeChallenge.id = '\(self.selectedPictureData.id.description)'")
-            for user in usersWithChallenge {
-                user.activeChallenge = nil
-                user.activeChallengePoints = 0
-            }
-            FBDatabase.deletePicture(pictureData: self.selectedPictureData)
-            self.realm.delete(self.selectedPictureData)
-            self.performSegue(withIdentifier: "DeletedPicSegue", sender: nil)
-        }
+//        try! self.realm.write {
+//            let pictureIndex = self.userData.pictures.index(of: self.selectedPictureData)
+//            self.userData.pictures.remove(at: pictureIndex!)
+//            if self.nextPictureData != nil {
+//                // There is another picture in the timeline, set it as the most recent picture
+//                self.nextPictureData.isMostRecentPicture = true
+//            }
+//            let usersWithChallenge = realm.objects(UserData.self).filter("activeChallenge.id = '\(self.selectedPictureData.id.description)'")
+//            for user in usersWithChallenge {
+//                user.activeChallenge = nil
+//                user.activeChallengePoints = 0
+//            }
+//            FBDatabase.deletePicture(pictureData: self.selectedPictureData)
+//            self.realm.delete(self.selectedPictureData)
+//            self.performSegue(withIdentifier: "DeletedPicSegue", sender: nil)
+//        }
     }
     
     /*

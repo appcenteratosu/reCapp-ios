@@ -21,8 +21,8 @@ pod 'SkyFloatingLabelTextField'
 pod 'IHKeyboardAvoiding'
 pod 'SwiftyOnboard'
 pod 'FCAlertView'
-pod  'RealmSwift'
-  
+#pod  'RealmSwift'
+
 
   target 'reCapTests' do
     inherit! :search_paths

@@ -12,7 +12,7 @@ import Hero
 import SwiftLocation
 import CoreLocation
 import Firebase
-import RealmSwift
+
 
 class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, ImageButtonDelegate {
     
@@ -20,7 +20,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     var image: UIImage!
     var pictureData: PictureData!
     var userData: UserData!
-    var pictureArray: Results<PictureData>!
+    var pictureArray: [PictureData]?
     var imageToPass: UIImage?
     var pictureDataToPass: PictureData?
     var mode: Int!
@@ -67,8 +67,6 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         
         self.navigationController?.toolbar.isHidden = false
         self.navigationController?.navigationBar.isHidden = true
-        
-        setupUI(index: 0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -78,19 +76,19 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     
     func setupUI(index: Int) {
         
-        
-        let coordinatesToPass = [pictureArray[index].latitude, pictureArray[index].longitude]
-        
-        locationOutlet.text = String.convertGPSCoordinatesToOutput(coordinates: coordinatesToPass)
-        let coordinates = CLLocationCoordinate2D(latitude: coordinatesToPass[0], longitude: coordinatesToPass[1])
-        Locator.location(fromCoordinates: coordinates, using: .apple, onSuccess: { places in
-            print(places)
-            self.locationNameOutlet.text = "\(places[0])"
-        }) { err in
-            print(err)
+        if let pictures = self.pictureArray {
+            let coordinatesToPass = [pictures[index].latitude, pictures[index].longitude]
+            locationOutlet.text = String.convertGPSCoordinatesToOutput(coordinates: coordinatesToPass)
+            let coordinates = CLLocationCoordinate2D(latitude: coordinatesToPass[0], longitude: coordinatesToPass[1])
+            Locator.location(fromCoordinates: coordinates, using: .apple, onSuccess: { places in
+                print(places)
+                self.locationNameOutlet.text = "\(places[0])"
+            }) { err in
+                print(err)
+            }
+            titleOutlet.text = pictureArray?[index].name
+            descriptionOutlet.text = pictureArray?[index].info
         }
-        titleOutlet.text = pictureArray[index].name
-        descriptionOutlet.text = pictureArray[index].info
         
     }
     
@@ -109,28 +107,45 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         self.collectionView.dataSource = self
         //self.pictureArray = []
         let groupID = pictureData.groupID!
-        let realm = try! Realm()
-        self.pictureArray = realm.objects(PictureData.self).filter("groupID = '\(groupID.description)'").sorted(byKeyPath: "time", ascending: false)
+//        let realm = try! Realm()
+//        self.pictureArray = realm.objects(PictureData.self).filter("groupID = '\(groupID.description)'").sorted(byKeyPath: "time", ascending: false)
         /*for data in results {
             self.pictureArray.append(data)
         }*/
-        self.collectionView.reloadData()
+        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "groupID").queryEqual(toValue: groupID.description).observeSingleEvent(of: .value) { (snap) in
+            if let objects = snap.children.allObjects as? [DataSnapshot] {
+                var pictures: [PictureData] = []
+                for object in objects {
+                    let pictureData = PictureData(snapshot: object)
+                    pictures.append(pictureData)
+                }
+                
+                pictures.sort(by: { (p1, p2) -> Bool in
+                    return p1.time > p2.time
+                })
+                
+                self.pictureArray = pictures
+                
+                self.collectionView.reloadData()
+                self.setupUI(index: 0)
+            }
+        }
     }
     
     // MARK: - Collection View Methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pictureArray.count
+        return pictureArray?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PictureCell", for: indexPath) as! PhotoChalColCell
         cell.setImageViewDelegate(delegate: self)
         let row = indexPath.row
-        let cellPictureData = pictureArray[row]
+        let cellPictureData = pictureArray?[row]
         //print(cellPictureData)
         cell.pictureData = cellPictureData
-        FBDatabase.getPicture(pictureData: cellPictureData, with_progress: {(progress, total) in
+        FBDatabase.getPicture(pictureData: cellPictureData!, with_progress: {(progress, total) in
             
         }, with_completion: {(image) in
             if let realImage = image {
@@ -186,7 +201,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     
     @IBAction func photoDeletedUnwindSegue(segue: UIStoryboardSegue) {
         // Called when a photo gets deleted in photo view
-        if self.pictureArray.count == 0 {
+        if self.pictureArray?.count == 0 {
             // There are no photos left in the timeline
             self.performSegue(withIdentifier: "DeletedPicSegue", sender: nil)
         }
@@ -209,16 +224,20 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             let image = infoArray[1] as! UIImage
             if self.userData.pictures.contains(pictureData), self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
                 // The user owns the picture, user is able to delete the photo
-                self.selectedPicIndex = self.pictureArray.index(of: pictureData)!
-                if pictureData.isMostRecentPicture {
-                    // If the selected photo is not the most recent
-                    let nextPictureIndex = self.selectedPicIndex + 1
-                    if (nextPictureIndex) != self.pictureArray.count {
-                        // The selected picture is not the only picture in the timeline
-                        destination.nextPictureData = self.pictureArray[nextPictureIndex]
+                if let selectedPicIndex = self.pictureArray?.index(of: pictureData) {
+                    self.selectedPicIndex = selectedPicIndex
+                    if pictureData.isMostRecentPicture {
+                        // If the selected photo is not the most recent
+                        let nextPictureIndex = self.selectedPicIndex + 1
+                        if (nextPictureIndex) != self.pictureArray?.count {
+                            // The selected picture is not the only picture in the timeline
+                            destination.nextPictureData = self.pictureArray?[nextPictureIndex]
+                        }
                     }
+                    destination.userData = self.userData
                 }
-                destination.userData = self.userData
+//                self.selectedPicIndex = self.pictureArray.index(of: pictureData)!
+                
             }
             destination.mode = self.mode
             destination.selectedPictureData = pictureData

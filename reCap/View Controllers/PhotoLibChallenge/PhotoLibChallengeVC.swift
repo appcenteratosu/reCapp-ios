@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import FCAlertView
-import RealmSwift
+
 import SwiftLocation
 import CoreLocation
 
@@ -23,9 +23,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     private var photoLibChalReference: DatabaseReference!
     var user: User!
     var userData: UserData!
-    var realm: Realm!
     var mode: Int!
-    private var userNotification: NotificationToken!
     
     var userLat: Double!
     var userLong: Double!
@@ -113,23 +111,47 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         self.tableView.allowsSelection = false
         var groupIDArray: [String] = []
         // Get all user pictures and sort them by time, the most recent will be at the start
-        let userPictures = self.userData.pictures.sorted(byKeyPath: "time", ascending: false)
-        for pictureData in userPictures {
-            let location = pictureData.locationName
-            if !self.tableSectionArray.contains(location!) {
-                // Location is not in the locations array
-                // Add it to the array and initialize
-                // an empty array for the key location
-                self.tableSectionArray.append(location!)
-                self.collectionDictionaryData[location!] = []
-            }
-            if !groupIDArray.contains(pictureData.groupID) {
-                // If the picture in a group has not yet been added
-                groupIDArray.append(pictureData.groupID)
-                self.collectionDictionaryData[location!]?.append(pictureData)
+        
+        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "owner").queryEqual(toValue: userData.id).observeSingleEvent(of: .value) { (snap) in
+            if let objects = snap.children.allObjects as? [DataSnapshot] {
+                var pictures: [PictureData] = []
+                for object in objects {
+                    let picture = PictureData(snapshot: object)
+                    let location = picture.locationName
+                    if !self.tableSectionArray.contains(location!) {
+                        // Location is not in the locations array
+                        // Add it to the array and initialize
+                        // an empty array for the key location
+                        self.tableSectionArray.append(location!)
+                        self.collectionDictionaryData[location!] = []
+                    }
+                    if !groupIDArray.contains(picture.groupID) {
+                        // If the picture in a group has not yet been added
+                        groupIDArray.append(picture.groupID)
+                        self.collectionDictionaryData[location!]?.append(picture)
+                    }
+                }
+                self.tableView.reloadData()
             }
         }
-        self.tableView.reloadData()
+        
+        
+//        let userPictures = self.userData.pictures.sorted(byKeyPath: "time", ascending: false)
+//        for pictureData in userPictures {
+//            let location = pictureData.locationName
+//            if !self.tableSectionArray.contains(location!) {
+//                // Location is not in the locations array
+//                // Add it to the array and initialize
+//                // an empty array for the key location
+//                self.tableSectionArray.append(location!)
+//                self.collectionDictionaryData[location!] = []
+//            }
+//            if !groupIDArray.contains(pictureData.groupID) {
+//                // If the picture in a group has not yet been added
+//                groupIDArray.append(pictureData.groupID)
+//                self.collectionDictionaryData[location!]?.append(pictureData)
+//            }
+//        }
     }
     
     private func getFiftyChallenges(results: Results<PictureData>) -> [PictureData] {

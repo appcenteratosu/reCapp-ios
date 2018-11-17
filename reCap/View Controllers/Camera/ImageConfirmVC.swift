@@ -17,8 +17,8 @@ class ImageConfirmVC: UIViewController {
     var bearingToPass: Double?
     var locationToPass: String?
     var isAtChallengeLocation: Bool!
-    var previousPic: PictureData!
-    var userData: UserData!
+    var previousPic: RCPicture!
+    var userData: RCUser!
 
     @IBOutlet weak var imageView: UIImageView!
     @IBAction func cancelButton(_ sender: Any) {

@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import RealmSwift
+
 
 class MapContainerVC: UIViewController {
     

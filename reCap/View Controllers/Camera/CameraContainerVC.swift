@@ -15,7 +15,7 @@ import Firebase
 import CoreLocation
 import CoreMotion
 import FCAlertView
-import RealmSwift
+
 
 class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, HorizontalDialDelegate {
     
@@ -40,8 +40,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     private var isAtChallengeLocation: Bool!
     let locationManager = CLLocationManager()
     var destinationAngle: Double? = 0
-    private var userData: UserData!
-    private var realm: Realm!
+    private var rcUser: RCUser!
+//    private var realm: Realm!
     private var hasUpdateUserLocation = false
     
     var profileImage: UIImage?
@@ -63,7 +63,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     let blackColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
     var user: User!
-    private var activeChallengePicData: PictureData!
+    private var activeChallengePicData: RCPicture!
     private let chalBestCoordThreshold = 0.0001
     private let chalCloseCoordThreshold = 0.005
     
@@ -71,7 +71,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Camera container loaded")
-        self.realm = try! Realm()
         setupHero()
         setupCamera(clear: false)
         configureButton()
@@ -96,8 +95,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     private func setup() {
         FirebaseHandler.getUserData(completion: { (userData) in
-            self.userData = userData
-            if self.userData != nil {
+            self.rcUser = userData
+            if self.rcUser != nil {
                 // Got user data from realm database
                 self.setupProfileImage()
                 self.setupActiveChallenge()
@@ -123,11 +122,17 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
 
             FCAlertView.displayAlert(title: "Error", message: "Please make sure the camera is perpendicular to the ground.", buttonTitle: "Okay", type: "warning", view: self, blur: true)
 
-        }
-        else if bearingOutlet.textColor != UIColor.green && bearingOutlet.textColor != UIColor.white && bearingOutlet.textColor != UIColor.yellow && bearingOutlet.textColor != UIColor.orange {
-            FCAlertView.displayAlert(title: "Error", message: "Please make sure the bearing is as close to \(self.userData.activeChallenge!.bearing)°.", buttonTitle: "Okay", type: "warning", view: self, blur: true)
-        }
-        else {
+        } else if bearingOutlet.textColor != UIColor.green
+            && bearingOutlet.textColor != UIColor.white
+            && bearingOutlet.textColor != UIColor.yellow
+            && bearingOutlet.textColor != UIColor.orange {
+            
+            rcUser.getBearingForActiveChallenge { (bearing) in
+                FCAlertView.displayAlert(title: "Error",
+                                         message: "Please make sure the bearing is as close to \(bearing)°." , buttonTitle: "Okay",
+                                         type: "warning", view: self, blur: true)
+            }
+        } else {
             self.stillImageOutput?.capturePhoto(with: self.photoSetting, delegate: self)
             
             DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -235,71 +240,55 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         let roundedValue = value.round(nearest: 1)
         
         
-        if let user = self.userData {
-            if let challenge = user.activeChallenge {
-                
-                let distance = abs(roundedValue - challenge.bearing)
-                
-                if distance >= 30.0 {
-                    bearingOutlet.textColor = UIColor.red
+        if let user = self.rcUser {
+            user.getBearingForActiveChallenge { (bearing) in
+                if let bearing = bearing {
+                    let distance = abs(roundedValue - bearing)
+                    
+                    if distance >= 30.0 {
+                        self.bearingOutlet.textColor = UIColor.red
+                    } else if distance >= 5 {
+                        self.bearingOutlet.textColor = UIColor.orange
+                    } else if distance >= 1 {
+                        self.bearingOutlet.textColor = UIColor.yellow
+                    } else if distance == 0 {
+                        self.bearingOutlet.textColor = UIColor.green
+                    } else {
+                        self.bearingOutlet.textColor = UIColor.white
+                    }
                 }
-                else if distance >= 5 {
-                    bearingOutlet.textColor = UIColor.orange
-                }
-                else if distance >= 1 {
-                    bearingOutlet.textColor = UIColor.yellow
-                }
-                else if distance == 0 {
-                    bearingOutlet.textColor = UIColor.green
-                }
-                else {
-                    bearingOutlet.textColor = UIColor.white
-                }
-                
             }
         }
         
-        
-        
         if roundedValue.truncatingRemainder(dividingBy: 1) == 0 {
-            
             if UIDevice.current.orientation == .landscapeLeft {
                 if roundedValue + 90.0 > 360 {
                     bearingOutlet.text = String((roundedValue + 90.0) - 360) + "°"
                     self.bearingToPass = (roundedValue + 90.0) - 360
-                }
-                else {
+                } else {
                     bearingOutlet.text = String(roundedValue + 90.0) + "°"
                     self.bearingToPass = roundedValue + 90.0
                 }
                 
-            }
-            else if UIDevice.current.orientation == .landscapeRight {
+            } else if UIDevice.current.orientation == .landscapeRight {
                 if roundedValue + 90.0 > 360 {
                     
                     bearingOutlet.text = String((roundedValue - 90.0) - 360) + "°"
                     self.bearingToPass = (roundedValue - 90.0) - 360
                     
-                }
-                else {
+                } else {
                     bearingOutlet.text = String(roundedValue - 90.0) + "°"
                     self.bearingToPass = roundedValue - 90.0
                 }
-            }
-            else {
+            } else {
                 bearingOutlet.text = String(roundedValue) + "°"
                 self.bearingToPass = roundedValue
             }
-            
-            
         }
     }
     
     func updateHorizontalDialValue(value: Double) {
-        
         bearingPickerOutlet.value = value
-        
-        
     }
     
     func setupProfileImage() {
@@ -359,38 +348,42 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
      of the gps coordinates when on the exact location
      */
     private func setupActiveChallenge() {
-        self.activeChallengePicData = self.userData.activeChallenge
-        if self.activeChallengePicData != nil {
-            // There is an active challenge
-            self.previousOutlet.isEnabled = true
-            self.arrowOutlet.isHidden = false
-            FBDatabase.getPicture(pictureData: self.activeChallengePicData, with_progress: { (progress, total) in
-                }, with_completion: { (image) in
-                    if let realImage = image {
-                        self.previousImageView = UIImageView(frame: self.view.frame)
-                        self.previousImageView?.image = realImage
-                        self.previousImageView?.alpha = 0.0
-                        
-                    if realImage.imageOrientation == .left || realImage.imageOrientation == .right {
-                        self.previousImageView?.contentMode = .scaleToFill
-                        self.previousImageContentMode = .scaleToFill
-                    }
-                    else {
-                        self.previousImageView?.contentMode = .scaleAspectFill
-                        self.previousImageContentMode = .scaleAspectFill
-                    }
-                    self.previewView.addSubview(self.previousImageView!)
-                }
-                else {
-                    // Could not get image
+        self.rcUser.getActiveChallenge { (challenge) in
+            if let picture = challenge {
+                self.activeChallengePicData = picture
+                
+                if self.activeChallengePicData != nil {
+                    // There is an active challenge
+                    self.previousOutlet.isEnabled = true
+                    self.arrowOutlet.isHidden = false
+                    FBDatabase.getPicture(pictureData: self.activeChallengePicData, with_progress: { (progress, total) in
+                    }, with_completion: { (image) in
+                        if let realImage = image {
+                            self.previousImageView = UIImageView(frame: self.view.frame)
+                            self.previousImageView?.image = realImage
+                            self.previousImageView?.alpha = 0.0
+                            
+                            if realImage.imageOrientation == .left || realImage.imageOrientation == .right {
+                                self.previousImageView?.contentMode = .scaleToFill
+                                self.previousImageContentMode = .scaleToFill
+                            }
+                            else {
+                                self.previousImageView?.contentMode = .scaleAspectFill
+                                self.previousImageContentMode = .scaleAspectFill
+                            }
+                            self.previewView.addSubview(self.previousImageView!)
+                        }
+                        else {
+                            // Could not get image
+                            self.previousOutlet.isEnabled = false
+                            self.arrowOutlet.isHidden = true
+                        }
+                    })
+                } else {
                     self.previousOutlet.isEnabled = false
                     self.arrowOutlet.isHidden = true
                 }
-            })
-        }
-        else {
-            self.previousOutlet.isEnabled = false
-            self.arrowOutlet.isHidden = true
+            }
         }
     }
     

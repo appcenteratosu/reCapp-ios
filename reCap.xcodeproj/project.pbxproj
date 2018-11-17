@@ -24,6 +24,9 @@
 		34B359AB20583F9B0093D02C /* CustomPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34B359A720583F980093D02C /* CustomPage.xib */; };
 		34B359AC20583F9B0093D02C /* CustomOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34B359A820583F9A0093D02C /* CustomOverlay.xib */; };
 		34F60577203FD24C001A74E4 /* ImageConfirmVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */; };
+		730657B7219F76D100DB3B2F /* RCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657B6219F76D100DB3B2F /* RCUser.swift */; };
+		730657B9219F7A8E00DB3B2F /* RCPicture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657B8219F7A8E00DB3B2F /* RCPicture.swift */; };
+		730657BB219F858300DB3B2F /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657BA219F858300DB3B2F /* AppManager.swift */; };
 		734840FB219A6E7D0065E472 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734840FA219A6E7D0065E472 /* DataManager.swift */; };
 		73553B75218F7FCD00D1F3E1 /* FirebaseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */; };
 		73553B772190E56000D1F3E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73553B762190E56000D1F3E1 /* GoogleService-Info.plist */; };
@@ -124,6 +127,9 @@
 		34B359A820583F9A0093D02C /* CustomOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomOverlay.xib; sourceTree = "<group>"; };
 		34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageConfirmVC.swift; path = "reCap/View Controllers/Camera/ImageConfirmVC.swift"; sourceTree = SOURCE_ROOT; };
 		3C4B8964350E05059DCB1788 /* Pods-reCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-reCap/Pods-reCap.release.xcconfig"; sourceTree = "<group>"; };
+		730657B6219F76D100DB3B2F /* RCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCUser.swift; sourceTree = "<group>"; };
+		730657B8219F7A8E00DB3B2F /* RCPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCPicture.swift; sourceTree = "<group>"; };
+		730657BA219F858300DB3B2F /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		734840FA219A6E7D0065E472 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHandler.swift; sourceTree = "<group>"; };
 		73553B762190E56000D1F3E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -252,6 +258,7 @@
 				7A3B468B202AB3FC001D19B6 /* EdgeShadowLayer.swift */,
 				7AE3755D2037C51D00CA9946 /* Custom Fonts */,
 				7A5878462030D22600F36A56 /* Extensions.swift */,
+				730657B5219F76AE00DB3B2F /* Models */,
 				7A4D8A53202782DB0043878E /* Realm Objects */,
 				7A4D8A50202782480043878E /* Database */,
 				34A7ACA62027878E00ACFB12 /* Storyboards */,
@@ -356,6 +363,16 @@
 				E795DFCEF164970B26D248C7 /* Pods_reCapUITests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		730657B5219F76AE00DB3B2F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				730657B6219F76D100DB3B2F /* RCUser.swift */,
+				730657B8219F7A8E00DB3B2F /* RCPicture.swift */,
+				730657BA219F858300DB3B2F /* AppManager.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		7A16B8C2209B9BA40058BC16 /* Profile menu */ = {
@@ -726,8 +743,6 @@
 				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
 				"${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework",
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkyFloatingLabelTextField/SkyFloatingLabelTextField.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
@@ -757,8 +772,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pageboy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkyFloatingLabelTextField.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
@@ -791,6 +804,8 @@
 				34F60577203FD24C001A74E4 /* ImageConfirmVC.swift in Sources */,
 				7A4D8A442027801E0043878E /* NavigationVC.swift in Sources */,
 				7A5358A8205B6E680047F410 /* LeaderboardsFriendsVC.swift in Sources */,
+				730657B9219F7A8E00DB3B2F /* RCPicture.swift in Sources */,
+				730657B7219F76D100DB3B2F /* RCUser.swift in Sources */,
 				7AA8EE922055A5000043B73C /* ImageCreateVC.swift in Sources */,
 				7A120DCF2041F0570003EE1F /* PhotoChalColCell.swift in Sources */,
 				347A06A4202A14BB00961024 /* SignInTransitionVC.swift in Sources */,
@@ -799,6 +814,7 @@
 				7AF3594A2038CDE500713EA3 /* SettingsVC.swift in Sources */,
 				7A5358A4205ADF150047F410 /* AppLoadingVC.swift in Sources */,
 				7AE3756C2037C8E100CA9946 /* LeaderboardFriendsTableCell.swift in Sources */,
+				730657BB219F858300DB3B2F /* AppManager.swift in Sources */,
 				7AF10F572058DA7D00019C70 /* SnappingCollectionViewLayout.swift in Sources */,
 				7A3C60132027BAE300ABC9E1 /* MapContainerVC.swift in Sources */,
 				7A5358B4205C8ACB0047F410 /* PhotoLibChallengeVC.swift in Sources */,

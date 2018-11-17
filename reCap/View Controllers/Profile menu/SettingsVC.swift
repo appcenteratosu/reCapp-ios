@@ -9,14 +9,14 @@
 import UIKit
 import Firebase
 import FCAlertView
-import RealmSwift
+
 
 class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegate {
     
     var userDataValues: [String]!
     let limitLength = 18
-    private var realm: Realm!
-    private var userData: UserData? {
+    
+    private var userData: RCUser? {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -94,10 +94,10 @@ class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegat
             alert.addTextField(withPlaceholder: "Enter Name") { (name) in
                 if name != "" {
                     FCAlertView.displayAlert(title: "Changing...", message: "Your name is being changed...", buttonTitle: "Dismiss", type: "progress", view: self)
-                    try! self.realm.write {
-                        self.userData?.name = name ?? ""
-                        self.tableView.reloadData()
-                    }
+//                    try! self.realm.write {
+//                        self.userData?.name = name ?? ""
+//                        self.tableView.reloadData()
+//                    }
                 }
                 else {
                     FCAlertView.displayAlert(title: "Oops!", message: "Please make sure to type a name", buttonTitle: "Got It!", type: "warning", view: self)

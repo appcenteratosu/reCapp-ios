@@ -62,7 +62,7 @@ class FirebaseHandler {
         }
     }
     
-    static func createUserDataReference(userData user: UserData, completion: @escaping (Error?)->()) {
+    static func createUserDataReference(userData user: RCUser, completion: @escaping (Error?)->()) {
         var data: [String: Any?] = ["name": user.name,
                                    "points": user.points,
                                    "pictures": nil,
@@ -124,7 +124,7 @@ class FirebaseHandler {
                     "longitude": pictureData.longitude,
                     "bearing": pictureData.bearing,
                     "orientation": pictureData.orientation,
-                    "owner": pictureData.owner.id,
+                    "owner": pictureData.owner,
                     "time": pictureData.time,
                     "locationName": pictureData.locationName,
                     "isRootPicture": pictureData.isRootPicture,
@@ -140,33 +140,15 @@ class FirebaseHandler {
         }
     }
     
-    static func getUserData(completion: @escaping (UserData)->()) {
+    static func getUserData(completion: @escaping (RCUser)->()) {
         if let user = auth.currentUser {
             let handle = database.child(UserDataString).child(user.uid).observe(.value) { (snap) in
-                if let data = snap.value as? [String: Any] {
-                    let name = data["name"] as! String
-                    let userData = UserData(id: user.uid, name: name, email: user.email!)
-                    
-                    if let challengePoints = data["activeUserChallengePoints"] as? Int {
-                        userData.activeChallengePoints = challengePoints
-                    }
-                    
-                    if let lat = data["latitude"] as? Double {
-                        userData.latitude = lat
-                    }
-                    
-                    if let lon = data["longitude"] as? Double {
-                        userData.longitude = lon
-                    }
-                    
-                    if let points = data["points"] as? Int {
-                        userData.points = points
-                    }
-                    DataManager.currentFBUser = user
-                    DataManager.currentAppUser = userData
-                    CurrentUserData = userData
-                    completion(userData)
-                }
+                
+                let rcUser = RCUser(snapshot: snap)
+                
+                DataManager.currentFBUser = user
+                DataManager.currentAppUser = rcUser
+                completion(rcUser)
             }
             
             DatabaseHandles.append(handle)
@@ -182,6 +164,11 @@ class FirebaseHandler {
     static func updateUserLocation(state: String, country: String) {
         database.child(UserDataString).child(DataManager.currentFBUser.uid).child("country").setValue(country)
         database.child(UserDataString).child(DataManager.currentFBUser.uid).child("state").setValue(state)
+    }
+    
+    
+    static func getFilteredData() {
+        
     }
     
     

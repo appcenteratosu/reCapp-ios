@@ -12,7 +12,6 @@ import MapboxCoreNavigation
 import MapboxNavigation
 import MapboxDirections
 import Firebase
-import RealmSwift
 
 class MapVC: UIViewController, MGLMapViewDelegate {
     
@@ -41,7 +40,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
     var pictureDataArray: [PictureData]! = []
     var userPictureDataArray: [PictureData]! = []
     var activeChallengePicData: PictureData!
-    private var realm: Realm!
     
     
     var pictureIDArray: [String]! = []
@@ -286,7 +284,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         }
         
         
-        let rawPictureDataArray = RealmHelper.getAllPictureData(onlyRecent: true)
+//        let rawPictureDataArray = RealmHelper.getAllPictureData(onlyRecent: true)
         
         if rawPictureDataArray.count > 0 {
             for rawPictureData in rawPictureDataArray {

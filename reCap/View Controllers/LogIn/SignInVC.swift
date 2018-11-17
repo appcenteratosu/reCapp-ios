@@ -10,7 +10,6 @@ import UIKit
 import Firebase
 import SkyFloatingLabelTextField
 import FCAlertView
-import RealmSwift
 
 class SignInVC: UIViewController, UITextFieldDelegate {
     
@@ -110,21 +109,6 @@ class SignInVC: UIViewController, UITextFieldDelegate {
                             withCustomImage: nil,
                             withDoneButtonTitle: nil,
                             andButtons: nil)
-//            let creds = SyncCredentials.usernamePassword(username: username, password: password)
-//            SyncUser.logIn(with: creds, server: RealmConstants.AUTH_URL, onCompletion: {(user, err) in
-//                if let error = err {
-//                    // Error logging in
-//                    print(error.localizedDescription)
-//                    self.displayErrorAlert(message: error.localizedDescription)
-//                } else {
-//                    print("Logged in user")
-//                    alert.dismiss()
-//                    let activeUser = user!
-//                    let config = SyncConfiguration(user: activeUser, realmURL: RealmConstants.REALM_URL)
-//                    Realm.Configuration.defaultConfiguration = Realm.Configuration(syncConfiguration: config, objectTypes:[UserData.self, PictureData.self])
-//                    self.performSegue(withIdentifier: SignInVC.PAGE_VIEW_SEGUE, sender: nil)
-//                }
-//            })
             
             FirebaseHandler.login(email: username, password: password) { (error, user) in
                 if error != nil {
@@ -133,8 +117,8 @@ class SignInVC: UIViewController, UITextFieldDelegate {
                 } else {
                     if let user = user {
                         DataManager.currentFBUser = user
-                        FirebaseHandler.getUserData(completion: { (userData) in
-                            DataManager.currentAppUser = userData
+                        FirebaseHandler.getUserData(completion: { (rcUser) in
+                            DataManager.currentAppUser = rcUser
                             alert.dismiss()
                             self.performSegue(withIdentifier: SignInVC.PAGE_VIEW_SEGUE, sender: nil)
                         })

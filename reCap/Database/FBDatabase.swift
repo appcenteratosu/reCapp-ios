@@ -63,21 +63,19 @@ class FBDatabase {
     /*
      Get picture from database
      */
-    class func getPicture(pictureData: PictureData, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
-        if let image = imageCache.object(forKey: pictureData.id! as NSString) {
+    class func getPicture(pictureData: RCPicture, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
+        if let image = imageCache.object(forKey: pictureData.id as NSString) {
             completion(image)
-        }
-        else {
+        } else {
             let storageRef = Storage.storage().reference().child(PICTURE_NODE).child(pictureData.id)
             getPictureFromDatabase(storageRef: storageRef, with_progress: progress, with_completion: completion, key: pictureData.id)
         }
     }
     
-    class func getProfilePicture(for_user user: UserData, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
+    class func getProfilePicture(for_user user: RCUser, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
         if let image = imageCache.object(forKey: user.id! as NSString) {
             completion(image)
-        }
-        else {
+        } else {
             let storageRef = Storage.storage().reference().child(PROFILE_PICTURE_NODE).child(user.id)
             getPictureFromDatabase(storageRef: storageRef, with_progress: progress, with_completion: completion, key: user.id)
         }
@@ -98,8 +96,7 @@ class FBDatabase {
                 let pic = UIImage(data: data!)
                 imageCache.setObject(pic!, forKey: key as NSString)
                 completion(pic)
-            }
-            else {
+            } else {
                 // Could not get image in database
                 completion(nil)
             }

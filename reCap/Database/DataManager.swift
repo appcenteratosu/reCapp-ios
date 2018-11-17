@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import RealmSwift
+
 import Firebase
 
 class DataManager {
     static var currentFBUser: User!
-    static var currentAppUser: UserData!
+    static var currentAppUser: RCUser!
 //        didSet {
 //            var pictures: [String] = []
 //

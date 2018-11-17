@@ -11,7 +11,7 @@ import Hero
 import SkyFloatingLabelTextField
 import Firebase
 import FCAlertView
-import RealmSwift
+
 
 class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
@@ -131,8 +131,12 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
                     self.displayErrorAlert(message: error!.localizedDescription)
                 } else {
                     if let user = user {
-                        let userData = UserData(id: user.uid, name: name!, email: email!)
-                        FirebaseHandler.createUserDataReference(userData: userData, completion: { (error) in
+                        let newUser = RCUser()
+                        newUser.id = user.uid
+                        newUser.name = name!
+                        newUser.email = email!
+                        
+                        FirebaseHandler.createUserDataReference(userData: newUser, completion: { (error) in
                             FirebaseHandler.storeProfilePicture(image: image!, userID: user.uid, completion: { (error) in
                                 if error != nil {
                                     self.displayErrorAlert(message: error!.localizedDescription)
