@@ -15,7 +15,7 @@ class PhotoChalColCell: UICollectionViewCell {
     @IBOutlet weak var imageButton: UIButton!
     
     // MARK: - Properties
-    var pictureData: PictureData!
+    var pictureData: RCPicture!
     private weak var delegate: ImageButtonDelegate!
     
     override func awakeFromNib() {

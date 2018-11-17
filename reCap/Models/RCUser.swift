@@ -108,5 +108,45 @@ class RCUser: Codable {
         }
     }
     
-}
+    func update(values: [Properties: Any]) {
+        var data: [String: Any] = [:]
+        for item in values {
+            switch item.key {
+            case .points:
+                data["points"] = item.value
+            case .activeChallenge:
+                data["activeChallenge"] = item.value
+            case .activeChalengePoints:
+                data["activeChalengePoints"] = item.value
+            case .state:
+                data["state"] = item.value
+            case .country:
+                data["country"] = item.value
+            case .latitude:
+                data["latitude"] = item.value
+            case .longitude:
+                data["longitude"] = item.value
+            default:
+                break
+            }
+        }
+        
+        FirebaseHandler.database.child("UserData").child(id).updateChildValues(data)
+    }
+    
+    enum Properties {
+        case id
+        case name
+        case points
+        case email
+        case friends
+        case activeChallenge
+        case activeChalengePoints
+        case state
+        case country
+        case latitude
+        case longitude
+        case pictures
+    }
 
+}

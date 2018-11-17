@@ -10,8 +10,8 @@ import Foundation
 
 //
 //
-//public class RealmHelper {
-//    
+public class RealmHelper {
+//
 //    
 //    //-------------------------------------------------------------------------------------------------------------------------
 //    //MARK:- PictureData Functions
@@ -67,6 +67,6 @@ import Foundation
 //        }
 //    }
 //    
-//}
+}
 
 

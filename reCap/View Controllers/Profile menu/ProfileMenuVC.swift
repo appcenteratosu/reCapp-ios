@@ -27,7 +27,7 @@ class ProfileMenuVC: UIViewController {
 //    private var realm: Realm!
     
     // MARK: - Properties
-    var userData: UserData!
+    var userData: RCUser!
     var image: UIImage?
     
     @IBAction func backAction(_ sender: Any) {

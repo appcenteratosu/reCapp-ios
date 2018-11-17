@@ -22,8 +22,8 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
     var bearing: Double?
     var location: String?
     var isAtChallengeLocation: Bool!
-    var previousPic: PictureData!
-    var userData: UserData!
+    var previousPic: RCPicture!
+    var userData: RCUser!
     var challengePoints: String?
     
     @IBOutlet weak var imageBackground: UIImageView!
@@ -49,37 +49,43 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         var isRoot: Bool!
         var groupID: String!
         let currentDate = Int((Date().timeIntervalSince1970))
-        let pictureID = PictureData.createPictureDataID(userData: self.userData)
-        let realm = try! Realm()
         
         FCAlertView.displayAlert(title: "Saving Picture...", message: "Adding your picture to the database...", buttonTitle: "", type: "progress", view: self)
         
         if self.isAtChallengeLocation {
             // If the user took the picture at the challenge coordinates, there is an active challenge
-            try! realm.write {
-                self.userData.points = self.userData.points + Int(self.userData.activeChallengePoints)
-                self.userData.activeChallenge = nil
-                self.previousPic.isMostRecentPicture = false
-            }
+            let points = self.userData.points + self.userData.activeChalengePoints
+            self.previousPic.isMostRecent = false
             isRoot = false
             groupID = self.previousPic.groupID
-            print("User earned \(self.userData.activeChallengePoints) points")
-            self.challengePoints = self.userData.activeChallengePoints.description
-        }
-        else {
+            
+            userData.update(values: [.points : points,
+                                     .activeChallenge: ""])
+            self.challengePoints = "\(self.userData.activeChalengePoints)"
+            
+        } else {
             print("root picture")
             isRoot = true
-            groupID = pictureID
         }
-        let pictureData = PictureData(name: self.titleOutlet.text, info: self.descriptionOutlet.text!, owner: self.userData, latitude: self.lat!,longitude: self.long!, bearing: self.bearing! ,orientation: PictureData.ORIENTATION_PORTRAIT, time: currentDate, locationName: self.locationNameOutlet.text!, id: pictureID, isRootPicture: isRoot, groupID: groupID, isMostRecentPicture: true)
-//        try! realm.write {
-//            realm.add(pictureData)
-//            self.userData.pictures.append(pictureData)
-//        }
         
-        FirebaseHandler.createPictureDataReference(pictureData: pictureData)
+        let picture = RCPicture()
+        picture.name = self.titleOutlet.text!
+        picture.name = self.titleOutlet.text!
+        picture.info = self.descriptionOutlet.text!
+        picture.owner = self.userData.id
+        picture.latitude = self.lat!
+        picture.longitude = self.long!
+        picture.bearing = self.bearing!
+        picture.orientation = RCPicture.ORIENTATION_PORTRAIT
+        picture.time = currentDate
+        picture.locationName = self.locationNameOutlet.text!
+        picture.isRoot = isRoot
+        picture.groupID = groupID
+        picture.isMostRecent = true
         
-        FBDatabase.addPicture(image: self.image!, pictureData: pictureData, with_completion: {(error) in
+        FirebaseHandler.createPictureDataReference(pictureData: picture)
+        
+        FBDatabase.addPicture(image: self.image!, pictureData: picture, with_completion: {(error) in
             if let actualError = error {
                 // There was an error
                 print(actualError)
@@ -90,7 +96,7 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
                     self.displayChallengeComplete()
                 }
                 else {
-                    self.displayPictureAdded(pictureData: pictureData)
+                    self.displayPictureAdded(pictureData: picture)
                 }
                 self.navigationController?.setToolbarHidden(true, animated: true)
                 self.navigationController?.popToRootViewController(animated: true)
@@ -110,10 +116,10 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         
     }
     
-    private func displayPictureAdded(pictureData: PictureData) {
+    private func displayPictureAdded(pictureData: RCPicture) {
         
         let titleString = "Picture Added"
-        let subtitleString = "Good Job! You now have added \(pictureData.name!) to your library"
+        let subtitleString = "Good Job! You now have added \(pictureData.name) to your library"
         
         FCAlertView.displayAlert(title: titleString, message: subtitleString, buttonTitle: "Hooray!", type: "success", view: self, blur: true)
         

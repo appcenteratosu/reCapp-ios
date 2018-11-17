@@ -10,6 +10,12 @@ import Foundation
 import FirebaseDatabase
 
 class RCPicture: Codable {
+
+    static let ORIENTATION_PORTRAIT = 0
+    static let ORIENTATION_LANDSCAPE = 1
+    static let LONGITUDE_INDEX = 1
+    static let LATTITUDE_INDEX = 0
+
     var id: String
     var name: String
     var latitude: Double
@@ -56,7 +62,7 @@ class RCPicture: Codable {
             if let info = data["longitude"] as? Double {
                 self.longitude = info
             }
-            if let info = data["bearing"] as? Int {
+            if let info = data["bearing"] as? Double {
                 self.bearing = info
             }
             if let info = data["orientation"] as? Int {

@@ -60,32 +60,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    private func makeRealmPublic() {
-        let creds = SyncCredentials.nickname("reCapp-admin", isAdmin: true)
-        SyncUser.logIn(with: creds, server: RealmConstants.AUTH_URL, onCompletion: {(user, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            else {
-                let admin = user!
-                let permissions = SyncPermission(realmPath: "/reCapp", identity: "*", accessLevel: .write)
-                admin.apply(permissions, callback: {(err) in
-                    if let error = err {
-                        print(error.localizedDescription)
-                    }
-                    else {
-                        print("Wrote permissions")
-                        admin.logOut()
-                        let users = SyncUser.all
-                        for user in users {
-                            // Logs all users out
-                            user.value.logOut()
-                        }
-                    }
-                })
-            }
-        })
-    }
+//    private func makeRealmPublic() {
+//        let creds = SyncCredentials.nickname("reCapp-admin", isAdmin: true)
+//        SyncUser.logIn(with: creds, server: RealmConstants.AUTH_URL, onCompletion: {(user, err) in
+//            if let error = err {
+//                print(error.localizedDescription)
+//            }
+//            else {
+//                let admin = user!
+//                let permissions = SyncPermission(realmPath: "/reCapp", identity: "*", accessLevel: .write)
+//                admin.apply(permissions, callback: {(err) in
+//                    if let error = err {
+//                        print(error.localizedDescription)
+//                    }
+//                    else {
+//                        print("Wrote permissions")
+//                        admin.logOut()
+//                        let users = SyncUser.all
+//                        for user in users {
+//                            // Logs all users out
+//                            user.value.logOut()
+//                        }
+//                    }
+//                })
+//            }
+//        })
+//    }
     
     /// set orientations you want to be allowed in this property by default
     var orientationLock = UIInterfaceOrientationMask.all

@@ -10,5 +10,5 @@ import Foundation
 import UIKit
 
 protocol ImageButtonDelegate: class {
-    func imageButtonPressed(image: UIImage, pictureData: PictureData)
+    func imageButtonPressed(image: UIImage, pictureData: RCPicture)
 }

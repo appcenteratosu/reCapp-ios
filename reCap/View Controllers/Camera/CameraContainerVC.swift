@@ -798,8 +798,13 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             vc.bearingToPass = self.bearingToPass
             vc.locationToPass = self.locationToPass
             //vc.user = self.user
-            vc.userData = self.userData
-            vc.previousPic = self.activeChallengePicData
+
+            vc.userData = AppManager.user
+            AppManager.user.getActiveChallenge { (picture) in
+                if picture != nil {
+                    vc.previousPic = picture!
+                }
+            }
         }
         else if segueID == "toProfileSegue" {
             let vc = segue.destination as! ProfileMenuVC

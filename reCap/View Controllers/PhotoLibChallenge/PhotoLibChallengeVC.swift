@@ -19,10 +19,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     
     // MARK: - Properties
     private var tableSectionArray: [String]!
-    private var collectionDictionaryData: [String : [PictureData]]!
+    private var collectionDictionaryData: [String : [RCPicture]]!
     private var photoLibChalReference: DatabaseReference!
     var user: User!
-    var userData: UserData!
+    var userData: RCUser!
     var mode: Int!
     
     var userLat: Double!
@@ -154,10 +154,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
 //        }
     }
     
-    private func getFiftyChallenges(results: Results<PictureData>) -> [PictureData] {
+    private func getFiftyChallenges(results: [RCPicture]) -> [RCPicture] {
         var count = 0
         let max = 50
-        var pictureArray: [PictureData] = []
+        var pictureArray: [RCPicture] = []
         for pictureData in results {
             if count < max {
                 pictureArray.append(pictureData)

@@ -29,7 +29,7 @@ class FBDatabase {
     /*
      Puts a profile image in the database
      */
-    class func addProfilePicture(with_image image: UIImage, for_user user: UserData, with_completion completion: @escaping (_ error: String?) -> ()) {
+    class func addProfilePicture(with_image image: UIImage, for_user user: RCUser, with_completion completion: @escaping (_ error: String?) -> ()) {
         let storageRef = Storage.storage().reference().child(PROFILE_PICTURE_NODE).child(user.id)
         savePicture(storageRef: storageRef, image: image, completion: completion)
     }
@@ -37,7 +37,7 @@ class FBDatabase {
     /*
      Puts a picture in the database
      */
-    class func addPicture(image: UIImage, pictureData: PictureData, with_completion completion: @escaping (_ error: String?) -> ()) {
+    class func addPicture(image: UIImage, pictureData: RCPicture, with_completion completion: @escaping (_ error: String?) -> ()) {
         let storageRef = Storage.storage().reference().child(PICTURE_NODE).child(pictureData.id)
         savePicture(storageRef: storageRef, image: image, completion: completion)
     }
@@ -73,7 +73,7 @@ class FBDatabase {
     }
     
     class func getProfilePicture(for_user user: RCUser, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
-        if let image = imageCache.object(forKey: user.id! as NSString) {
+        if let image = imageCache.object(forKey: user.id as NSString) {
             completion(image)
         } else {
             let storageRef = Storage.storage().reference().child(PROFILE_PICTURE_NODE).child(user.id)
@@ -81,7 +81,7 @@ class FBDatabase {
         }
     }
     
-    class func deletePicture(pictureData: PictureData) {
+    class func deletePicture(pictureData: RCPicture) {
         let storageRef = Storage.storage().reference().child(PICTURE_NODE).child(pictureData.id)
         storageRef.delete(completion: nil)
     }

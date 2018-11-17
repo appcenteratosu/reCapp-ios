@@ -18,7 +18,7 @@ class FirebaseHandler {
     private static var UserDataString = "UserData"
     private static var ProfilePictures = "ProfilePictures"
     
-    public static var CurrentUserData: UserData?
+    public static var CurrentUserData: RCUser?
     
     public static var DatabaseHandles: [DatabaseHandle] = []
 
@@ -116,10 +116,11 @@ class FirebaseHandler {
         }
     }
     
-    static func createPictureDataReference(pictureData: PictureData) {
+    static func createPictureDataReference(pictureData: RCPicture) {
+        guard let id = database.child("PictureData").childByAutoId().key else { return }
         var data: [String: Any] = ["name": pictureData.name,
                     "info": pictureData.info,
-                    "id": pictureData.id,
+                    "id": id,
                     "latitude": pictureData.latitude,
                     "longitude": pictureData.longitude,
                     "bearing": pictureData.bearing,
@@ -127,11 +128,11 @@ class FirebaseHandler {
                     "owner": pictureData.owner,
                     "time": pictureData.time,
                     "locationName": pictureData.locationName,
-                    "isRootPicture": pictureData.isRootPicture,
-                    "isMoseRecentPicture": pictureData.isMostRecentPicture,
+                    "isRootPicture": pictureData.isRoot,
+                    "isMoseRecentPicture": pictureData.isMostRecent,
                     "groupID": pictureData.groupID]
         
-        database.child(PictureData).child(pictureData.id).setValue(data) { (error, ref) in
+        database.child(PictureData).child(id).setValue(data) { (error, ref) in
             if error != nil {
                 print(error!.localizedDescription)
             } else {
@@ -169,6 +170,51 @@ class FirebaseHandler {
     
     static func getFilteredData() {
         
+    }
+    
+    static func getAllPictureData(onlyRecent: Bool, completion: @escaping ([RCPicture])->()) {
+        if onlyRecent == true {
+            let ref = database.child("PictureData")
+            ref.queryOrdered(byChild: "isMoseRecentPicture").queryEqual(toValue: true).observeSingleEvent(of: .value) { (snap) in
+                var pictures: [RCPicture] = []
+                if let objects = snap.children.allObjects as? [DataSnapshot] {
+                    for object in objects {
+                        let picture = RCPicture(snapshot: object)
+                        pictures.append(picture)
+                    }
+                    
+                    completion(pictures)
+                }
+            }
+        } else {
+            database.child("PictureData").observeSingleEvent(of: .value) { (snap) in
+                var pictures: [RCPicture] = []
+                if let objects = snap.children.allObjects as? [DataSnapshot] {
+                    for object in objects {
+                        let picture = RCPicture(snapshot: object)
+                        pictures.append(picture)
+                    }
+                    
+                    completion(pictures)
+                }
+            }
+        }
+    }
+    
+    static func getPictureData(lat: Double, long: Double, onlyRecent: Bool, compltion: @escaping (RCPicture?)->()) {
+        getAllPictureData(onlyRecent: true) { (pictures) in
+            let filtered = pictures.filter({ (picture) -> Bool in
+                if picture.latitude == lat && picture.longitude == long {
+                    return true
+                }
+            })
+            
+            if filtered.count == 1 {
+                compltion(filtered.first!)
+            } else {
+                compltion(nil)
+            }
+        }
     }
     
     

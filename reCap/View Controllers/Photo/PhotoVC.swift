@@ -22,10 +22,10 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Properties
     var image: UIImage!
-    var selectedPictureData: PictureData!
-    var nextPictureData: PictureData!
+    var selectedPictureData: RCPicture!
+    var nextPictureData: RCPicture!
     
-    var userData: UserData!
+    var userData: RCUser!
 //    private var realm: Realm!
     override func viewDidLoad() {
         super.viewDidLoad()

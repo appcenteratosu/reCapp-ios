@@ -18,18 +18,18 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     
     // Parameters
     var image: UIImage!
-    var pictureData: PictureData!
-    var userData: UserData!
-    var pictureArray: [PictureData]?
+    var pictureData: RCPicture
+    var userData: RCUser!
+    var pictureArray: [RCPicture]?
     var imageToPass: UIImage?
-    var pictureDataToPass: PictureData?
+    var pictureDataToPass: RCPicture?
     var mode: Int!
     
     static let PHOTO_LIB_MODE = 0
     static let CHALLENGE_MODE = 1
     
     private var didDeletePhoto = false
-    private var selectedPicToken: NotificationToken!
+//    private var selectedPicToken: NotificationToken!
     private var selectedPicIndex = -1
     @IBOutlet weak var imageOutlet: UIImageView!
     @IBOutlet weak var locationOutlet: UILabel!
@@ -193,7 +193,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     }
 
     // MARK: - ImageButton Methods
-    func imageButtonPressed(image: UIImage, pictureData: PictureData) {
+    func imageButtonPressed(image: UIImage, pictureData: RCPicture) {
         print("Image Pressed")
         let infoArray = [pictureData, image] as [Any]
         self.performSegue(withIdentifier: "PhotoSegue", sender: infoArray)
@@ -220,10 +220,11 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         if segueID == "PhotoSegue" {
             let destination = segue.destination as! PhotoVC
             let infoArray = sender as! [Any]
-            let pictureData = infoArray[0] as! PictureData
+            let pictureData = infoArray[0] as! RCPicture
             let image = infoArray[1] as! UIImage
-            if self.userData.pictures.contains(pictureData), self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
+            if self.userData.pictures.contains(pictureData.id), self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
                 // The user owns the picture, user is able to delete the photo
+                
                 if let selectedPicIndex = self.pictureArray?.index(of: pictureData) {
                     self.selectedPicIndex = selectedPicIndex
                     if pictureData.isMostRecentPicture {
