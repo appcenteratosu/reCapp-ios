@@ -18,7 +18,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     
     // Parameters
     var image: UIImage!
-    var pictureData: RCPicture
+    var pictureData: RCPicture?
     var userData: RCUser!
     var pictureArray: [RCPicture]?
     var imageToPass: UIImage?
@@ -106,7 +106,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         //self.pictureArray = []
-        let groupID = pictureData.groupID!
+        let groupID = pictureData!.groupID
 //        let realm = try! Realm()
 //        self.pictureArray = realm.objects(PictureData.self).filter("groupID = '\(groupID.description)'").sorted(byKeyPath: "time", ascending: false)
         /*for data in results {
@@ -114,9 +114,9 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         }*/
         FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "groupID").queryEqual(toValue: groupID.description).observeSingleEvent(of: .value) { (snap) in
             if let objects = snap.children.allObjects as? [DataSnapshot] {
-                var pictures: [PictureData] = []
+                var pictures: [RCPicture] = []
                 for object in objects {
-                    let pictureData = PictureData(snapshot: object)
+                    let pictureData = RCPicture(snapshot: object)
                     pictures.append(pictureData)
                 }
                 
@@ -224,10 +224,15 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             let image = infoArray[1] as! UIImage
             if self.userData.pictures.contains(pictureData.id), self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
                 // The user owns the picture, user is able to delete the photo
-                
-                if let selectedPicIndex = self.pictureArray?.index(of: pictureData) {
-                    self.selectedPicIndex = selectedPicIndex
-                    if pictureData.isMostRecentPicture {
+                if let index = self.pictureArray?.firstIndex(where: { (picture) -> Bool in
+                    if picture.id == pictureData.id {
+                        return true
+                    } else {
+                        return false
+                    }
+                }) {
+                    self.selectedPicIndex = index
+                    if pictureData.isMostRecent {
                         // If the selected photo is not the most recent
                         let nextPictureIndex = self.selectedPicIndex + 1
                         if (nextPictureIndex) != self.pictureArray?.count {
@@ -237,7 +242,22 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
                     }
                     destination.userData = self.userData
                 }
-//                self.selectedPicIndex = self.pictureArray.index(of: pictureData)!
+                
+                
+                
+//                if let selectedPicIndex = self.pictureArray?.index(of: pictureData) {
+//                    self.selectedPicIndex = selectedPicIndex
+//                    if pictureData.isMostRecentPicture {
+//                        // If the selected photo is not the most recent
+//                        let nextPictureIndex = self.selectedPicIndex + 1
+//                        if (nextPictureIndex) != self.pictureArray?.count {
+//                            // The selected picture is not the only picture in the timeline
+//                            destination.nextPictureData = self.pictureArray?[nextPictureIndex]
+//                        }
+//                    }
+//                    destination.userData = self.userData
+//                }
+////                self.selectedPicIndex = self.pictureArray.index(of: pictureData)!
                 
             }
             destination.mode = self.mode

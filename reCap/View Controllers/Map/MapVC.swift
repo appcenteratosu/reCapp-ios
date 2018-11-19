@@ -604,11 +604,12 @@ class MapVC: UIViewController, MGLMapViewDelegate {
             let destination = nav.topViewController as! PhotoTimelineVC
             
             //let destination = segue.destination as! ChallengeViewVC
-            let pictureData = pictureDataToPass
-            let picture = imageToPass
-            destination.pictureData = pictureData
-            destination.image = picture
-            print("Segue Done")
+            if let pictureData = pictureDataToPass {
+                let picture = imageToPass
+                destination.pictureData = pictureData
+                destination.image = picture
+                print("Segue Done")
+            }
         }
     }
     

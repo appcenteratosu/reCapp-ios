@@ -37,13 +37,12 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     static var FRIENDS_LIST_MODE = 1
     var mode: Int!
     var user: User!
-    var userData: UserData!
-    private var friendsList: [UserData]!
-    private var leaderboardsList: [UserData]!
-    private var stateLeaderboards: [UserData]!
-    private var countryLeaderboards: [UserData]!
-    private var globalLeaderboards: [UserData]!
-    private var realm: Realm!
+    var userData: RCUser!
+    private var friendsList: [RCUser]!
+    private var leaderboardsList: [RCUser]!
+    private var stateLeaderboards: [RCUser]!
+    private var countryLeaderboards: [RCUser]!
+    private var globalLeaderboards: [RCUser]!
     
     private static let STATE_FILTER = 0
     private static let COUNTRY_FILTER = 1
@@ -110,12 +109,13 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         
         let usersDataRef = FirebaseHandler.database.child("UserData")
         // State Results
-        let stateResults: [UserData] = []
+        
         usersDataRef.queryOrdered(byChild: "state").queryEqual(toValue: userData.state).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
                 for child in snaps {
-                    if let user = child.value as? [String: Any] {
-                        print("State Object:", user)
+                    if self.stateLeaderboards.count < 50 {
+                        let rcuser = RCUser(snapshot: child)
+                        self.stateLeaderboards.append(rcuser)
                     }
                 }
             }
@@ -124,18 +124,21 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         usersDataRef.queryOrdered(byChild: "country").queryEqual(toValue: userData.country).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
                 for child in snaps {
-                    if let user = child.value as? [String: Any] {
-                        print("Country User:", user)
+                    if self.countryLeaderboards.count < 50 {
+                        let rcuser = RCUser(snapshot: child)
+                        self.countryLeaderboards.append(rcuser)
                     }
                 }
             }
         }
         
+
         usersDataRef.observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
                 for child in snaps {
-                    if let user = child.value as? [String: Any] {
-                        print("Global:", user)
+                    if self.globalLeaderboards.count < 50 {
+                        let rcuser = RCUser(snapshot: child)
+                        self.globalLeaderboards.append(rcuser)
                     }
                 }
             }
@@ -191,16 +194,19 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     private func setupFriendsList() {
         self.title = "Friends List"
         self.locationControl.isHidden = true
-        for friends in self.userData.friends {
-            self.friendsList.append(friends)
+        for friend in self.userData.friends {
+            FirebaseHandler.database.child("UserData").child(friend).observeSingleEvent(of: .value) { (snap) in
+                let friend = RCUser(snapshot: snap)
+                self.friendsList.append(friend)
+            }
+            self.tableView.reloadData()
         }
-        self.tableView.reloadData()
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! LeaderboardFriendsTableCell
-        let user: UserData!
+        let user: RCUser!
         if mode == LeaderboardsFriendsVC.FRIENDS_LIST_MODE {
             user = friendsList[indexPath.row]
             cell.pointsOutlet.text = "\(user.points) points"
@@ -240,20 +246,36 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         alert.addTextField(withPlaceholder: "Enter Friends Username") { (email) in
             if email != "", email != self.userData.email {
                 FCAlertView.displayAlert(title: "Adding...", message: "Adding friend to your friends list...", buttonTitle: "Dismiss", type: "progress", view: self)
-                if let friend = self.realm.objects(UserData.self).filter("email = '\(email!.description)'").first {
-                    // The user exists
-                    self.friendsList.append(friend)
-                    self.tableView.beginUpdates()
-                    let index = IndexPath(row: self.friendsList.count-1, section: 0)
-                    self.tableView.insertRows(at: [index], with: .automatic)
-                    self.tableView.endUpdates()
-                    try! self.realm.write {
-                        self.userData.friends.append(friend)
-                    }
+                
+                if let email = email {
+                    FirebaseHandler.database.child("UserData").child(email).observeSingleEvent(of: .value, with: { (snap) in
+                        if snap.value != nil {
+                            let friend = RCUser(snapshot: snap)
+                            self.friendsList.append(friend)
+                            self.tableView.beginUpdates()
+                            let index = IndexPath(row: self.friendsList.count-1, section: 0)
+                            self.tableView.insertRows(at: [index], with: .automatic)
+                            self.tableView.endUpdates()
+                            self.userData.add(friend: friend)
+                        } else {
+                            FCAlertView.displayAlert(title: "Oops!", message: "That email doesn't exist", buttonTitle: "Okay", type: "warning", view: self)
+                        }
+                    })
                 }
-                else {
-                    FCAlertView.displayAlert(title: "Oops!", message: "Please make sure to type a email", buttonTitle: "Got It!", type: "warning", view: self)
-                }
+                
+//                if let friend = self.realm.objects(UserData.self).filter("email = '\(email!.description)'").first {
+//                    // The user exists
+//                    self.friendsList.append(friend)
+//                    self.tableView.beginUpdates()
+//                    let index = IndexPath(row: self.friendsList.count-1, section: 0)
+//                    self.tableView.insertRows(at: [index], with: .automatic)
+//                    self.tableView.endUpdates()
+//                    try! self.realm.write {
+//                        self.userData.friends.append(friend)
+//                    }
+//                } else {
+//                    FCAlertView.displayAlert(title: "Oops!", message: "Please make sure to type a email", buttonTitle: "Got It!", type: "warning", view: self)
+//                }
             }
         }
         alert.addButton("Cancel") {
@@ -342,7 +364,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         // Pass the selected object to the new view controller.
         let segueID = segue.identifier
         if segueID == "PhotoLibSegue" {
-            let friend = sender as! UserData
+            let friend = sender as! RCUser
             let destination = segue.destination as! UINavigationController
             let photoLibVC = destination.topViewController as! PhotoLibChallengeVC
             photoLibVC.userData = friend

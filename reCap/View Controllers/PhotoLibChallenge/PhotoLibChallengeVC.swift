@@ -106,7 +106,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
 
     
     private func setupPhotoLib() {
-        let username = self.userData.name!
+        let username = self.userData.name
         self.title = "\(username)'s Photos"
         self.tableView.allowsSelection = false
         var groupIDArray: [String] = []
@@ -114,21 +114,21 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         
         FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "owner").queryEqual(toValue: userData.id).observeSingleEvent(of: .value) { (snap) in
             if let objects = snap.children.allObjects as? [DataSnapshot] {
-                var pictures: [PictureData] = []
+                var pictures: [RCPicture] = []
                 for object in objects {
-                    let picture = PictureData(snapshot: object)
+                    let picture = RCPicture(snapshot: object)
                     let location = picture.locationName
-                    if !self.tableSectionArray.contains(location!) {
+                    if !self.tableSectionArray.contains(location) {
                         // Location is not in the locations array
                         // Add it to the array and initialize
                         // an empty array for the key location
-                        self.tableSectionArray.append(location!)
-                        self.collectionDictionaryData[location!] = []
+                        self.tableSectionArray.append(location)
+                        self.collectionDictionaryData[location] = []
                     }
                     if !groupIDArray.contains(picture.groupID) {
                         // If the picture in a group has not yet been added
                         groupIDArray.append(picture.groupID)
-                        self.collectionDictionaryData[location!]?.append(picture)
+                        self.collectionDictionaryData[location]?.append(picture)
                     }
                 }
                 self.tableView.reloadData()
@@ -213,7 +213,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     }
     
     // MARK: - ImageButton Methods
-    func imageButtonPressed(image: UIImage, pictureData: PictureData) {
+    func imageButtonPressed(image: UIImage, pictureData: RCPicture) {
         print("Image Pressed")
         if mode == PhotoLibChallengeVC.CHALLENGE_MODE {
             let alert = UIAlertController(title: nil, message: "What would you like to do with this challenge?", preferredStyle: .actionSheet)
@@ -260,7 +260,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
      representing what type of challenge category the pic
      falls into
      */
-    private func getPicChallengeCategory(pictureData: PictureData, currentDate: Date) -> String {
+    private func getPicChallengeCategory(pictureData: RCPicture, currentDate: Date) -> String {
         //let pictureDate = DateGetter.getDateFromString(string: pictureData.time)
         let dateDiffSec = Int(abs(TimeInterval(pictureData.time) - currentDate.timeIntervalSince1970))
         //let dateDiffSec = Int(abs(pictureDate.timeIntervalSince(currentDate)))

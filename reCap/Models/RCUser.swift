@@ -134,6 +134,14 @@ class RCUser: Codable {
         FirebaseHandler.database.child("UserData").child(id).updateChildValues(data)
     }
     
+    func add(friend: RCUser) {
+        FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(true)
+    }
+    
+    func remove(friend: RCUser) {
+        FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(friend)
+    }
+    
     enum Properties {
         case id
         case name
