@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             FirebaseHandler.getUserData { (userData) in
                 DataManager.currentFBUser = user
                 DataManager.currentAppUser = userData
+                AppManager.user = userData
             }
             setRootAsPageView()
         } else {

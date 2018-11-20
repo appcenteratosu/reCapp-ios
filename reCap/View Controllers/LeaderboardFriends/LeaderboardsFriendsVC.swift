@@ -118,6 +118,8 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                         self.stateLeaderboards.append(rcuser)
                     }
                 }
+                self.leaderboardsList = self.stateLeaderboards
+                self.tableView.reloadData()
             }
         }
         
@@ -129,6 +131,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                         self.countryLeaderboards.append(rcuser)
                     }
                 }
+                self.tableView.reloadData()
             }
         }
         
@@ -141,52 +144,10 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                         self.globalLeaderboards.append(rcuser)
                     }
                 }
+                self.tableView.reloadData()
             }
         }
         
-        
-        // Coutry results
-        // global results
-        
-//        let stateResults = realm.objects(UserData.self).filter("state = '\(userData.state!)'").sorted(byKeyPath: "points", ascending: false)
-//        let countryResults = realm.objects(UserData.self).filter("country = '\(userData.country!)'").sorted(byKeyPath: "points", ascending: false)
-//        let globalResults = realm.objects(UserData.self).sorted(byKeyPath: "points", ascending: false)
-        var count = 0
-        let maximum = 50
-//        for userData in stateResults {
-//            if count < maximum {
-//                // Can still take users in leaderboards
-//                self.stateLeaderboards.append(userData)
-//                count = count + 1
-//            } else {
-//                // Not 50 users
-//                break
-//            }
-//        }
-//        count = 0
-//        for userData in countryResults {
-//            if count < 50 {
-//                // Can still take users in leaderboards
-//                self.countryLeaderboards.append(userData)
-//                count = count + 1
-//            }
-//            else {
-//                // Not 50 users
-//                break
-//            }
-//        }
-//        count = 0
-//        for userData in globalResults {
-//            if count < 50 {
-//                // Can still take users in leaderboards
-//                self.globalLeaderboards.append(userData)
-//                count = count + 1
-//            }
-//            else {
-//                // Not 50 users
-//                break
-//            }
-//        }
         self.leaderboardsList = self.stateLeaderboards
         self.tableView.reloadData()
     }
@@ -210,28 +171,24 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         if mode == LeaderboardsFriendsVC.FRIENDS_LIST_MODE {
             user = friendsList[indexPath.row]
             cell.pointsOutlet.text = "\(user.points) points"
-        }
-        else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
+        } else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
             user = leaderboardsList[indexPath.row]
             cell.pointsOutlet.text = "\(user.points) points"
-        }
-        else {
+        } else {
             return cell
         }
         cell.fullNameOutlet.text = user.name
         cell.usernameOutlet.text = user.email
-        FBDatabase.getProfilePicture(for_user: user, with_progress: {(progress, total) in
-            
-        }, with_completion: {(image) in
-            if let profilePic = image {
-                cell.imageOutlet.image = profilePic
-                
+        FirebaseHandler.getProfilePicture(userID: user.id, completion: { (image) in
+            if let pic = image {
+                cell.imageOutlet.image = pic
+            } else {
+                print("Could not get Image")
             }
-            else {
-                print("Did not get profile pic")
-            }
-        })
-        // Configure the cell...
+        }) { (progress) in
+            print("Profile Image Progress:", progress)
+        }
+        
         return cell
     }
     

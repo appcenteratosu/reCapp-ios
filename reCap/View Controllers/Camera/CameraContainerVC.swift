@@ -39,7 +39,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     var locationToPass: String?
     private var isAtChallengeLocation: Bool!
     let locationManager = CLLocationManager()
-    var destinationAngle: Double? = 0
+    var destinationAngle: Double? = nil
     private var rcUser: RCUser!
 //    private var realm: Realm!
     private var hasUpdateUserLocation = false
@@ -97,7 +97,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         FirebaseHandler.getUserData(completion: { (userData) in
             self.rcUser = userData
             if self.rcUser != nil {
-                // Got user data from realm database
+                // Got user data from database
                 self.setupProfileImage()
                 self.setupActiveChallenge()
                 self.setupLocation()
@@ -383,6 +383,9 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                     self.previousOutlet.isEnabled = false
                     self.arrowOutlet.isHidden = true
                 }
+            } else {
+                print("No Active Challenge")
+                self.arrowOutlet.isHidden = true
             }
         }
     }
@@ -638,9 +641,11 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
         updateHorizontalDialValue(value: heading.magneticHeading)
-        UIView.animate(withDuration: 0.25, animations: {
-            self.arrowOutlet.transform = CGAffineTransform(rotationAngle: CGFloat((self.destinationAngle! - heading.magneticHeading) * Double.pi / 180))
-        })
+        if let angle = self.destinationAngle {
+            UIView.animate(withDuration: 0.25, animations: {
+                self.arrowOutlet.transform = CGAffineTransform(rotationAngle: CGFloat((angle - heading.magneticHeading) * Double.pi / 180))
+            })
+        }
     }
     
     var firstRun = true

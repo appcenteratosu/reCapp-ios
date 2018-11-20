@@ -129,8 +129,13 @@ class FirebaseHandler {
                     "time": pictureData.time,
                     "locationName": pictureData.locationName,
                     "isRootPicture": pictureData.isRoot,
-                    "isMoseRecentPicture": pictureData.isMostRecent,
-                    "groupID": pictureData.groupID]
+                    "isMostRecentPicture": pictureData.isMostRecent]
+        
+        if pictureData.isRoot {
+            data["groupID"] = id
+        } else {
+            data["groupID"] = pictureData.groupID
+        }
         
         database.child(PictureData).child(id).setValue(data) { (error, ref) in
             if error != nil {
@@ -175,7 +180,7 @@ class FirebaseHandler {
     static func getAllPictureData(onlyRecent: Bool, completion: @escaping ([RCPicture])->()) {
         if onlyRecent == true {
             let ref = database.child("PictureData")
-            ref.queryOrdered(byChild: "isMoseRecentPicture").queryEqual(toValue: true).observeSingleEvent(of: .value) { (snap) in
+            ref.queryOrdered(byChild: "isMostRecentPicture").queryEqual(toValue: true).observeSingleEvent(of: .value) { (snap) in
                 var pictures: [RCPicture] = []
                 if let objects = snap.children.allObjects as? [DataSnapshot] {
                     for object in objects {
@@ -206,6 +211,8 @@ class FirebaseHandler {
             let filtered = pictures.filter({ (picture) -> Bool in
                 if picture.latitude == lat && picture.longitude == long {
                     return true
+                } else {
+                    return false
                 }
             })
             

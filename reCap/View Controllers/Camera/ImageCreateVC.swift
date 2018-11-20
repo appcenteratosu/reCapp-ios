@@ -66,6 +66,7 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         } else {
             print("root picture")
             isRoot = true
+            groupID = ""
         }
         
         let picture = RCPicture()
@@ -80,7 +81,6 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         picture.time = currentDate
         picture.locationName = self.locationNameOutlet.text!
         picture.isRoot = isRoot
-        picture.groupID = groupID
         picture.isMostRecent = true
         
         FirebaseHandler.createPictureDataReference(pictureData: picture)

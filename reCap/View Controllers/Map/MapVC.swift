@@ -101,6 +101,12 @@ class MapVC: UIViewController, MGLMapViewDelegate {
                 DispatchQueue.main.asyncAfter(deadline: when) {
                     self.setupCamera()
                 }
+            } else {
+                self.setupMap()
+                let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.setupCamera()
+                }
             }
         }
         
@@ -371,9 +377,11 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         let lat = annotation.coordinate.latitude
         let long = annotation.coordinate.longitude
         
-        getImage(lat: lat, long: long) { (imageView) -> (UIView) in
+        getImage(lat: lat, long: long) { (imageView) -> (UIView?) in
             if let image = imageView {
                 return image
+            } else {
+                return nil
             }
         }
         
@@ -401,7 +409,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         return nil
     }
     
-    func getImage(lat: Double, long: Double, completion: @escaping (UIImageView?)->(UIView)) {
+    func getImage(lat: Double, long: Double, completion: @escaping (UIImageView?)->(UIView?)) {
         FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true) { (picture) in
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 50))
             if let picture = picture {

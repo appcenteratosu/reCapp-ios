@@ -23,6 +23,8 @@ class RCUser: Codable {
     var longitude: Double
     var pictures: [String]
     
+    var activeChallengeObj: RCPicture? = nil
+    
     init() {
         id = ""
         name = ""
@@ -87,24 +89,22 @@ class RCUser: Codable {
     }
     
     func getActiveChallenge(completion: @escaping (RCPicture?)->()) {
-        FirebaseHandler.database.child("PictureData").child(activeChallenge).observeSingleEvent(of: .value) { (snap) in
-            if snap != nil {
+        if !activeChallenge.isEmpty {
+            FirebaseHandler.database.child("PictureData").child(activeChallenge).observeSingleEvent(of: .value) { (snap) in
+                
                 let pic = RCPicture(snapshot: snap)
+                self.activeChallengeObj = pic
                 completion(pic)
-            } else {
-                completion(nil)
+                
             }
+        } else {
+            completion(nil)
         }
     }
     
     func getBearingForActiveChallenge(completion: @escaping (_ bearing: Double?)->()) {
-        FirebaseHandler.database.child("PictureData").child(activeChallenge).observeSingleEvent(of: .value) { (snap) in
-            if snap != nil {
-                let pic = RCPicture(snapshot: snap)
-                completion(pic.bearing)
-            } else {
-                completion(nil)
-            }
+        if let challenge = self.activeChallengeObj {
+            completion(challenge.bearing)
         }
     }
     
