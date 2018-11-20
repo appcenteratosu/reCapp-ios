@@ -189,6 +189,8 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
             print("Profile Image Progress:", progress)
         }
         
+        
+        
         return cell
     }
     
