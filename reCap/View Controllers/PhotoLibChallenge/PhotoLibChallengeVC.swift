@@ -134,24 +134,6 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
                 self.tableView.reloadData()
             }
         }
-        
-        
-//        let userPictures = self.userData.pictures.sorted(byKeyPath: "time", ascending: false)
-//        for pictureData in userPictures {
-//            let location = pictureData.locationName
-//            if !self.tableSectionArray.contains(location!) {
-//                // Location is not in the locations array
-//                // Add it to the array and initialize
-//                // an empty array for the key location
-//                self.tableSectionArray.append(location!)
-//                self.collectionDictionaryData[location!] = []
-//            }
-//            if !groupIDArray.contains(pictureData.groupID) {
-//                // If the picture in a group has not yet been added
-//                groupIDArray.append(pictureData.groupID)
-//                self.collectionDictionaryData[location!]?.append(pictureData)
-//            }
-//        }
     }
     
     private func getFiftyChallenges(results: [RCPicture]) -> [RCPicture] {
@@ -401,18 +383,14 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         let collectionDataArray = self.collectionDictionaryData[sectionTitle]
         pictureData = collectionDataArray?[row]
         cell.pictureData = pictureData
-        if let realPictureData = pictureData{
-            FBDatabase.getPicture(pictureData: realPictureData, with_progress: {(progress, total) in
-                
-            }, with_completion: {(image) in
-                if let realImage = image {
-                    print("Got image in PhotoLibChal VC")
-                    cell.imageView.image = realImage
+        if let realPictureData = pictureData {
+            FirebaseHandler.downloadPicture(pictureData: realPictureData) { (image) in
+                if let image = image {
+                    cell.imageView.image = image
+                } else {
+                    Log.i("Could not get image from callback")
                 }
-                else {
-                    print("Did not get image in PhotoLibChal VC")
-                }
-            })
+            }
             return cell
         }
         return cell

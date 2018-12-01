@@ -94,6 +94,7 @@ class RCUser: Codable {
                 
                 let pic = RCPicture(snapshot: snap)
                 self.activeChallengeObj = pic
+                self.activeChallenge = pic.id
                 completion(pic)
                 
             }
@@ -117,7 +118,7 @@ class RCUser: Codable {
             case .activeChallenge:
                 data["activeChallenge"] = item.value
             case .activeChalengePoints:
-                data["activeChalengePoints"] = item.value
+                data["activeChallengePoints"] = item.value
             case .state:
                 data["state"] = item.value
             case .country:

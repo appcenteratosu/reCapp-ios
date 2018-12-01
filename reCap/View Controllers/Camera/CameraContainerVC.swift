@@ -67,10 +67,11 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     private let chalBestCoordThreshold = 0.0001
     private let chalCloseCoordThreshold = 0.005
     
+    public var isLoadingFromSelf = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Camera container loaded")
+        Log.i("Camera container loaded")
         setupHero()
         setupCamera(clear: false)
         configureButton()
@@ -90,30 +91,30 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        Log.i("Starting Camera Main setup ")
         setup()
+
     }
     
     private func setup() {
-        FirebaseHandler.getUserData(completion: { (userData) in
-            self.rcUser = userData
-            if self.rcUser != nil {
-                // Got user data from database
-                self.setupProfileImage()
-                self.setupActiveChallenge()
-                self.setupLocation()
-            } else {
-                print("Did not get user data")
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                if self.videoPreviewLayer != nil {
-                    self.setupOrientation()
-                    if self.session?.inputs.count == 0 {
-                        self.setupCamera(clear: false)
-                    }
-                    self.locationManager.startUpdatingHeading()
+        self.rcUser = DataManager.currentAppUser
+        if self.rcUser != nil {
+            // Got user data from database
+            self.setupProfileImage()
+            self.setupActiveChallenge()
+            self.setupLocation()
+        } else {
+            Log.d("Did not get user data")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            if self.videoPreviewLayer != nil {
+                self.setupOrientation()
+                if self.session?.inputs.count == 0 {
+                    self.setupCamera(clear: false)
                 }
+                self.locationManager.startUpdatingHeading()
             }
-        })
+        }
     }
     
     @IBAction func buttonPressed(_ sender: Any) {
@@ -128,9 +129,13 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             && bearingOutlet.textColor != UIColor.orange {
             
             rcUser.getBearingForActiveChallenge { (bearing) in
-                FCAlertView.displayAlert(title: "Error",
-                                         message: "Please make sure the bearing is as close to \(bearing)°." , buttonTitle: "Okay",
-                                         type: "warning", view: self, blur: true)
+                if let bearing = bearing {
+                    FCAlertView.displayAlert(title: "Error",
+                                             message: "Please make sure the bearing is as close to \(bearing)°." , buttonTitle: "Okay",
+                                             type: "warning", view: self, blur: true)
+                } else {
+                    Log.e("Couln't get bearing from callback")
+                }
             }
         } else {
             self.stillImageOutput?.capturePhoto(with: self.photoSetting, delegate: self)
@@ -162,27 +167,24 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
 
     
     @IBAction func previousHoldAction(_ sender: Any) {
-        self.previewView.addSubview(self.previousImageView!)
-        
-         if self.previousImageContentMode == .scaleToFill {
+        if self.previousOutlet.isEnabled {
+            self.previewView.addSubview(self.previousImageView!)
             
-            if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .faceDown || UIDevice.current.orientation == .faceUp || UIDevice.current.orientation == .portraitUpsideDown {
+            if self.previousImageContentMode == .scaleToFill {
+//                if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .faceDown || UIDevice.current.orientation == .faceUp || UIDevice.current.orientation == .portraitUpsideDown {
+                    UIView.animate(withDuration: 0.25, animations: {
+                        self.previousImageView?.alpha = 0.8
+                        self.bearingOutlet.isHidden = true
+                        self.bearingPickerOutlet.isHidden = true
+                    })
+//                }
+            } else {
                 UIView.animate(withDuration: 0.25, animations: {
-                    self.previousImageView?.alpha = 1.0
+                    self.previousImageView?.alpha = 0.9
                     self.bearingOutlet.isHidden = true
                     self.bearingPickerOutlet.isHidden = true
                 })
             }
-            
-        }
-        else {
-            
-            UIView.animate(withDuration: 0.25, animations: {
-                self.previousImageView?.alpha = 1.0
-                self.bearingOutlet.isHidden = true
-                self.bearingPickerOutlet.isHidden = true
-            })
-            
         }
     }
     
@@ -318,7 +320,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                         print("Did not get profile picture in Camera Container VC")
                     }
                 }) { (progress) in
-                    print("Profile Image Progress:", progress)
+                    
                 }
             }
             
@@ -326,8 +328,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
     
+    let geocoder = CLGeocoder()
     func geocode(location: CLLocation, completion: @escaping (_ state: String, _ country: String)->()) {
-        let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { (places, error) in
             if error != nil {
                 print("ERROR geocoding:", error!.localizedDescription)
@@ -336,10 +338,19 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                     guard let state = place.administrativeArea else { return }
                     guard let country = place.country else { return }
                     
+                    self.stopGeocode()
                     completion(state, country)
                 }
             }
         }
+    }
+    
+    private func startGeocode() {
+        
+    }
+    
+    private func stopGeocode() {
+        geocoder.cancelGeocode()
     }
     
     /*
@@ -348,16 +359,14 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
      of the gps coordinates when on the exact location
      */
     private func setupActiveChallenge() {
+        self.previousOutlet.isEnabled = false
         self.rcUser.getActiveChallenge { (challenge) in
             if let picture = challenge {
                 self.activeChallengePicData = picture
                 
                 if self.activeChallengePicData != nil {
                     // There is an active challenge
-                    self.previousOutlet.isEnabled = true
-                    self.arrowOutlet.isHidden = false
-                    FBDatabase.getPicture(pictureData: self.activeChallengePicData, with_progress: { (progress, total) in
-                    }, with_completion: { (image) in
+                    FirebaseHandler.downloadPicture(pictureData: picture, completion: { (image) in
                         if let realImage = image {
                             self.previousImageView = UIImageView(frame: self.view.frame)
                             self.previousImageView?.image = realImage
@@ -366,11 +375,12 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                             if realImage.imageOrientation == .left || realImage.imageOrientation == .right {
                                 self.previousImageView?.contentMode = .scaleToFill
                                 self.previousImageContentMode = .scaleToFill
-                            }
-                            else {
+                            } else {
                                 self.previousImageView?.contentMode = .scaleAspectFill
                                 self.previousImageContentMode = .scaleAspectFill
                             }
+                            self.previousOutlet.isEnabled = true
+                            self.arrowOutlet.isHidden = false
                             self.previewView.addSubview(self.previousImageView!)
                         }
                         else {
@@ -552,12 +562,9 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
-        
-        
         UIView.animate(withDuration: 0.25, animations: {
             self.previousImageView?.alpha = 0.0
         })
-        
         
         if self.previousImageContentMode == .scaleToFill {
             
@@ -576,10 +583,10 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
         
         
-        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            self.viewDidAppear(false)
-        }
+//        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
+//        DispatchQueue.main.asyncAfter(deadline: when) {
+//            self.viewDidAppear(false)
+//        }
     }
     
     
@@ -589,9 +596,58 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         // Azimuth
         if (CLLocationManager.headingAvailable()) {
             locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.headingFilter = 1
             locationManager.startUpdatingHeading()
-            locationManager.startUpdatingLocation()
+//            locationManager.startUpdatingLocation()
+        }
+        
+        Locator.subscribePosition(accuracy: .room, onUpdate: { (location) -> (Void) in
+            let lat = location.coordinate.latitude.truncate(places: 6)
+            let long = location.coordinate.longitude.truncate(places: 6)
+            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+
+            let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
+            self.locationOutlet.text = gpsString
+            self.latToPass = lat
+            self.longToPass = long
+            self.locationToPass = gpsString
+            
+            self.geocode(location: location) { (state, country) in
+                FirebaseHandler.updateUserLocation(state: state, country: country)
+                FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+            }
+            
+            if self.activeChallengePicData != nil {
+                let picLong = self.activeChallengePicData.longitude
+                let picLat = self.activeChallengePicData.latitude
+                var destination: CLLocation? = CLLocation(latitude: 0, longitude: 0)
+                var angle: Double = 0
+                destination = CLLocation(latitude: picLat, longitude: picLong)
+                angle = self.getBearingBetweenTwoPoints1(point1: location, point2: destination!)
+                self.destinationAngle = angle
+                let longDiff = abs(picLong - long)
+                let latDiff = abs(picLat - lat)
+                if longDiff > self.chalCloseCoordThreshold || latDiff > self.chalCloseCoordThreshold {
+                    self.locationOutlet.textColor = UIColor.white
+                    self.isAtChallengeLocation = false
+                }
+                else if longDiff < self.chalBestCoordThreshold && latDiff < self.chalBestCoordThreshold {
+                    self.locationOutlet.textColor = UIColor.green
+                    self.isAtChallengeLocation = true
+                }
+                else if longDiff <= self.chalCloseCoordThreshold && latDiff <= self.chalCloseCoordThreshold {
+                    self.locationOutlet.textColor = UIColor.yellow
+                    self.isAtChallengeLocation = true
+                }
+            }
+            else {
+                self.locationOutlet.textColor = UIColor.white
+                self.isAtChallengeLocation = false
+            }
+            
+        }) { (error, last) -> (Void) in
+            
         }
         
 //        Locator.subscribePosition(accuracy: .room, onUpdate: { location in
@@ -651,8 +707,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     var firstRun = true
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            let lat = location.coordinate.latitude.truncate(places: 6)
-            let long = location.coordinate.longitude.truncate(places: 6)
+            let lat = location.coordinate.latitude.truncate(places: 8)
+            let long = location.coordinate.longitude.truncate(places: 8)
             let newLocation = CLLocation(latitude: lat, longitude: long)
             
             if firstRun {

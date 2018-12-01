@@ -83,25 +83,42 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         picture.isRoot = isRoot
         picture.isMostRecent = true
         
-        FirebaseHandler.createPictureDataReference(pictureData: picture)
+        Log.d("Starting database reference creation for new image")
+        FirebaseHandler.createPictureDataReference(pictureData: picture) { (updatedPic) in
+            if let picData = updatedPic {
+                
+                FirebaseHandler.storeImage(image: self.image!, picture: picData, whenDone: {
+                    if self.isAtChallengeLocation {
+                        self.displayChallengeComplete()
+                    }
+                    else {
+                        self.displayPictureAdded(pictureData: picture)
+                    }
+                    self.navigationController?.setToolbarHidden(true, animated: true)
+                    self.navigationController?.popToRootViewController(animated: true)
+                })
+            } else {
+                Log.e("Could not get updated RCPicture. Will Not be storing Image")
+            }
+        }
         
-        FBDatabase.addPicture(image: self.image!, pictureData: picture, with_completion: {(error) in
-            if let actualError = error {
-                // There was an error
-                print(actualError)
-            }
-            else {
-                // No error
-                if self.isAtChallengeLocation {
-                    self.displayChallengeComplete()
-                }
-                else {
-                    self.displayPictureAdded(pictureData: picture)
-                }
-                self.navigationController?.setToolbarHidden(true, animated: true)
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-        })
+//        FBDatabase.addPicture(image: self.image!, pictureData: picture, with_completion: {(error) in
+//            if let actualError = error {
+//                // There was an error
+//                print(actualError)
+//            }
+//            else {
+//                // No error
+//                if self.isAtChallengeLocation {
+//                    self.displayChallengeComplete()
+//                }
+//                else {
+//                    self.displayPictureAdded(pictureData: picture)
+//                }
+//                self.navigationController?.setToolbarHidden(true, animated: true)
+//                self.navigationController?.popToRootViewController(animated: true)
+//            }
+//        })
     }
     
     private func displayChallengeComplete() {

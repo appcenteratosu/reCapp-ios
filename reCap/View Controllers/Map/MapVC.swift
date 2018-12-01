@@ -211,7 +211,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        setupPictures()
+//        setupPictures()
         
         
         if let user = self.user {
@@ -302,13 +302,13 @@ class MapVC: UIViewController, MGLMapViewDelegate {
                     
                     self.pins.append(pin)
                     
-                    if let last = pictures.last {
-                        if picture.id == last.id {
-                            self.setupPins()
-                        }
-                    }
+//                    if let last = pictures.last {
+//                        if picture.id == last.id {
+//                            self.setupPins()
+//                        }
+//                    }
                 }
-                
+                self.setupPins()
             }
         }
         
@@ -376,7 +376,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         
         let lat = annotation.coordinate.latitude
         let long = annotation.coordinate.longitude
-        
+        Log.d("Starting data grab for callout")
         getImage(lat: lat, long: long) { (imageView) -> (UIView?) in
             if let image = imageView {
                 return image
@@ -384,28 +384,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
                 return nil
             }
         }
-        
-//        if let pictureData = RealmHelper.getPictureData(withLat: lat, withLong: long, onlyRecent: true) {
-//
-//            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 50))
-//
-//            FBDatabase.getPicture(pictureData: pictureData, with_progress: {(progress, total) in
-//
-//            }, with_completion: {(image) in
-//                if let realImage = image {
-//
-//                    imageView.image = realImage
-//                    imageView.contentMode = .scaleAspectFit
-//                    self.pictureDataToPass = pictureData
-//                    self.imageToPass = realImage
-//                    imageView.hero.id = "imageID"
-//                } else {
-//
-//                }
-//            })
-//            return imageView
-//
-//        }
         return nil
     }
     
@@ -413,9 +391,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true) { (picture) in
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 50))
             if let picture = picture {
-                FBDatabase.getPicture(pictureData: picture, with_progress: { (progress, total) in
-                    
-                }, with_completion: { (image) in
+                FirebaseHandler.downloadPicture(pictureData: picture, completion: { (image) in
                     if let realImage = image {
                         imageView.image = realImage
                         imageView.contentMode = .scaleAspectFit
@@ -459,26 +435,34 @@ class MapVC: UIViewController, MGLMapViewDelegate {
             // Calculate the route from the user's location to the set destination
             self.beginNavigation()
         }))
-        alert.addAction(UIAlertAction(title: "Set as Active Challenge", style: .default, handler: { (action) in
-            
-            let lat = annotation.coordinate.latitude
-            let long = annotation.coordinate.longitude
-            
-//            if let pictureData = RealmHelper.getPictureData(withLat: lat, withLong: long, onlyRecent: true) {
-//
-//                self.addChallengeToUser(pictureData: pictureData)
-//                self.centerButton.isHidden = false
-//
-//            }
-            
-            FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true, compltion: { (picture) in
-                if let pic = picture {
-                    self.addChallengeToUser(pictureData: pic)
-                    self.centerButton.isHidden = false
-                }
-            })
-            
-        }))
+        
+        var title = ""
+        if self.user.activeChallenge.isEmpty {
+            title = "Set as Active Challenge"
+            alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
+                
+                let lat = annotation.coordinate.latitude
+                let long = annotation.coordinate.longitude
+                
+                FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true, compltion: { (picture) in
+                    if let pic = picture {
+                        self.addChallengeToUser(pictureData: pic)
+                        self.centerButton.isHidden = false
+                    }
+                })
+                
+            }))
+        } else {
+            title = "Remove Active Challenge"
+            alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
+                
+                self.user.update(values: [.activeChallenge: "",
+                                          .activeChalengePoints: 0])
+                self.centerButton.isHidden = false
+                
+            }))
+        }
+        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -489,7 +473,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         self.performSegue(withIdentifier: "ChallengeViewSegue", sender: self)
         
     }
-    
     
     func calculateRoute(from origin: CLLocationCoordinate2D,
                         to destination: CLLocationCoordinate2D,
@@ -509,12 +492,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
             self.drawRoute(route: self.directionsRoute!)
         }
     }
-    
-    
-    
-    
-    
-    
     
     func drawRoute(route: Route) {
         guard route.coordinateCount > 0 else { return }
@@ -582,12 +559,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         else if challengeCategory == MapVC.TAKE_PIC_FROM_RECENT {
             points = MapVC.CHALLENGE_RECENT_POINTS
         }
-        
-        
-//        try! realm.write {
-//            self.user.activeChallenge = pictureData
-//            self.user.activeChallengePoints = points
-//        }
         
         self.user.update(values: [.activeChallenge: pictureData.id,
                                   .activeChalengePoints: points])

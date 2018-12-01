@@ -88,6 +88,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             }
             titleOutlet.text = pictureArray?[index].name
             descriptionOutlet.text = pictureArray?[index].info
+            
         }
         
     }
@@ -142,20 +143,21 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PictureCell", for: indexPath) as! PhotoChalColCell
         cell.setImageViewDelegate(delegate: self)
         let row = indexPath.row
+        cell.imageView.image = image
         let cellPictureData = pictureArray?[row]
         //print(cellPictureData)
         cell.pictureData = cellPictureData
-        FBDatabase.getPicture(pictureData: cellPictureData!, with_progress: {(progress, total) in
-            
-        }, with_completion: {(image) in
-            if let realImage = image {
-                print("Got image in PhotoLibChal VC")
-                cell.imageView.image = realImage
-            }
-            else {
-                print("Did not get image in PhotoLibChal VC")
-            }
-        })
+//        FBDatabase.getPicture(pictureData: cellPictureData!, with_progress: {(progress, total) in
+//            
+//        }, with_completion: {(image) in
+//            if let realImage = image {
+//                print("Got image in PhotoLibChal VC")
+//                cell.imageView.image = realImage
+//            }
+//            else {
+//                print("Did not get image in PhotoLibChal VC")
+//            }
+//        })
         return cell
     }
     
@@ -222,8 +224,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             let infoArray = sender as! [Any]
             let pictureData = infoArray[0] as! RCPicture
             let image = infoArray[1] as! UIImage
-            if self.userData.pictures.contains(pictureData.id), self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
-                // The user owns the picture, user is able to delete the photo
+            if pictureData.owner == DataManager.currentAppUser!.id, self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
                 if let index = self.pictureArray?.firstIndex(where: { (picture) -> Bool in
                     if picture.id == pictureData.id {
                         return true
@@ -242,24 +243,8 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
                     }
                     destination.userData = self.userData
                 }
-                
-                
-                
-//                if let selectedPicIndex = self.pictureArray?.index(of: pictureData) {
-//                    self.selectedPicIndex = selectedPicIndex
-//                    if pictureData.isMostRecentPicture {
-//                        // If the selected photo is not the most recent
-//                        let nextPictureIndex = self.selectedPicIndex + 1
-//                        if (nextPictureIndex) != self.pictureArray?.count {
-//                            // The selected picture is not the only picture in the timeline
-//                            destination.nextPictureData = self.pictureArray?[nextPictureIndex]
-//                        }
-//                    }
-//                    destination.userData = self.userData
-//                }
-////                self.selectedPicIndex = self.pictureArray.index(of: pictureData)!
-                
             }
+            
             destination.mode = self.mode
             destination.selectedPictureData = pictureData
             destination.image = image

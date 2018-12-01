@@ -30,8 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 DataManager.currentFBUser = user
                 DataManager.currentAppUser = userData
                 AppManager.user = userData
+                self.setRootAsPageView()
             }
-            setRootAsPageView()
         } else {
             setRootAsSignIn()
         }

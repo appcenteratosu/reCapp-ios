@@ -92,6 +92,20 @@ class FirebaseHandler {
         }
     }
     
+    static func storeImage(image: UIImage, picture: RCPicture, whenDone: @escaping ()->()) {
+        let ref = storage.child("Pictures").child(picture.id)
+        if let data = UIImageJPEGRepresentation(image, 1.0) {
+            let task = ref.putData(data, metadata: nil) { (meta, error) in
+                if error != nil {
+                    Log.e(error!.localizedDescription)
+                } else {
+                    Log.i("No error")
+                    whenDone()
+                }
+            }
+        }
+    }
+    
     static func getProfilePicture(userID uid: String, completion: @escaping (UIImage?)->(), progress: @escaping (Double)->()) {
         let ref = storage.child(ProfilePictures).child(uid)
         let downloadTask = ref.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
@@ -116,8 +130,10 @@ class FirebaseHandler {
         }
     }
     
-    static func createPictureDataReference(pictureData: RCPicture) {
+    static func createPictureDataReference(pictureData: RCPicture, completion: @escaping (RCPicture?)->()) {
         guard let id = database.child("PictureData").childByAutoId().key else { return }
+        let picture = pictureData
+        picture.id = id
         var data: [String: Any] = ["name": pictureData.name,
                     "info": pictureData.info,
                     "id": id,
@@ -133,31 +149,34 @@ class FirebaseHandler {
         
         if pictureData.isRoot {
             data["groupID"] = id
+            picture.groupID = id
         } else {
             data["groupID"] = pictureData.groupID
+            picture.groupID = pictureData.groupID
         }
         
         database.child(PictureData).child(id).setValue(data) { (error, ref) in
             if error != nil {
-                print(error!.localizedDescription)
+                Log.e(error!.localizedDescription)
+                completion(nil)
             } else {
-                print("SAVED")
+                Log.i("Saved Photo in Database")
+                completion(picture)
             }
         }
     }
     
     static func getUserData(completion: @escaping (RCUser)->()) {
         if let user = auth.currentUser {
-            let handle = database.child(UserDataString).child(user.uid).observe(.value) { (snap) in
+            database.child(UserDataString).child(user.uid).observeSingleEvent(of: .value) { (snap) in
                 
                 let rcUser = RCUser(snapshot: snap)
-                
+                rcUser.id = user.uid
+                rcUser.email = user.email!
                 DataManager.currentFBUser = user
                 DataManager.currentAppUser = rcUser
                 completion(rcUser)
             }
-            
-            DatabaseHandles.append(handle)
             
         }
     }
@@ -207,23 +226,53 @@ class FirebaseHandler {
     }
     
     static func getPictureData(lat: Double, long: Double, onlyRecent: Bool, compltion: @escaping (RCPicture?)->()) {
-        getAllPictureData(onlyRecent: true) { (pictures) in
-            let filtered = pictures.filter({ (picture) -> Bool in
-                if picture.latitude == lat && picture.longitude == long {
-                    return true
-                } else {
-                    return false
+        database.child("PictureData").queryOrdered(byChild: "isMostRecentPicture").queryEqual(toValue: onlyRecent).observeSingleEvent(of: .value) { (snap) in
+            if let children = snap.children.allObjects as? [DataSnapshot] {
+                let best = 0.0001
+                let close = 0.005
+                
+                for child in children {
+                    let picture = RCPicture(snapshot: child)
+                    
+                    let longDiff = abs(picture.longitude - long)
+                    let latDiff = abs(picture.latitude - lat)
+                    
+                    if longDiff > close || latDiff > close {
+                        // Lat or Lon is too far off
+                        compltion(nil)
+                    } else if longDiff < best && latDiff < best {
+                        // On current spot
+                        compltion(picture)
+                    } else if longDiff <= close && latDiff <= close {
+                        // Really Close
+                        compltion(picture)
+                    }
+                
                 }
-            })
-            
-            if filtered.count == 1 {
-                compltion(filtered.first!)
-            } else {
-                compltion(nil)
             }
         }
     }
     
+    static func downloadPicture(pictureData: RCPicture, completion: @escaping (UIImage?)->()) {
+        storage.child("Pictures").child(pictureData.id).getData(maxSize: 1024 * 1024 * 20) { (data, error) in
+            if error != nil {
+                Log.e(error!.localizedDescription)
+            } else {
+                if let picData = data {
+                    if let image = UIImage(data: picData) {
+                        Log.i("Got image")
+                        completion(image)
+                    } else {
+                        // Bad Data
+                        Log.s("Bad Data")
+                    }
+                } else {
+                    // No Data
+                    Log.e("No data handed back")
+                }
+            }
+        }
+    }
     
     
 }

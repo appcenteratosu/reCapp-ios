@@ -11,12 +11,14 @@ import Pageboy
 
 class PageViewController: PageboyViewController, PageboyViewControllerDataSource {
     
+    
     // MARK: - Properties
     private var viewControllersArray: [UIViewController]!
     var profileImage: UIImage!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        Log.i("Loaded")
         setupViewControllers()
     }
     
@@ -36,6 +38,9 @@ class PageViewController: PageboyViewController, PageboyViewControllerDataSource
         leaderboardsVC.mode = LeaderboardsFriendsVC.LEADERBOARD_MODE
         self.viewControllersArray = [mapVC, cameraNav, leaderboardsNav]
         self.dataSource = self
+        
+        Log.i("Setup Complete")
+        
     }
     
     //Pageboy Datasource Functions
