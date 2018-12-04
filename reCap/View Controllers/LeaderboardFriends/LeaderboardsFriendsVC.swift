@@ -112,44 +112,57 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         
         usersDataRef.queryOrdered(byChild: "state").queryEqual(toValue: userData.state).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                var state: [RCUser] = []
                 for child in snaps {
-                    if self.stateLeaderboards.count < 50 {
-                        let rcuser = RCUser(snapshot: child)
-                        self.stateLeaderboards.append(rcuser)
-                    }
+                    let rcuser = RCUser(snapshot: child)
+                    state.append(rcuser)
                 }
-                self.leaderboardsList = self.stateLeaderboards
+                
+                state.sort(by: { (p1, p2) -> Bool in
+                    return p1.points > p2.points
+                })
+                
+                let top50 = Array(state.prefix(50))
+                self.stateLeaderboards = top50
+                self.leaderboardsList = top50
                 self.tableView.reloadData()
             }
         }
         
         usersDataRef.queryOrdered(byChild: "country").queryEqual(toValue: userData.country).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                var country = [RCUser]()
                 for child in snaps {
-                    if self.countryLeaderboards.count < 50 {
-                        let rcuser = RCUser(snapshot: child)
-                        self.countryLeaderboards.append(rcuser)
-                    }
+                    let rcuser = RCUser(snapshot: child)
+                    country.append(rcuser)
                 }
-                self.tableView.reloadData()
+                
+                country.sort(by: { (p1, p2) -> Bool in
+                    return p1.points > p2.points
+                })
+                
+                let top50 = Array(country.prefix(50))
+                self.countryLeaderboards = top50
             }
         }
         
 
         usersDataRef.observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
+                var global = [RCUser]()
                 for child in snaps {
-                    if self.globalLeaderboards.count < 50 {
-                        let rcuser = RCUser(snapshot: child)
-                        self.globalLeaderboards.append(rcuser)
-                    }
+                    let rcuser = RCUser(snapshot: child)
+                    self.globalLeaderboards.append(rcuser)
                 }
-                self.tableView.reloadData()
+                
+                global.sort(by: { (p1, p2) -> Bool in
+                    return p1.points > p2.points
+                })
+                
+                let top50 = Array(global.prefix(50))
+                self.globalLeaderboards = top50
             }
         }
-        
-        self.leaderboardsList = self.stateLeaderboards
-        self.tableView.reloadData()
     }
     
     private func setupFriendsList() {
@@ -179,16 +192,22 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         }
         cell.fullNameOutlet.text = user.name
         cell.usernameOutlet.text = user.email
-        FirebaseHandler.getProfilePicture(userID: user.id, completion: { (image) in
-            if let pic = image {
-                cell.imageOutlet.image = pic
-            } else {
-                print("Could not get Image")
-            }
-        }) { (progress) in
-            print("Profile Image Progress:", progress)
-        }
         
+        if let image = ProfileImageCacher.requestProfilePictureFor(uid: user.id) {
+            cell.imageOutlet.image = image
+        } else {
+            FirebaseHandler.getProfilePicture(userID: user.id, completion: { (image) in
+                if let pic = image {
+                    cell.imageOutlet.image = pic
+                    ProfileImageCacher.AddNewProfilePicture(uid: user.id, image: pic)
+                } else {
+                    print("Could not get Image")
+                    Log.e("Couldn't get image from FirebaseHandler.getProfilePicture()")
+                }
+            }) { (progress) in
+                print("Profile Image Progress:", progress)
+            }
+        }
         
         
         return cell

@@ -458,7 +458,10 @@ class MapVC: UIViewController, MGLMapViewDelegate {
                 
                 self.user.update(values: [.activeChallenge: "",
                                           .activeChalengePoints: 0])
-                self.centerButton.isHidden = false
+                self.user.getActiveChallenge(updated: true, completion: { (picture) in
+                    
+                })
+                self.centerButton.isHidden = true
                 
             }))
         }

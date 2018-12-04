@@ -106,6 +106,22 @@ class FirebaseHandler {
         }
     }
     
+    static func deleteImage(picture: RCPicture) {
+        let storageRef = storage.child("Pictures").child(picture.id)
+        let databaseRef = database.child("PictureData").child(picture.id)
+        
+        databaseRef.setValue(nil)
+        Log.i("Delete photo data from database")
+        
+        storageRef.delete { (error) in
+            guard error != nil else {
+                Log.e(error!.localizedDescription)
+                return
+            }
+            Log.i("Deleted photo from storage")
+        }
+    }
+    
     static func getProfilePicture(userID uid: String, completion: @escaping (UIImage?)->(), progress: @escaping (Double)->()) {
         let ref = storage.child(ProfilePictures).child(uid)
         let downloadTask = ref.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
@@ -272,6 +288,35 @@ class FirebaseHandler {
                 }
             }
         }
+    }
+    
+    static func removePhotoFromAllUsers(picture: RCPicture, completion: @escaping (Bool)->()) {
+        let ref = database.child("UserData")
+        let query = ref.queryOrdered(byChild: "activeChallenge").queryEqual(toValue: picture.id)
+        query.observeSingleEvent(of: .value) { (snap) in
+            if let objs = snap.children.allObjects as? [DataSnapshot] {
+                var ids = [String]()
+                
+                for obj in objs {
+                    let user = RCUser(snapshot: obj)
+                    ids.append(user.id)
+                }
+                
+                for id in ids {
+                    removePhotoFromUser(id: id)
+                }
+                
+                completion(true)
+            } else {
+                completion(false)
+            }
+        }
+    }
+    
+    private static func removePhotoFromUser(id: String) {
+        let ref = database.child("UserData")
+        ref.child(id).child("activeChallenge").setValue("")
+        ref.child(id).child("activeChallengePoints").setValue(0)
     }
     
     

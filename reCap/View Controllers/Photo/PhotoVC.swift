@@ -26,19 +26,16 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     var nextPictureData: RCPicture!
     
     var userData: RCUser!
-//    private var realm: Realm!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setToolbarHidden(true, animated: true)
-//        self.realm = try! Realm()
         if image != nil, selectedPictureData != nil {
             applyBlurEffect(image: image)
             if self.mode == PhotoVC.PHOTO_LIB_MODE {
                 // This is a user viewing their own picture
                 self.deleteButton.isHidden = false
                 self.deleteButton.isEnabled = true
-            }
-            else {
+            } else {
                 self.deleteButton.isHidden = true
                 self.deleteButton.isEnabled = false
             }
@@ -103,6 +100,16 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
 //            self.realm.delete(self.selectedPictureData)
 //            self.performSegue(withIdentifier: "DeletedPicSegue", sender: nil)
 //        }
+        
+        Log.i("Delete Button Pressed")
+        FirebaseHandler.removePhotoFromAllUsers(picture: self.selectedPictureData) { (done) in
+            if done {
+                FirebaseHandler.deleteImage(picture: self.selectedPictureData)
+                self.performSegue(withIdentifier: "DeletedPicSegue", sender: nil)
+            } else {
+                Log.e("Photo was not removed from users active challenge")
+            }
+        }
     }
     
     /*

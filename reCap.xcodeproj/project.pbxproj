@@ -32,6 +32,8 @@
 		7353C9B521AB9B4B009728DB /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7353C9B421AB9B4B009728DB /* LocationManager.swift */; };
 		73553B75218F7FCD00D1F3E1 /* FirebaseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */; };
 		73553B772190E56000D1F3E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73553B762190E56000D1F3E1 /* GoogleService-Info.plist */; };
+		73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */; };
+		73E382A221B5E36B00A00F66 /* ProfileImageCacherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */; };
 		7A120DC3203E6BBB0003EE1F /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A120DC2203E6BBB0003EE1F /* Profile.storyboard */; };
 		7A120DC7203E6EB10003EE1F /* Tutorial.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A120DC6203E6EB10003EE1F /* Tutorial.storyboard */; };
 		7A120DCF2041F0570003EE1F /* PhotoChalColCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A120DCE2041F0560003EE1F /* PhotoChalColCell.swift */; };
@@ -137,6 +139,8 @@
 		7353C9B421AB9B4B009728DB /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHandler.swift; sourceTree = "<group>"; };
 		73553B762190E56000D1F3E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacher.swift; sourceTree = "<group>"; };
+		73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacherTests.swift; sourceTree = "<group>"; };
 		74603023074B9DA2002A640E /* Pods_reCapTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCapTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A120DC2203E6BBB0003EE1F /* Profile.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
 		7A120DC6203E6EB10003EE1F /* Tutorial.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Tutorial.storyboard; sourceTree = "<group>"; };
@@ -274,6 +278,7 @@
 				344C93F020226E280025E4C5 /* reCap.xcdatamodeld */,
 				7353C9B221A9DEC9009728DB /* Log.swift */,
 				7353C9B421AB9B4B009728DB /* LocationManager.swift */,
+				73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */,
 			);
 			path = reCap;
 			sourceTree = "<group>";
@@ -282,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				344C940120226E280025E4C5 /* reCapTests.swift */,
+				73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */,
 				344C940320226E280025E4C5 /* Info.plist */,
 			);
 			path = reCapTests;
@@ -573,6 +579,14 @@
 					344C93E520226E280025E4C5 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+							com.apple.Maps.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					344C93FC20226E280025E4C5 = {
 						CreatedOnToolsVersion = 9.2;
@@ -842,6 +856,7 @@
 				7A5358AC205B6EE10047F410 /* CustomPage.swift in Sources */,
 				344C93EA20226E280025E4C5 /* AppDelegate.swift in Sources */,
 				734840FB219A6E7D0065E472 /* DataManager.swift in Sources */,
+				73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */,
 				7A120DD32041F7A70003EE1F /* PhotoVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,6 +866,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				344C940220226E280025E4C5 /* reCapTests.swift in Sources */,
+				73E382A221B5E36B00A00F66 /* ProfileImageCacherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1002,12 +1018,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = iOSAppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1019,12 +1037,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = iOSAppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1037,7 +1057,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VPT5835T5T;
+				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCapTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Kaleb-Cooper-Team-Red.reCapTests";
@@ -1055,7 +1075,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VPT5835T5T;
+				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCapTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Kaleb-Cooper-Team-Red.reCapTests";
@@ -1072,7 +1092,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VPT5835T5T;
+				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCapUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Kaleb-Cooper-Team-Red.reCapUITests";
@@ -1089,7 +1109,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VPT5835T5T;
+				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCapUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Kaleb-Cooper-Team-Red.reCapUITests";

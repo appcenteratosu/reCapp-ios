@@ -9,8 +9,7 @@
 import UIKit
 import CoreData
 import Firebase
-
-import Firebase
+import SwiftLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -61,41 +60,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-//    private func makeRealmPublic() {
-//        let creds = SyncCredentials.nickname("reCapp-admin", isAdmin: true)
-//        SyncUser.logIn(with: creds, server: RealmConstants.AUTH_URL, onCompletion: {(user, err) in
-//            if let error = err {
-//                print(error.localizedDescription)
-//            }
-//            else {
-//                let admin = user!
-//                let permissions = SyncPermission(realmPath: "/reCapp", identity: "*", accessLevel: .write)
-//                admin.apply(permissions, callback: {(err) in
-//                    if let error = err {
-//                        print(error.localizedDescription)
-//                    }
-//                    else {
-//                        print("Wrote permissions")
-//                        admin.logOut()
-//                        let users = SyncUser.all
-//                        for user in users {
-//                            // Logs all users out
-//                            user.value.logOut()
-//                        }
-//                    }
-//                })
-//            }
-//        })
-//    }
-    
     /// set orientations you want to be allowed in this property by default
     var orientationLock = UIInterfaceOrientationMask.all
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.orientationLock
     }
-    
-
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -122,6 +92,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             FirebaseHandler.database.removeObserver(withHandle: handle)
             print("Removed Handle:", handle)
         }
+        
+        CameraContainerVC.requests.forEach { (request) in
+            request.stop()
+        }
+        
+        CameraContainerVC.requests = []
         
         self.saveContext()
     }

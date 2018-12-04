@@ -46,6 +46,11 @@ class RCUser: Codable {
             if let info = data["id"] as? String {
                 self.id = info
             }
+            
+            if let id = snapshot.key as? String {
+                self.id = id
+            }
+            
             if let info = data["name"] as? String {
                 self.name = info
             }
@@ -100,6 +105,51 @@ class RCUser: Codable {
             }
         } else {
             completion(nil)
+        }
+    }
+    
+    func getActiveChallenge(updated: Bool, completion:  @escaping (RCPicture?)->()) {
+        if updated { // Updated in Firebase, so get the new object
+            FirebaseHandler.database.child("UserData").child(self.id).child("activeChallenge").observeSingleEvent(of: .value) { (snap) in
+                if let challengeID = snap.value as? String {
+                    if challengeID.isEmpty {
+                        // Empty String, no challenge
+                        completion(nil)
+                    } else {
+                        FirebaseHandler.database.child("PictureData").child(self.activeChallenge).observeSingleEvent(of: .value) { (snap) in
+                            let pic = RCPicture(snapshot: snap)
+                            self.activeChallengeObj = pic
+                            self.activeChallenge = pic.id
+                            completion(pic)
+                        }
+                    }
+                } else {
+                    Log.e("Could not get challenge id from snap as String")
+                }
+            }
+        } else {
+            if let challenge = self.activeChallengeObj {
+                // Object already Exists
+                completion(challenge)
+            } else {
+                FirebaseHandler.database.child("UserData").child(self.id).child("activeChallenge").observeSingleEvent(of: .value) { (snap) in
+                    if let challengeID = snap.value as? String {
+                        if challengeID.isEmpty {
+                            // Empty String, no challenge
+                            completion(nil)
+                        } else {
+                            FirebaseHandler.database.child("PictureData").child(self.activeChallenge).observeSingleEvent(of: .value) { (snap) in
+                                let pic = RCPicture(snapshot: snap)
+                                self.activeChallengeObj = pic
+                                self.activeChallenge = pic.id
+                                completion(pic)
+                            }
+                        }
+                    } else {
+                        Log.e("Could not get challenge id from snap as String")
+                    }
+                }
+            }
         }
     }
     
