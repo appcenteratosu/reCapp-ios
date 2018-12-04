@@ -77,8 +77,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         collectionDictionaryData = [:]
         if self.mode == PhotoLibChallengeVC.PHOTO_LIB_MODE {
             self.setupPhotoLib()
-        }
-        else if mode == PhotoLibChallengeVC.CHALLENGE_MODE  {
+        } else if mode == PhotoLibChallengeVC.CHALLENGE_MODE  {
             self.setupChallenge()
         }
     }
