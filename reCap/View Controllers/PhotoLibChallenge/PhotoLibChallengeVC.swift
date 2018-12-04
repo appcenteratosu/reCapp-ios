@@ -61,6 +61,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
             self.userData = DataManager.currentAppUser
         }
         
+        if mode == 1 {
+            self.userData = DataManager.currentAppUser
+        }
+        
 //        self.realm = try! Realm()
 //        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
         applyBlurEffect(image: #imageLiteral(resourceName: "Gradient"))
@@ -177,7 +181,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
 //        let monthResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time <= \(monthTime) AND time >= \(yearTime)")
 //        let yearResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time <= \(yearTime)")
 
-        let picturesRef = FirebaseHandler.database.child("UserData")
+        let picturesRef = FirebaseHandler.database.child("PictureData")
         picturesRef.queryOrdered(byChild: "latitude").queryStarting(atValue: latLow).queryEnding(atValue: latHigh).observeSingleEvent(of: .value) { (snap) in
             if let objects = snap.children.allObjects as? [DataSnapshot] {
                 var recentResults: [RCPicture] = []
@@ -200,11 +204,17 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
                         }
                     }
                 }
-                
-                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT] = self.getFiftyChallenges(results: recentResults)
-                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK] = self.getFiftyChallenges(results: weekResults)
-                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = self.getFiftyChallenges(results: monthResults)
-                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR] = self.getFiftyChallenges(results: yearResults)
+
+//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT] = self.getFiftyChallenges(results: recentResults)
+//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK] = self.getFiftyChallenges(results: weekResults)
+//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = self.getFiftyChallenges(results: monthResults)
+//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR] = self.getFiftyChallenges(results: yearResults)
+
+                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT] = recentResults
+                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK] = weekResults
+                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = monthResults
+                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR] = yearResults
+
                 
                 if self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT]?.count != 0 {
                     self.tableSectionArray.append(PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT)

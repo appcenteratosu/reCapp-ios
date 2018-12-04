@@ -350,7 +350,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     static var requests: [LocationRequest] = []
     func setupLocation() {
-        Locator.requestAuthorizationIfNeeded(.always)
         Locator.requestAuthorizationIfNeeded(.whenInUse)
         // Azimuth
         if (CLLocationManager.headingAvailable()) {
@@ -358,7 +357,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.headingFilter = 1
             locationManager.startUpdatingHeading()
-            //            locationManager.startUpdatingLocation()
         }
         
         let request = Locator.subscribePosition(accuracy: .room, onUpdate: { (location) -> (Void) in
@@ -410,48 +408,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
         
         CameraContainerVC.requests.append(request)
-        
-        //        Locator.subscribePosition(accuracy: .room, onUpdate: { location in
-        //            let lat = location.coordinate.latitude.truncate(places: 6)
-        //            let long = location.coordinate.longitude.truncate(places: 6)
-        //            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
-        //
-        //            let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
-        //            self.locationOutlet.text = gpsString
-        //            self.latToPass = lat
-        //            self.longToPass = long
-        //            self.locationToPass = gpsString
-        //
-        //            if self.activeChallengePicData != nil {
-        //                let picLong = self.activeChallengePicData.longitude
-        //                let picLat = self.activeChallengePicData.latitude
-        //                var destination: CLLocation? = CLLocation(latitude: 0, longitude: 0)
-        //                var angle: Double = 0
-        //                destination = CLLocation(latitude: picLat, longitude: picLong)
-        //                angle = self.getBearingBetweenTwoPoints1(point1: location, point2: destination!)
-        //                self.destinationAngle = angle
-        //                let longDiff = abs(picLong - long)
-        //                let latDiff = abs(picLat - lat)
-        //                if longDiff > self.chalCloseCoordThreshold || latDiff > self.chalCloseCoordThreshold {
-        //                    self.locationOutlet.textColor = UIColor.white
-        //                    self.isAtChallengeLocation = false
-        //                }
-        //                else if longDiff < self.chalBestCoordThreshold && latDiff < self.chalBestCoordThreshold {
-        //                    self.locationOutlet.textColor = UIColor.green
-        //                    self.isAtChallengeLocation = true
-        //                }
-        //                else if longDiff <= self.chalCloseCoordThreshold && latDiff <= self.chalCloseCoordThreshold {
-        //                    self.locationOutlet.textColor = UIColor.yellow
-        //                    self.isAtChallengeLocation = true
-        //                }
-        //            }
-        //            else {
-        //                self.locationOutlet.textColor = UIColor.white
-        //                self.isAtChallengeLocation = false
-        //            }
-        //        },onFail: { (error, last) in
-        //            print(error)
-        //        })
     }
     
     // MARK: - Actions
