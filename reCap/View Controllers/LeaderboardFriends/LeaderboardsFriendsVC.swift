@@ -267,8 +267,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if mode == LeaderboardsFriendsVC.FRIENDS_LIST_MODE {
             self.performSegue(withIdentifier: "PhotoLibSegue", sender: friendsList[indexPath.row])
-        }
-        else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
+        } else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
             self.performSegue(withIdentifier: "PhotoLibSegue", sender: leaderboardsList[indexPath.row])
 
         }

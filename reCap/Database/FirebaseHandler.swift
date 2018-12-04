@@ -114,7 +114,7 @@ class FirebaseHandler {
         Log.i("Delete photo data from database")
         
         storageRef.delete { (error) in
-            guard error != nil else {
+            guard error == nil else {
                 Log.e(error!.localizedDescription)
                 return
             }

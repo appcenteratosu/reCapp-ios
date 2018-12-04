@@ -57,7 +57,9 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.userData = DataManager.currentAppUser
+        if self.userData == nil {
+            self.userData = DataManager.currentAppUser
+        }
         
 //        self.realm = try! Realm()
 //        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
