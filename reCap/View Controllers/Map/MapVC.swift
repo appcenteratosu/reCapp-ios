@@ -457,10 +457,11 @@ class MapVC: UIViewController, MGLMapViewDelegate {
             alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
                 
                 self.user.update(values: [.activeChallenge: "",
-                                          .activeChalengePoints: 0])
+                                          .activeChallengePoints: 0])
                 self.user.getActiveChallenge(updated: true, completion: { (picture) in
                     
                 })
+                self.setupMap()
                 self.centerButton.isHidden = true
                 
             }))
@@ -564,7 +565,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         }
         
         self.user.update(values: [.activeChallenge: pictureData.id,
-                                  .activeChalengePoints: points])
+                                  .activeChallengePoints: points])
 
         let lat = pictureData.latitude
         let long = pictureData.longitude

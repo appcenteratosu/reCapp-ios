@@ -314,12 +314,8 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         else if challengeCategory == PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT {
             points = PhotoLibChallengeVC.CHALLENGE_RECENT_POINTS
         }
-//        try! realm.write {
-//            self.userData.activeChallenge = pictureData
-//            self.userData.activeChallengePoints = points
-//        }
         
-        self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id, .activeChalengePoints: points])
+        self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id, .activeChallengePoints: points])
         
     }
     

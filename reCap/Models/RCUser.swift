@@ -165,18 +165,25 @@ class RCUser: Codable {
             switch item.key {
             case .points:
                 data["points"] = item.value
+                points = item.value as! Int
             case .activeChallenge:
                 data["activeChallenge"] = item.value
-            case .activeChalengePoints:
+                activeChallenge = item.value as! String
+            case .activeChallengePoints:
                 data["activeChallengePoints"] = item.value
+                activeChalengePoints = item.value as! Int
             case .state:
                 data["state"] = item.value
+                state = item.value as! String
             case .country:
                 data["country"] = item.value
+                country = item.value as! String
             case .latitude:
                 data["latitude"] = item.value
+                latitude = item.value as! Double
             case .longitude:
                 data["longitude"] = item.value
+                longitude = item.value as! Double
             default:
                 break
             }
@@ -200,7 +207,7 @@ class RCUser: Codable {
         case email
         case friends
         case activeChallenge
-        case activeChalengePoints
+        case activeChallengePoints
         case state
         case country
         case latitude
