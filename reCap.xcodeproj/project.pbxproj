@@ -32,6 +32,8 @@
 		7353C9B521AB9B4B009728DB /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7353C9B421AB9B4B009728DB /* LocationManager.swift */; };
 		73553B75218F7FCD00D1F3E1 /* FirebaseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */; };
 		73553B772190E56000D1F3E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73553B762190E56000D1F3E1 /* GoogleService-Info.plist */; };
+		7386257221B886240036930F /* RCPictureChallengeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7386257121B886240036930F /* RCPictureChallengeProtocol.swift */; };
+		7386257421B8B2F30036930F /* CustomUserLocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */; };
 		73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */; };
 		73E382A221B5E36B00A00F66 /* ProfileImageCacherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */; };
 		7A120DC3203E6BBB0003EE1F /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A120DC2203E6BBB0003EE1F /* Profile.storyboard */; };
@@ -139,6 +141,8 @@
 		7353C9B421AB9B4B009728DB /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHandler.swift; sourceTree = "<group>"; };
 		73553B762190E56000D1F3E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7386257121B886240036930F /* RCPictureChallengeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCPictureChallengeProtocol.swift; sourceTree = "<group>"; };
+		7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUserLocationAnnotationView.swift; sourceTree = "<group>"; };
 		73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacher.swift; sourceTree = "<group>"; };
 		73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacherTests.swift; sourceTree = "<group>"; };
 		74603023074B9DA2002A640E /* Pods_reCapTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCapTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -319,6 +323,7 @@
 				7A5358AF205B77DE0047F410 /* MapVC.swift */,
 				7A4D8A432027801E0043878E /* NavigationVC.swift */,
 				7A3C60122027BAE200ABC9E1 /* MapContainerVC.swift */,
+				7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -428,6 +433,7 @@
 			children = (
 				7AF10F562058DA7D00019C70 /* SnappingCollectionViewLayout.swift */,
 				7A5358B3205C8ACB0047F410 /* PhotoLibChallengeVC.swift */,
+				7386257121B886240036930F /* RCPictureChallengeProtocol.swift */,
 				7A120DD02041F4B50003EE1F /* ImageButtonDelegate.swift */,
 				7A120DCE2041F0560003EE1F /* PhotoChalColCell.swift */,
 				7A38A274202AB56100DF239F /* PhotoChallengeTableCell.swift */,
@@ -817,10 +823,12 @@
 				73553B75218F7FCD00D1F3E1 /* FirebaseHandler.swift in Sources */,
 				7A120DD12041F4B50003EE1F /* ImageButtonDelegate.swift in Sources */,
 				7A3C5538207AFDDD009A8036 /* HorizontalDial.swift in Sources */,
+				7386257421B8B2F30036930F /* CustomUserLocationAnnotationView.swift in Sources */,
 				345FB83920363BE300C59FDB /* SignInVC.swift in Sources */,
 				7A5358B0205B77DE0047F410 /* MapVC.swift in Sources */,
 				347B20FE2058C935001B72A0 /* PhotoTimelineVC.swift in Sources */,
 				344C93F220226E280025E4C5 /* reCap.xcdatamodeld in Sources */,
+				7386257221B886240036930F /* RCPictureChallengeProtocol.swift in Sources */,
 				34F60577203FD24C001A74E4 /* ImageConfirmVC.swift in Sources */,
 				7A4D8A442027801E0043878E /* NavigationVC.swift in Sources */,
 				7A5358A8205B6E680047F410 /* LeaderboardsFriendsVC.swift in Sources */,

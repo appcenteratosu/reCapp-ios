@@ -50,10 +50,14 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     static let SECONDS_IN_YEAR = PhotoLibChallengeVC.SECONDS_IN_MONTH * 12
     private static let MILE_THRESH = 10.0
     
+    var challengeDelegate: RCPictureChallengeDelegate?
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
+    
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,16 +68,12 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         if mode == 1 {
             self.userData = DataManager.currentAppUser
         }
-        
-//        self.realm = try! Realm()
-//        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
+    
         applyBlurEffect(image: #imageLiteral(resourceName: "Gradient"))
         setup()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+//        #error("Need to set delegate here")
+        
     }
     
     private func setup() {
@@ -205,11 +205,6 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
                     }
                 }
 
-//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT] = self.getFiftyChallenges(results: recentResults)
-//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK] = self.getFiftyChallenges(results: weekResults)
-//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = self.getFiftyChallenges(results: monthResults)
-//                self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR] = self.getFiftyChallenges(results: yearResults)
-
                 self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT] = recentResults
                 self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK] = weekResults
                 self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = monthResults
@@ -314,6 +309,8 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         else if challengeCategory == PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT {
             points = PhotoLibChallengeVC.CHALLENGE_RECENT_POINTS
         }
+        
+        challengeDelegate?.userDidAddNewChallenge(picture: pictureData)
         
         self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id, .activeChallengePoints: points])
         

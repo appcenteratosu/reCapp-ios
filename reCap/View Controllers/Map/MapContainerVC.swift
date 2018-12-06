@@ -39,7 +39,7 @@ class MapContainerVC: UIViewController {
     @IBAction func challengesFixed(_ sender: Any) {
         self.performSegue(withIdentifier: "ChallengeSegue", sender: nil)
     }
-    
+    var mapVC: MapVC?
     
     // MARK: - Navigation
 
@@ -53,9 +53,12 @@ class MapContainerVC: UIViewController {
             let challengeVC = desination.topViewController as! PhotoLibChallengeVC
             challengeVC.mode = PhotoLibChallengeVC.CHALLENGE_MODE
             challengeVC.userData = self.userData
-        }
-        else if id == "MapSegue" {
+            if let mapVC = mapVC  {
+                challengeVC.challengeDelegate = mapVC
+            }
+        } else if id == "MapSegue" {
             let desination = segue.destination as! MapVC
+            self.mapVC = desination
             //desination.user = self.user
         }
     }

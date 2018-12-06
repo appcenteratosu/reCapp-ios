@@ -13,7 +13,7 @@ import MapboxNavigation
 import MapboxDirections
 import Firebase
 
-class MapVC: UIViewController, MGLMapViewDelegate {
+class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     private static let TAKE_PIC_FROM_RECENT = "Recent Photos (+1 point)"
     private static let TAKE_PIC_FROM_WEEK = "Photos over a week ago (+5 points)"
@@ -41,10 +41,8 @@ class MapVC: UIViewController, MGLMapViewDelegate {
     var userPictureDataArray: [RCPicture] = []
     var activeChallengePicData: RCPicture?
     
-    
     var pictureIDArray: [String]! = []
     var pictureArray: [UIImage]! = []
-    
     
     var directionsRoute: Route?
     var mapViewNavigation: NavigationMapView!
@@ -54,42 +52,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
     
     let darkColor = UIColor(red: 48/255, green: 48/255, blue: 48/255, alpha: 1.0)
     
-    @IBOutlet weak var styleControl: UISegmentedControl!
-    @IBOutlet weak var centerButton: UIButton!
-    @IBAction func styleControlAction(_ sender: Any) {
-        
-        if styleControl.selectedSegmentIndex == 0 {
-            mapView.styleURL = MGLStyle.outdoorsStyleURL(withVersion: 10)
-            
-            styleControl.tintColor = darkColor
-            mapView.attributionButton.tintColor = darkColor
-        }
-        else {
-            mapView.styleURL = MGLStyle.darkStyleURL(withVersion: 9)
-            styleControl.tintColor = UIColor.white
-            mapView.attributionButton.tintColor = UIColor.white
-        }
-        
-    }
-    @IBAction func centerAction(_ sender: Any) {
-        
-        if let user = self.user {
-            user.getActiveChallenge { (challenge) in
-                if let challenge = challenge {
-                    let lat = challenge.latitude
-                    let long = challenge.longitude
-                    
-                    print(lat, long)
-                    
-                    let coordinate = CLLocationCoordinate2DMake(lat, long)
-                    self.mapView.setCenter(coordinate, zoomLevel: self.mapView.zoomLevel, direction: 0, animated: true)
-                }
-            }
-        }
-    }
-    //
-    
-    
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.user = DataManager.currentAppUser
@@ -117,10 +80,23 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         
     }
     
-    func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
-        // Start downloading tiles and resources for z13-16.
-        //startOfflinePackDownload()
-        mapView.showsUserLocation = true
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        //        setupPictures()
+        
+        
+        if let user = self.user {
+            user.getActiveChallenge { (picture) in
+                if picture != nil {
+                    self.centerButton.isHidden = false
+                } else {
+                    self.centerButton.isHidden = true
+                }
+            }
+        } else {
+            self.centerButton.isHidden = true
+        }
+        
     }
     
     deinit {
@@ -128,7 +104,140 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         NotificationCenter.default.removeObserver(self)
     }
     
+    // MARK: - Setup
+    func setupCamera() {
+        
+        let user = self.mapView.userLocation?.coordinate
+        self.mapView.setCenter(user!, zoomLevel: 2, direction: 0, animated: true)
+//        let camera = MGLMapCamera(lookingAtCenter: user!, fromDistance: 500, pitch: 0, heading: 0)
+        let camera = MGLMapCamera(lookingAtCenter: user!, altitude: 500, pitch: 30, heading: 0)
+        let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            // Animate the camera movement over 5 seconds.
+            self.mapView.setCamera(camera, withDuration: 2, animationTimingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
+            
+        }
+    }
     
+    func setupMap() {
+        
+        mapView = NavigationMapView(frame: view.bounds)
+        mapView.delegate = self
+        mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        mapView.showsUserLocation = true
+        mapView.compassView.isHidden = true
+        
+        if Bool.checkIfTimeIs(between: 0, and: 7) == true || Bool.checkIfTimeIs(between: 18, and: 23) == true {
+            mapView.styleURL = MGLStyle.darkStyleURL(withVersion: 9)
+            styleControl.selectedSegmentIndex = 1
+            styleControl.tintColor = UIColor.white
+            mapView.attributionButton.tintColor = UIColor.white
+        } else {
+            mapView.styleURL = MGLStyle.outdoorsStyleURL(withVersion: 10)
+            styleControl.selectedSegmentIndex = 0
+            styleControl.tintColor = darkColor
+            mapView.attributionButton.tintColor = darkColor
+        }
+        
+        view.addSubview(mapView)
+        view.bringSubview(toFront: styleControl)
+        view.bringSubview(toFront: centerButton)
+        
+        setupPictures()
+    }
+    
+    func setupPictures() {
+        
+        //Need to grab all user submitted images, grab their GPS locations and store as a Dictionary Array. Then put pins down.
+        //For now, just grab current users images for pins.
+        
+        locations = []
+        locationDictionary = [:]
+        
+        if self.pins.count > 0 {
+            self.mapView.removeAnnotations(self.pins)
+            self.pins.removeAll()
+        }
+        
+        FirebaseHandler.getAllPictureData(onlyRecent: true) { (pictures) in
+            if pictures.count > 0 {
+                for picture in pictures {
+                    
+                    let pin = MGLPointAnnotation()
+                    pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
+                    pin.title = picture.name
+                    pin.subtitle = picture.locationName
+                    
+                    self.pictureIDArray.append(picture.id)
+                    self.pictureDataArray.append(picture)
+                    
+                    self.pins.append(pin)
+                }
+                
+                self.setupPins()
+            }
+        }
+        
+        
+    }
+    
+    func setupPins() {
+        self.mapView.addAnnotations(self.pins)
+    }
+    
+    // MARK: - Actions and Delegates
+    
+    @IBOutlet weak var styleControl: UISegmentedControl!
+    @IBOutlet weak var centerButton: UIButton!
+    @IBAction func styleControlAction(_ sender: Any) {
+        
+        if styleControl.selectedSegmentIndex == 0 {
+            mapView.styleURL = MGLStyle.outdoorsStyleURL(withVersion: 10)
+            
+            styleControl.tintColor = darkColor
+            mapView.attributionButton.tintColor = darkColor
+        }
+        else {
+            mapView.styleURL = MGLStyle.darkStyleURL(withVersion: 9)
+            styleControl.tintColor = UIColor.white
+            mapView.attributionButton.tintColor = UIColor.white
+        }
+        
+    }
+    
+    @IBAction func centerAction(_ sender: Any) {
+        if let user = self.user {
+            user.getActiveChallenge { (challenge) in
+                if let challenge = challenge {
+                    let lat = challenge.latitude
+                    let long = challenge.longitude
+                    
+                    print(lat, long)
+                    
+                    let coordinate = CLLocationCoordinate2DMake(lat, long)
+                    self.mapView.setCenter(coordinate, zoomLevel: self.mapView.zoomLevel, direction: 0, animated: true)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Challenge Delegate
+    func userDidAddNewChallenge(picture: RCPicture) {
+        Log.d("User did add new challenge")
+        self.activeChallengePicData = picture
+    }
+    
+    func userDidRemoveChallenge(picture: RCPicture) {
+        Log.d("User did remove challenge")
+        self.activeChallengePicData = nil
+    }
+    
+    // MARK: - MGLOfflinePack notification handlers
+    func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
+        // Start downloading tiles and resources for z13-16.
+        //startOfflinePackDownload()
+        mapView.showsUserLocation = true
+    }
     
     func startOfflinePackDownload() {
         // Create a region that includes the current viewport and any tiles needed to view it when zoomed further in.
@@ -153,8 +262,6 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         }
         
     }
-    
-    // MARK: - MGLOfflinePack notification handlers
     
     @objc func offlinePackProgressDidChange(notification: NSNotification) {
         // Get the offline pack this notification is regarding,
@@ -208,121 +315,15 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         }
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-//        setupPictures()
-        
-        
-        if let user = self.user {
-            user.getActiveChallenge { (picture) in
-                if picture != nil {
-                    self.centerButton.isHidden = false
-                } else {
-                    self.centerButton.isHidden = true
-                }
-            }
-        } else {
-            self.centerButton.isHidden = true
-        }
-        
-    }
-    
-    func setupCamera() {
-        
-        let user = self.mapView.userLocation?.coordinate
-        self.mapView.setCenter(user!, zoomLevel: 2, direction: 0, animated: true)
-        let camera = MGLMapCamera(lookingAtCenter: user!, fromDistance: 3000, pitch: 0, heading: 0)
-        
-        let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            // Animate the camera movement over 5 seconds.
-            self.mapView.setCamera(camera, withDuration: 2, animationTimingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
-            
-        }
-    }
-    
-    func setupMap() {
-        
-        mapView = NavigationMapView(frame: view.bounds)
-        mapView.delegate = self
-        mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        mapView.showsUserLocation = true
-        mapView.compassView.isHidden = true
-        
-        
-        
-        if Bool.checkIfTimeIs(between: 0, and: 7) == true || Bool.checkIfTimeIs(between: 18, and: 23) == true {
-            mapView.styleURL = MGLStyle.darkStyleURL(withVersion: 9)
-            styleControl.selectedSegmentIndex = 1
-            styleControl.tintColor = UIColor.white
-            mapView.attributionButton.tintColor = UIColor.white
-        }
-        else {
-            mapView.styleURL = MGLStyle.outdoorsStyleURL(withVersion: 10)
-            styleControl.selectedSegmentIndex = 0
-            styleControl.tintColor = darkColor
-            mapView.attributionButton.tintColor = darkColor
-        }
-        
-        view.addSubview(mapView)
-        view.bringSubview(toFront: styleControl)
-        view.bringSubview(toFront: centerButton)
-        
-        setupPictures()
-        
-        
-    }
-    
-    
-    func setupPictures() {
-        
-        //Need to grab all user submitted images, grab their GPS locations and store as a Dictionary Array. Then put pins down.
-        //For now, just grab current users images for pins.
-        
-        locations = []
-        locationDictionary = [:]
-        
-        if self.pins.count > 0 {
-            self.mapView.removeAnnotations(self.pins)
-            self.pins.removeAll()
-        }
-        
-        FirebaseHandler.getAllPictureData(onlyRecent: true) { (pictures) in
-            if pictures.count > 0 {
-                for picture in pictures {
-                    
-                    let pin = MGLPointAnnotation()
-                    pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
-                    pin.title = picture.name
-                    pin.subtitle = picture.locationName
-                    
-                    self.pictureIDArray.append(picture.id)
-                    self.pictureDataArray.append(picture)
-                    
-                    self.pins.append(pin)
-                    
-//                    if let last = pictures.last {
-//                        if picture.id == last.id {
-//                            self.setupPins()
-//                        }
-//                    }
-                }
-                self.setupPins()
-            }
-        }
-        
-        
-    }
-    
-    func setupPins() {
-        self.mapView.addAnnotations(self.pins)
-    }
-    
+    let greenColor = UIColor(red: 99/255, green: 207/255, blue: 155/255, alpha: 1.0)
+    let redColor = UIColor(red: 204/255, green: 51/255, blue: 51/255, alpha: 1.0)
     
     // Use the default marker. See also: our view annotation or custom marker examples.
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         
+        if annotation is MGLUserLocation && mapView.userLocation != nil {
+            return CustomUserLocationAnnotationView()
+        }
         
         // Assign a reuse identifier to be used by both of the annotation views, taking advantage of their similarities.
         let reuseIdentifier = "reusableDotView"
@@ -338,16 +339,28 @@ class MapVC: UIViewController, MGLMapViewDelegate {
             let lat = annotation.coordinate.latitude
             let long = annotation.coordinate.longitude
             
-            checkForMapAnnotation(av: annotationView!, lat: lat, long: long, completion: { (av) -> (MGLAnnotationView?) in
-                return av!
-            })
-            
-            annotationView!.backgroundColor = UIColor(red: 99/255, green: 207/255, blue: 155/255, alpha: 1.0)
+            if self.activeChallengePicData?.latitude == lat && self.activeChallengePicData?.longitude == long {
+                annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+                annotationView!.backgroundColor = redColor
+            } else {
+                annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+                annotationView!.backgroundColor = greenColor
+            }
             return annotationView
         }
+        
         return annotationView
     }
     
+    /// Checks to see if the latitude and longitude supplied are the coordinates of the active challenge for the current user
+    ///
+    /// - Important: This method is depreciated and should not be implimented. Doing so will produce uncertain results
+    ///
+    /// - Parameters:
+    ///   - av: Annotation View
+    ///   - lat: Latitude of picture to check
+    ///   - long: Longitude of picture to check
+    ///   - completion: the completion handler to fire when complete
     func checkForMapAnnotation(av: MGLAnnotationView, lat: Double, long: Double, completion: @escaping (MGLAnnotationView?)->(MGLAnnotationView?)){
         FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true) { (picture) in
             if let user = self.user {
@@ -356,7 +369,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
                         if let challenge = challenge {
                             if picture.id == challenge.id {
                                 av.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-                                av.backgroundColor = UIColor(red: 204/255, green: 51/255, blue: 51/255, alpha: 1.0)
+                                av.backgroundColor = self.redColor
                                 completion(av)
                             }
                         }
@@ -366,11 +379,11 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         }
     }
     
+    
     // Allow callout view to appear when an annotation is tapped.
     func mapView(_ mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
         return true
     }
-    
     
     func mapView(_ mapView: MGLMapView, leftCalloutAccessoryViewFor annotation: MGLAnnotation) -> UIView? {
         
@@ -411,8 +424,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
         
         if annotation is MGLUserLocation && mapView.userLocation != nil {
             return nil
-        }
-        else {
+        } else {
             return UIButton(type: .detailDisclosure)
         }
  
@@ -528,7 +540,7 @@ class MapVC: UIViewController, MGLMapViewDelegate {
     }
     
     
-    
+    // Find where data source is set
     
     private func getPicChallengeCategory(pictureData: RCPicture, currentDate: Date) -> String {
         //let pictureDate = DateGetter.getDateFromString(string: pictureData.time)

@@ -101,24 +101,6 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
                 Log.e("Could not get updated RCPicture. Will Not be storing Image")
             }
         }
-        
-//        FBDatabase.addPicture(image: self.image!, pictureData: picture, with_completion: {(error) in
-//            if let actualError = error {
-//                // There was an error
-//                print(actualError)
-//            }
-//            else {
-//                // No error
-//                if self.isAtChallengeLocation {
-//                    self.displayChallengeComplete()
-//                }
-//                else {
-//                    self.displayPictureAdded(pictureData: picture)
-//                }
-//                self.navigationController?.setToolbarHidden(true, animated: true)
-//                self.navigationController?.popToRootViewController(animated: true)
-//            }
-//        })
     }
     
     private func displayChallengeComplete() {

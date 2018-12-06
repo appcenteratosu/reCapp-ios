@@ -122,10 +122,10 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
         
         
-        //        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
-        //        DispatchQueue.main.asyncAfter(deadline: when) {
-        //            self.viewDidAppear(false)
-        //        }
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.viewDidAppear(false)
+        }
     }
     
     // MARK: - Setup
@@ -505,7 +505,19 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     
     // MARK: - Class Methods
-    
+    func locationManagerShouldDisplayHeadingCalibration(_ manager: CLLocationManager) -> Bool {
+        if let heading = manager.heading {
+            if heading.headingAccuracy < 0 {
+                return true
+            } else if heading.headingAccuracy > 5 {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return true
+        }
+    }
     
     
     func horizontalDialDidValueChanged(_ horizontalDial: HorizontalDial) {
@@ -514,7 +526,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
         let roundedValue = value.round(nearest: 1)
         
-        
         if let user = self.rcUser {
             user.getBearingForActiveChallenge { (bearing) in
                 if let bearing = bearing {
@@ -522,11 +533,11 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                     
                     if distance >= 30.0 {
                         self.bearingOutlet.textColor = UIColor.red
-                    } else if distance >= 5 {
+                    } else if distance >= 10 {
                         self.bearingOutlet.textColor = UIColor.orange
-                    } else if distance >= 1 {
+                    } else if distance >= 4 {
                         self.bearingOutlet.textColor = UIColor.yellow
-                    } else if distance == 0 {
+                    } else if distance <= 3 {
                         self.bearingOutlet.textColor = UIColor.green
                     } else {
                         self.bearingOutlet.textColor = UIColor.white
@@ -663,10 +674,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     }
     
     
-    
-    
-    
-    
     func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
         updateHorizontalDialValue(value: heading.magneticHeading)
         if let angle = self.destinationAngle {
@@ -741,8 +748,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         else if UIDevice.current.orientation == .landscapeRight {
             self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
         }
-        
-        
+
         videoPreviewLayer!.frame = previewView.bounds
         
         
@@ -838,12 +844,10 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                     vc.previousPic = picture!
                 }
             }
-        }
-        else if segueID == "toProfileSegue" {
+        } else if segueID == "toProfileSegue" {
             let vc = segue.destination as! ProfileMenuVC
             vc.image = self.profileImage
-        }
-        else if segueID == "PhotoLibSegue" {
+        } else if segueID == "PhotoLibSegue" {
             let destination = segue.destination as! UINavigationController
             let photoLibVC = destination.topViewController as! PhotoLibChallengeVC
             photoLibVC.mode = PhotoLibChallengeVC.PHOTO_LIB_MODE
