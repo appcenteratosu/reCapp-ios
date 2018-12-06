@@ -82,21 +82,19 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        //        setupPictures()
         
-        
-        if let user = self.user {
-            user.getActiveChallenge { (picture) in
-                if picture != nil {
-                    self.centerButton.isHidden = false
-                } else {
-                    self.centerButton.isHidden = true
-                }
+        user.getActiveChallenge(updated: hasUpdatedchallenge) { (challenge) in
+            if let challenge = challenge {
+                self.centerButton.isHidden = false
+            } else {
+                self.centerButton.isHidden = true
             }
-        } else {
-            self.centerButton.isHidden = true
+            
+            if self.hasUpdatedchallenge {
+                self.hasUpdatedchallenge = false
+            }
+            
         }
-        
     }
     
     deinit {
@@ -222,9 +220,11 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     }
     
     // MARK: - Challenge Delegate
+    var hasUpdatedchallenge = false
     func userDidAddNewChallenge(picture: RCPicture) {
         Log.d("User did add new challenge")
         self.activeChallengePicData = picture
+        hasUpdatedchallenge = true
     }
     
     func userDidRemoveChallenge(picture: RCPicture) {
@@ -321,23 +321,24 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     // Use the default marker. See also: our view annotation or custom marker examples.
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         
-        if annotation is MGLUserLocation && mapView.userLocation != nil {
-            return CustomUserLocationAnnotationView()
-        }
-        
         // Assign a reuse identifier to be used by both of the annotation views, taking advantage of their similarities.
-        let reuseIdentifier = "reusableDotView"
+        let reuseIdentifier = "\(annotation.coordinate.longitude)"
         
         // For better performance, always try to reuse existing annotations.
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
         
         // If there’s no reusable annotation view available, initialize a new one.
         if annotationView == nil {
-            annotationView = CustomAnnotationView(reuseIdentifier: reuseIdentifier)
-            annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+            
+            if annotation is MGLUserLocation && mapView.userLocation != nil {
+                return CustomUserLocationAnnotationView()
+            }
             
             let lat = annotation.coordinate.latitude
             let long = annotation.coordinate.longitude
+            
+            annotationView = CustomAnnotationView(reuseIdentifier: reuseIdentifier)
+            annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
             
             if self.activeChallengePicData?.latitude == lat && self.activeChallengePicData?.longitude == long {
                 annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -449,7 +450,21 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         }))
         
         var title = ""
-        if self.user.activeChallenge.isEmpty {
+        if self.activeChallengePicData?.latitude == annotation.coordinate.latitude &&
+            self.activeChallengePicData?.longitude == annotation.coordinate.longitude {
+            title = "Remove Active Challenge"
+            alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
+                
+                self.user.update(values: [.activeChallenge: "",
+                                          .activeChallengePoints: 0])
+                self.user.getActiveChallenge(updated: true, completion: { (picture) in
+                    
+                })
+                self.setupMap()
+                self.centerButton.isHidden = true
+                
+            }))
+        } else {
             title = "Set as Active Challenge"
             alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
                 
@@ -462,19 +477,6 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                         self.centerButton.isHidden = false
                     }
                 })
-                
-            }))
-        } else {
-            title = "Remove Active Challenge"
-            alert.addAction(UIAlertAction(title: title, style: .default, handler: { (action) in
-                
-                self.user.update(values: [.activeChallenge: "",
-                                          .activeChallengePoints: 0])
-                self.user.getActiveChallenge(updated: true, completion: { (picture) in
-                    
-                })
-                self.setupMap()
-                self.centerButton.isHidden = true
                 
             }))
         }

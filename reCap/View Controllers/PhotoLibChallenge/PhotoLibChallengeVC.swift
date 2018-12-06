@@ -77,6 +77,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     }
     
     private func setup() {
+        setupSpinner()
         tableSectionArray = []
         collectionDictionaryData = [:]
         if self.mode == PhotoLibChallengeVC.PHOTO_LIB_MODE {
@@ -174,13 +175,9 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         let weekTime = currentTime - PhotoLibChallengeVC.SECONDS_IN_WEEK
         let monthTime = currentTime - PhotoLibChallengeVC.SECONDS_IN_MONTH
         let yearTime = currentTime - PhotoLibChallengeVC.SECONDS_IN_YEAR
-//        let coordinatesPredicate = NSPredicate(format: "latitude <= \(latHigh) AND latitude >= \(latLow) AND longitude <= \(longHigh) AND longitude >= \(longLow)")
-//        let mostRecentPredicate = NSPredicate(format: "isMostRecentPicture = true")
-//        let recentResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time >= \(weekTime)").sorted(byKeyPath: "time", ascending: false)
-//        let weekResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time <= \(weekTime) AND time >= \(monthTime)").sorted(byKeyPath: "time", ascending: false)
-//        let monthResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time <= \(monthTime) AND time >= \(yearTime)")
-//        let yearResults = self.realm.objects(PictureData.self).filter(coordinatesPredicate).filter(mostRecentPredicate).filter("time <= \(yearTime)")
 
+        spinner?.startAnimating()
+        
         let picturesRef = FirebaseHandler.database.child("PictureData")
         picturesRef.queryOrdered(byChild: "latitude").queryStarting(atValue: latLow).queryEnding(atValue: latHigh).observeSingleEvent(of: .value) { (snap) in
             if let objects = snap.children.allObjects as? [DataSnapshot] {
@@ -398,6 +395,22 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
             return cell
         }
         return cell
+    }
+    
+    var spinner: UIActivityIndicatorView?
+    func setupSpinner() {
+        spinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinner?.center = self.view.center
+        spinner?.hidesWhenStopped = true
+        self.view.addSubview(spinner!)
+        stopSpinner()
+    }
+    
+    func stopSpinner() {
+        Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { (timer) in
+            timer.invalidate()
+            self.spinner?.stopAnimating()
+        }
     }
     
     
