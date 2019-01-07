@@ -42,12 +42,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "568179391.240005"
+                  timestampString = "568578155.476494"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
                   endingLineNumber = "128"
-                  offsetFromSymbolStart = "3680">
+                  offsetFromSymbolStart = "4484">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -57,12 +57,12 @@
                   moduleName = "reCap"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/LogIn/CreateAccountVC.swift"
-                  timestampString = "568179391.243129"
+                  timestampString = "568578155.4791549"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "129"
                   endingLineNumber = "129"
-                  offsetFromSymbolStart = "84">
+                  offsetFromSymbolStart = "109">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -218,7 +218,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/Camera/ImageCreateVC.swift"
-            timestampString = "565810842.6478339"
+            timestampString = "568578146.728072"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "55"
@@ -602,7 +602,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/View Controllers/Camera/ImageCreateVC.swift"
-            timestampString = "565810842.64965"
+            timestampString = "568578146.729304"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "57"
@@ -698,7 +698,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/Models/RCUser.swift"
-            timestampString = "568179390.829874"
+            timestampString = "568578146.730293"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "114"
@@ -714,7 +714,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "reCap/Models/RCUser.swift"
-            timestampString = "568179390.829931"
+            timestampString = "568578146.730653"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "120"
@@ -897,6 +897,38 @@
             endingLineNumber = "23"
             landmarkName = "getPictureData(in:completion:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "reCap.MapNetworkService.getPictureData(in: Swift.Array&lt;Swift.Double&gt;, completion: (Swift.Optional&lt;Swift.Array&lt;reCap.RCPicture&gt;&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "reCap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/Map/Map%20View%20Model/MapNetworkService.swift"
+                  timestampString = "568578155.550637"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "681">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in reCap.MapNetworkService.getPictureData(in: Swift.Array&lt;Swift.Double&gt;, completion: (Swift.Optional&lt;Swift.Array&lt;reCap.RCPicture&gt;&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "reCap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/Map/Map%20View%20Model/MapNetworkService.swift"
+                  timestampString = "568578155.5525351"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "81">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -961,38 +993,6 @@
             endingLineNumber = "22"
             landmarkName = "getPictureData(in:completion:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "reCap.MapNetworkService.getPictureData(in: Swift.Array&lt;Swift.Double&gt;) -&gt; ()"
-                  moduleName = "reCap"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/Map/Map%20View%20Model/MapNetworkService.swift"
-                  timestampString = "568179391.460848"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "22"
-                  endingLineNumber = "22"
-                  offsetFromSymbolStart = "520">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in reCap.MapNetworkService.getPictureData(in: Swift.Array&lt;Swift.Double&gt;) -&gt; ()"
-                  moduleName = "reCap"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/appcenter/Documents/Work/App%20Center/Apps/reCap/reCap/View%20Controllers/Map/Map%20View%20Model/MapNetworkService.swift"
-                  timestampString = "568179391.464668"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "23"
-                  endingLineNumber = "23"
-                  offsetFromSymbolStart = "56">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

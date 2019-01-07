@@ -14,7 +14,6 @@
 //  Copyright © 2018 Kaleb Cooper. All rights reserved.
 //
 import Foundation
-
 import FirebaseDatabase
 
 class PictureData {

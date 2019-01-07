@@ -14,7 +14,8 @@ import CoreLocation
 import FCAlertView
 import Pageboy
 
-class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFieldDelegate {
+// remove PageboyViewControllerDelegate
+class ImageCreateVC: UIViewController, UITextFieldDelegate {
     
     var image: UIImage?
     var lat: Double?
@@ -184,14 +185,5 @@ class ImageCreateVC: UIViewController, PageboyViewControllerDelegate, UITextFiel
         return true
     }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }
