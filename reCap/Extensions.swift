@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import FCAlertView
-
+import CoreLocation
 
 extension Double
 {
@@ -188,4 +188,33 @@ struct AppUtility {
         UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
     }
     
+}
+
+extension CLLocation {
+    /// Checks to see if a certain image is in range of the current photo
+    ///
+    /// - Parameters:
+    ///   - range: The range in miles
+    ///   - picture: The picture to check if in range
+    func isIn(range: Double, of picture: CLLocation) -> Bool {
+        let rangeInMiles = Measurement(value: range, unit: UnitLength.miles)
+        let rangeInMeters = rangeInMiles.converted(to: UnitLength.meters).value
+        
+        let distanceInMeters = self.distance(from: picture)
+        
+        if distanceInMeters <= rangeInMeters {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+extension BinaryInteger {
+    var degreesToRadians: CGFloat { return CGFloat(Int(self)) * .pi / 180 }
+}
+
+extension FloatingPoint {
+    var degreesToRadians: Self { return self * .pi / 180 }
+    var radiansToDegrees: Self { return self * 180 / .pi }
 }

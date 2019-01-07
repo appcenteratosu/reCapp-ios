@@ -55,9 +55,6 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        self.realm = try! Realm()
-//        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
-        
         self.userData = DataManager.currentAppUser
         
         friendsList = []

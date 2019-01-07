@@ -52,10 +52,15 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     let darkColor = UIColor(red: 48/255, green: 48/255, blue: 48/255, alpha: 1.0)
     
+    
+    var viewModel: MapViewModel!
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.user = DataManager.currentAppUser
+        
         user.getActiveChallenge { (picture) in
             if let challenge = picture {
                 self.activeChallengePicData = challenge
@@ -93,7 +98,6 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
             if self.hasUpdatedchallenge {
                 self.hasUpdatedchallenge = false
             }
-            
         }
     }
     
@@ -124,6 +128,10 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         mapView.showsUserLocation = true
         mapView.compassView.isHidden = true
+        
+        self.viewModel = MapViewModel(map: mapView,
+                                      userLocation: CLLocation(latitude: CLLocationDegrees(exactly: user.latitude)!,
+                                                               longitude: CLLocationDegrees(exactly: user.longitude)!))
         
         if Bool.checkIfTimeIs(between: 0, and: 7) == true || Bool.checkIfTimeIs(between: 18, and: 23) == true {
             mapView.styleURL = MGLStyle.darkStyleURL(withVersion: 9)
@@ -322,7 +330,8 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         
         // Assign a reuse identifier to be used by both of the annotation views, taking advantage of their similarities.
-        let reuseIdentifier = "\(annotation.coordinate.longitude)"
+//        let reuseIdentifier = "\(annotation.coordinate.longitude)"
+        let reuseIdentifier = "reuse"
         
         // For better performance, always try to reuse existing annotations.
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
@@ -457,12 +466,21 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                 
                 self.user.update(values: [.activeChallenge: "",
                                           .activeChallengePoints: 0])
-                self.user.getActiveChallenge(updated: true, completion: { (picture) in
-                    
-                })
-                self.setupMap()
-                self.centerButton.isHidden = true
                 
+                self.user.getActiveChallenge(updated: true) { (challenge) in
+                    if let challenge = challenge {
+                        self.centerButton.isHidden = false
+                    } else {
+                        self.centerButton.isHidden = true
+                    }
+                    
+                    self.setupCamera()
+                    self.setupPictures()
+                    
+                    if self.hasUpdatedchallenge {
+                        self.hasUpdatedchallenge = false
+                    }
+                }
             }))
         } else {
             title = "Set as Active Challenge"
@@ -474,6 +492,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                 FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true, compltion: { (picture) in
                     if let pic = picture {
                         self.addChallengeToUser(pictureData: pic)
+                        self.setupPictures()
                         self.centerButton.isHidden = false
                     }
                 })

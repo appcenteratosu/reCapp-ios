@@ -34,6 +34,8 @@
 		73553B772190E56000D1F3E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73553B762190E56000D1F3E1 /* GoogleService-Info.plist */; };
 		7386257221B886240036930F /* RCPictureChallengeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7386257121B886240036930F /* RCPictureChallengeProtocol.swift */; };
 		7386257421B8B2F30036930F /* CustomUserLocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */; };
+		73B3C0A121DD60C600874015 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B3C0A021DD60C600874015 /* MapViewModel.swift */; };
+		73B3C0A321DDB3FF00874015 /* MapNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B3C0A221DDB3FF00874015 /* MapNetworkService.swift */; };
 		73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */; };
 		73E382A221B5E36B00A00F66 /* ProfileImageCacherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */; };
 		7A120DC3203E6BBB0003EE1F /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A120DC2203E6BBB0003EE1F /* Profile.storyboard */; };
@@ -143,6 +145,8 @@
 		73553B762190E56000D1F3E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7386257121B886240036930F /* RCPictureChallengeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCPictureChallengeProtocol.swift; sourceTree = "<group>"; };
 		7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUserLocationAnnotationView.swift; sourceTree = "<group>"; };
+		73B3C0A021DD60C600874015 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		73B3C0A221DDB3FF00874015 /* MapNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapNetworkService.swift; sourceTree = "<group>"; };
 		73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacher.swift; sourceTree = "<group>"; };
 		73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacherTests.swift; sourceTree = "<group>"; };
 		74603023074B9DA2002A640E /* Pods_reCapTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCapTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -324,6 +328,7 @@
 				7A4D8A432027801E0043878E /* NavigationVC.swift */,
 				7A3C60122027BAE200ABC9E1 /* MapContainerVC.swift */,
 				7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */,
+				73B3C09F21DD60AE00874015 /* Map View Model */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -390,6 +395,15 @@
 				730657BA219F858300DB3B2F /* AppManager.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		73B3C09F21DD60AE00874015 /* Map View Model */ = {
+			isa = PBXGroup;
+			children = (
+				73B3C0A021DD60C600874015 /* MapViewModel.swift */,
+				73B3C0A221DDB3FF00874015 /* MapNetworkService.swift */,
+			);
+			path = "Map View Model";
 			sourceTree = "<group>";
 		};
 		7A16B8C2209B9BA40058BC16 /* Profile menu */ = {
@@ -769,6 +783,8 @@
 				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
 				"${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework",
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkyFloatingLabelTextField/SkyFloatingLabelTextField.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
@@ -798,6 +814,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pageboy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkyFloatingLabelTextField.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
@@ -842,6 +860,7 @@
 				7A3C553E207B1082009A8036 /* PictureData.swift in Sources */,
 				7AF3594A2038CDE500713EA3 /* SettingsVC.swift in Sources */,
 				7A5358A4205ADF150047F410 /* AppLoadingVC.swift in Sources */,
+				73B3C0A121DD60C600874015 /* MapViewModel.swift in Sources */,
 				7AE3756C2037C8E100CA9946 /* LeaderboardFriendsTableCell.swift in Sources */,
 				730657BB219F858300DB3B2F /* AppManager.swift in Sources */,
 				7AF10F572058DA7D00019C70 /* SnappingCollectionViewLayout.swift in Sources */,
@@ -864,6 +883,7 @@
 				7A5358AC205B6EE10047F410 /* CustomPage.swift in Sources */,
 				344C93EA20226E280025E4C5 /* AppDelegate.swift in Sources */,
 				734840FB219A6E7D0065E472 /* DataManager.swift in Sources */,
+				73B3C0A321DDB3FF00874015 /* MapNetworkService.swift in Sources */,
 				73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */,
 				7A120DD32041F7A70003EE1F /* PhotoVC.swift in Sources */,
 			);
@@ -1031,11 +1051,12 @@
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1050,11 +1071,12 @@
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

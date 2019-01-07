@@ -85,6 +85,10 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.hasUpdateUserLocation = false
+        for request in CameraContainerVC.requests {
+            request.stop()
+        }
+        Locator.completeAllLocationRequests()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -362,7 +366,9 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         let request = Locator.subscribePosition(accuracy: .room, onUpdate: { (location) -> (Void) in
             let lat = location.coordinate.latitude.truncate(places: 6)
             let long = location.coordinate.longitude.truncate(places: 6)
-            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+//            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+            DataManager.currentAppUser.latitude = lat
+            DataManager.currentAppUser.longitude = long
             
             let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
             self.locationOutlet.text = gpsString

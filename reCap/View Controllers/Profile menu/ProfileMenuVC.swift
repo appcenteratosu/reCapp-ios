@@ -45,15 +45,11 @@ class ProfileMenuVC: UIViewController {
             setupBlurEffect(image: img)
         }
         AppUtility.lockOrientation(.portrait)
-        // Do any additional setup after loading the view.
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-//        let realm = try! Realm()
-//        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
-//        if self.userData != nil {
-//            setupOutlets()
-//        }
+    override func viewWillAppear(_ animated: Bool) {
+        self.userData = DataManager.currentAppUser
+        setupOutlets()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

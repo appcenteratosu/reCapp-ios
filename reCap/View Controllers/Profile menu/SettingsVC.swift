@@ -32,9 +32,7 @@ class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegat
         // Uncomment the following line to preserve selection between presentations
         self.clearsSelectionOnViewWillAppear = false
         
-        FirebaseHandler.getUserData { (userData) in
-            self.userData = userData
-        }
+        self.userData = DataManager.currentAppUser
         
     }
 
@@ -93,11 +91,20 @@ class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegat
             alert.bounceAnimations = true
             alert.addTextField(withPlaceholder: "Enter Name") { (name) in
                 if name != "" {
-                    FCAlertView.displayAlert(title: "Changing...", message: "Your name is being changed...", buttonTitle: "Dismiss", type: "progress", view: self)
-//                    try! self.realm.write {
-//                        self.userData?.name = name ?? ""
-//                        self.tableView.reloadData()
-//                    }
+                    FCAlertView.displayAlert(title: "Changing...",
+                                             message: "Your name is being changed...",
+                                             buttonTitle: "Dismiss",
+                                             type: "progress",
+                                             view: self)
+                    
+                    guard let name = name else {
+                        FCAlertView.displayAlert(title: "Oops!", message: "Please make sure to type a name", buttonTitle: "Got It!", type: "warning", view: self)
+                        return
+                    }
+                    
+                    DataManager.currentAppUser.update(values: [RCUser.Properties.name : name])
+                    self.userData = DataManager.currentAppUser
+                    self.tableView.reloadData()
                 }
                 else {
                     FCAlertView.displayAlert(title: "Oops!", message: "Please make sure to type a name", buttonTitle: "Got It!", type: "warning", view: self)

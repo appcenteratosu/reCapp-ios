@@ -30,7 +30,6 @@ class RCPicture: Codable {
     var groupID: String
     var info: String
     
-    
     init() {
         id = ""
         name = ""
@@ -90,6 +89,26 @@ class RCPicture: Codable {
                 self.info = info
             }
         }
+    }
+    
+    
+    func convertToRealm() {
+        let realmImage = PictureData()
+        realmImage.id = self.id
+        realmImage.name = self.id
+        realmImage.latitude = self.latitude
+        realmImage.longitude = self.longitude
+        realmImage.bearing = self.bearing
+        realmImage.orientation = self.orientation
+        realmImage.time = self.time
+        realmImage.owner = self.owner
+        realmImage.locationName = self.locationName
+        realmImage.isRootPicture = self.isRoot
+        realmImage.isMostRecentPicture = self.isMostRecent
+        realmImage.groupID = self.groupID
+        realmImage.info = self.info
+        
+        
     }
     
 }

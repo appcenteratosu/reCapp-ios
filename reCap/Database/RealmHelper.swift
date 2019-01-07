@@ -7,10 +7,13 @@
 //
 
 import Foundation
+import RealmSwift
 
 //
 //
 public class RealmHelper {
+    
+//    static let realm = try! Realm()
 //
 //    
 //    //-------------------------------------------------------------------------------------------------------------------------

@@ -184,6 +184,17 @@ class RCUser: Codable {
             case .longitude:
                 data["longitude"] = item.value
                 longitude = item.value as! Double
+            case .name:
+                name = item.value as! String
+                data["name"] = item.value
+                let req = DataManager.currentFBUser.createProfileChangeRequest()
+                req.displayName = name
+                req.commitChanges { (error) in
+                    guard error == nil else {
+                        Log.s("Name could not be changed: \(error!.localizedDescription)")
+                        return
+                    }
+                }
             default:
                 break
             }
@@ -215,4 +226,6 @@ class RCUser: Codable {
         case pictures
     }
 
+    
+    
 }
