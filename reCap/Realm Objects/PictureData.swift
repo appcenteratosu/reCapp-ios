@@ -15,8 +15,9 @@
 //
 import Foundation
 import FirebaseDatabase
+import RealmSwift
 
-class PictureData {
+class PictureData: Object {
     
     // MARK: - Constants
     static let ORIENTATION_PORTRAIT = 0
@@ -38,6 +39,13 @@ class PictureData {
     @objc dynamic var isRootPicture = true
     @objc dynamic var isMostRecentPicture = true
     @objc dynamic var groupID: String!
+    @objc dynamic var image: Data? = nil
+    
+    @objc dynamic var test: Bool = false
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
     
     // MARK: - Initializers
     convenience required init(name: String!, info: String, owner: RCUser, latitude: Double, longitude: Double, bearing: Double, orientation: Int, time: Int, locationName: String, id: String, isRootPicture: Bool, groupID: String, isMostRecentPicture: Bool) {
@@ -102,15 +110,25 @@ class PictureData {
         }
     }
     
-    /*
-     Returns an id for picture data
-     */
-//    class func createPictureDataID(userData: UserData) -> String {
-//        var id = UUID().uuidString
-//        id = id + userData.id
-//        id = id.replacingOccurrences(of: "-", with: "")
-//        return id
-//    }
+    func convertToRCPicture() -> RCPicture {
+        let picture = RCPicture()
+        picture.name = self.name
+        picture.info = self.info
+        picture.id = self.id
+        picture.latitude = self.latitude
+        picture.longitude = self.longitude
+        picture.bearing = self.bearing
+        picture.orientation = self.orientation
+        picture.owner = self.owner
+        picture.time = self.time
+        picture.locationName = self.locationName
+        picture.isRoot = self.isRootPicture
+        picture.isMostRecent = self.isMostRecentPicture
+        picture.groupID = self.groupID
+        picture.image = self.image
+        
+        return picture
+    }
     
 }
 

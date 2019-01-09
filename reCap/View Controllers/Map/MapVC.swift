@@ -58,22 +58,24 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.user = DataManager.currentAppUser
         
-        user.getActiveChallenge { (picture) in
-            if let challenge = picture {
-                self.activeChallengePicData = challenge
-                self.setupMap()
-                let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
-                DispatchQueue.main.asyncAfter(deadline: when) {
-                    self.setupCamera()
-                }
+        // 1. Check for cached data OR Get all data and cache it
+        RealmHelper.getCachedPhotoData { (error, cachedData) in
+            if error != nil {
+                Log.e(error!.localizedDescription)
+                // No cached Data
+                FirebaseHandler.getAllPictureData(onlyRecent: true, completion: { (pictureData) in
+                    for picture in pictureData {
+                        picture.convertToRealm()
+                    }
+                    
+                    self.completeSetup(data: pictureData)
+                })
             } else {
-                self.setupMap()
-                let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
-                DispatchQueue.main.asyncAfter(deadline: when) {
-                    self.setupCamera()
+                if let data = cachedData {
+                    completeSetup(data: data)
                 }
             }
         }
@@ -107,6 +109,48 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     }
     
     // MARK: - Setup
+    
+    func completeSetup(data: [RCPicture]) {
+        if self.pins.count > 0 {
+            self.mapView.removeAnnotations(self.pins)
+            self.pins.removeAll()
+        }
+        
+        // 2. Set MapView DataSource
+        if data.count > 0 {
+            for picture in data {
+                
+                let pin = MGLPointAnnotation()
+                pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
+                pin.title = picture.name
+                pin.subtitle = picture.locationName
+                
+                self.pictureIDArray.append(picture.id)
+                self.pictureDataArray.append(picture)
+                
+                self.pins.append(pin)
+            }
+            
+            // 3. Check if user has active challenge - Update as needed
+            user.getActiveChallenge { (picture) in
+                if let challenge = picture {
+                    self.activeChallengePicData = challenge
+                    self.setupMap()
+                    let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        self.setupCamera()
+                    }
+                } else {
+                    self.setupMap()
+                    let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        self.setupCamera()
+                    }
+                }
+            }
+        }
+    }
+    
     func setupCamera() {
         
         let user = self.mapView.userLocation?.coordinate
@@ -150,39 +194,37 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         view.bringSubview(toFront: centerButton)
         
         setupPictures()
+        self.setupPins()
     }
     
     func setupPictures() {
         
-        //Need to grab all user submitted images, grab their GPS locations and store as a Dictionary Array. Then put pins down.
-        //For now, just grab current users images for pins.
-        
         locations = []
         locationDictionary = [:]
         
-        if self.pins.count > 0 {
-            self.mapView.removeAnnotations(self.pins)
-            self.pins.removeAll()
-        }
-        
-        FirebaseHandler.getAllPictureData(onlyRecent: true) { (pictures) in
-            if pictures.count > 0 {
-                for picture in pictures {
-                    
-                    let pin = MGLPointAnnotation()
-                    pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
-                    pin.title = picture.name
-                    pin.subtitle = picture.locationName
-                    
-                    self.pictureIDArray.append(picture.id)
-                    self.pictureDataArray.append(picture)
-                    
-                    self.pins.append(pin)
-                }
-                
-                self.setupPins()
-            }
-        }
+//        if self.pins.count > 0 {
+//            self.mapView.removeAnnotations(self.pins)
+//            self.pins.removeAll()
+//        }
+//        
+//        FirebaseHandler.getAllPictureData(onlyRecent: true) { (pictures) in
+//            if pictures.count > 0 {
+//                for picture in pictures {
+//
+//                    let pin = MGLPointAnnotation()
+//                    pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
+//                    pin.title = picture.name
+//                    pin.subtitle = picture.locationName
+//
+//                    self.pictureIDArray.append(picture.id)
+//                    self.pictureDataArray.append(picture)
+//
+//                    self.pins.append(pin)
+//                }
+//
+//                self.setupPins()
+//            }
+//        }
         
         
     }
@@ -618,7 +660,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         if segueID == "ChallengeViewSegue" {
             let nav = segue.destination as! UINavigationController
             let destination = nav.topViewController as! PhotoTimelineVC
-            
+            #error("Data not actually being passed here.")
             //let destination = segue.destination as! ChallengeViewVC
             if let pictureData = pictureDataToPass {
                 let picture = imageToPass

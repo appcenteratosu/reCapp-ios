@@ -218,3 +218,24 @@ extension FloatingPoint {
     var degreesToRadians: Self { return self * .pi / 180 }
     var radiansToDegrees: Self { return self * 180 / .pi }
 }
+
+
+extension UIImage {
+    func convertToData() -> Data? {
+        if let data = UIImagePNGRepresentation(self) {
+            return data
+        } else {
+            return nil
+        }
+    }
+}
+
+extension Data {
+    func convertToUIImage() -> UIImage? {
+        if let image = UIImage(data: self) {
+            return image
+        } else {
+            return nil
+        }
+    }
+}

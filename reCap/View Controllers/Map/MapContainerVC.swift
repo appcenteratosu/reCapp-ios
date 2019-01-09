@@ -20,9 +20,6 @@ class MapContainerVC: UIViewController {
         super.viewDidLoad()
         print("Map container loaded")
         self.userData = DataManager.currentAppUser
-//        let realm = try! Realm()
-//        self.userData = realm.object(ofType: UserData.self, forPrimaryKey: SyncUser.current?.identity)
-        // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -98,6 +98,11 @@ PODS:
   - nanopb/encode (0.3.901)
   - Pageboy (3.0.1)
   - Polyline (4.2.0)
+  - Realm (3.13.1):
+    - Realm/Headers (= 3.13.1)
+  - Realm/Headers (3.13.1)
+  - RealmSwift (3.13.1):
+    - Realm (= 3.13.1)
   - SkyFloatingLabelTextField (3.6.0)
   - Solar (2.1.0)
   - SwiftLocation (3.2.3):
@@ -119,6 +124,7 @@ DEPENDENCIES:
   - MapboxGeocoder.swift
   - MapboxNavigation
   - Pageboy
+  - RealmSwift
   - SkyFloatingLabelTextField
   - SwiftLocation
   - SwiftyOnboard
@@ -152,6 +158,8 @@ SPEC REPOS:
     - nanopb
     - Pageboy
     - Polyline
+    - Realm
+    - RealmSwift
     - SkyFloatingLabelTextField
     - Solar
     - SwiftLocation
@@ -187,6 +195,8 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Pageboy: ec0170fd880ea6fa3589219edfd64b554443ff6e
   Polyline: 3d69f75bb136357e27291d439d0436c6ebda57a4
+  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
+  RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
   SkyFloatingLabelTextField: 38164979b79512f9ff9288ad8acfc4bbf5d843e3
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
   SwiftLocation: a3c3bc2023118171ef3572188a31def94aa0892c
@@ -194,6 +204,6 @@ SPEC CHECKSUMS:
   SwiftyOnboard: de60e90c2af23dd61b01ec0c6a8d0be3370f857b
   Turf: c6bdf62d6a70c647874f295dd1cf4eefc0c3e9e6
 
-PODFILE CHECKSUM: 3b2e249b07d26ab1973de3b29ce28415da1d1ef8
+PODFILE CHECKSUM: 457f4ce8e86d52cab4386c54f105750294f1a802
 
 COCOAPODS: 1.5.3

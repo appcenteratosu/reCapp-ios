@@ -29,6 +29,7 @@ class RCPicture: Codable {
     var isMostRecent: Bool
     var groupID: String
     var info: String
+    var image: Data?
     
     init() {
         id = ""
@@ -91,11 +92,10 @@ class RCPicture: Codable {
         }
     }
     
-    
-    func convertToRealm() {
+    func convertToRealm(with image: UIImage? = nil) {
         let realmImage = PictureData()
         realmImage.id = self.id
-        realmImage.name = self.id
+        realmImage.name = self.name
         realmImage.latitude = self.latitude
         realmImage.longitude = self.longitude
         realmImage.bearing = self.bearing
@@ -108,7 +108,21 @@ class RCPicture: Codable {
         realmImage.groupID = self.groupID
         realmImage.info = self.info
         
+        if let image = image {
+            let data = UIImagePNGRepresentation(image)
+            realmImage.image = data
+        }
         
+        guard let realm = RealmHelper.realm else { return }
+        
+        try! realm.write {
+            realm.add(realmImage, update: true)
+        }
     }
     
+    func fetchPhoto(completion: (UIImage)->()) {
+        FirebaseHandler.downloadPicture(pictureData: self) { (image) in
+            self.image = image?.convertToData()
+        }
+    }
 }

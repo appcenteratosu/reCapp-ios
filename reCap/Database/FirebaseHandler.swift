@@ -215,7 +215,7 @@ class FirebaseHandler {
     static func getAllPictureData(onlyRecent: Bool, completion: @escaping ([RCPicture])->()) {
         if onlyRecent == true {
             let ref = database.child("PictureData")
-            ref.queryOrdered(byChild: "isMostRecentPicture").queryEqual(toValue: true).observeSingleEvent(of: .value) { (snap) in
+            ref.observeSingleEvent(of: .value) { (snap) in
                 var pictures: [RCPicture] = []
                 if let objects = snap.children.allObjects as? [DataSnapshot] {
                     for object in objects {
@@ -237,6 +237,28 @@ class FirebaseHandler {
                     
                     completion(pictures)
                 }
+            }
+        }
+    }
+    
+    static func getAllNewPhotos(newerThan time: Int, completion: @escaping ([RCPicture])->()) {
+        let start = Double(time) + 0.1
+        let now = Date().timeIntervalSince1970
+        let buffer = 60.0 * 10.0
+        let ref = database.child("PictureData")
+        ref.queryOrdered(byChild: "time").queryStarting(atValue: start).queryEnding(atValue: now + buffer).observeSingleEvent(of: .value) { (snapshot) in
+            if let data = snapshot.children.allObjects as? [DataSnapshot] {
+                var pictures: [RCPicture] = []
+                
+                for item in data {
+                    let picture = RCPicture(snapshot: item)
+                    pictures.append(picture)
+                }
+                
+                completion(pictures)
+                
+            } else {
+                Log.e("Can't get data from snapshot")
             }
         }
     }

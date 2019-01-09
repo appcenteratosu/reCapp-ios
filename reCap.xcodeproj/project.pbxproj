@@ -36,6 +36,7 @@
 		7386257421B8B2F30036930F /* CustomUserLocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */; };
 		73B3C0A121DD60C600874015 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B3C0A021DD60C600874015 /* MapViewModel.swift */; };
 		73B3C0A321DDB3FF00874015 /* MapNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B3C0A221DDB3FF00874015 /* MapNetworkService.swift */; };
+		73BBA7BD21E695D30059361A /* MapPopulationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BBA7BC21E695D30059361A /* MapPopulationManager.swift */; };
 		73E3829F21B5DD8D00A00F66 /* ProfileImageCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */; };
 		73E382A221B5E36B00A00F66 /* ProfileImageCacherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */; };
 		7A120DC3203E6BBB0003EE1F /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A120DC2203E6BBB0003EE1F /* Profile.storyboard */; };
@@ -147,6 +148,7 @@
 		7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUserLocationAnnotationView.swift; sourceTree = "<group>"; };
 		73B3C0A021DD60C600874015 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		73B3C0A221DDB3FF00874015 /* MapNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapNetworkService.swift; sourceTree = "<group>"; };
+		73BBA7BC21E695D30059361A /* MapPopulationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPopulationManager.swift; sourceTree = "<group>"; };
 		73E3829E21B5DD8D00A00F66 /* ProfileImageCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacher.swift; sourceTree = "<group>"; };
 		73E382A021B5E12500A00F66 /* ProfileImageCacherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCacherTests.swift; sourceTree = "<group>"; };
 		74603023074B9DA2002A640E /* Pods_reCapTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCapTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,7 +273,7 @@
 		344C93E820226E280025E4C5 /* reCap */ = {
 			isa = PBXGroup;
 			children = (
-				7A3B468B202AB3FC001D19B6 /* EdgeShadowLayer.swift */,
+				344C93E920226E280025E4C5 /* AppDelegate.swift */,
 				7AE3755D2037C51D00CA9946 /* Custom Fonts */,
 				7A5878462030D22600F36A56 /* Extensions.swift */,
 				730657B5219F76AE00DB3B2F /* Models */,
@@ -279,7 +281,6 @@
 				7A4D8A50202782480043878E /* Database */,
 				34A7ACA62027878E00ACFB12 /* Storyboards */,
 				7A4D8A3820277DFF0043878E /* View Controllers */,
-				344C93E920226E280025E4C5 /* AppDelegate.swift */,
 				344C93F320226E280025E4C5 /* Assets.xcassets */,
 				344C93F820226E280025E4C5 /* Info.plist */,
 				73553B762190E56000D1F3E1 /* GoogleService-Info.plist */,
@@ -325,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				7A5358AF205B77DE0047F410 /* MapVC.swift */,
+				73BBA7BC21E695D30059361A /* MapPopulationManager.swift */,
 				7A4D8A432027801E0043878E /* NavigationVC.swift */,
 				7A3C60122027BAE200ABC9E1 /* MapContainerVC.swift */,
 				7386257321B8B2F30036930F /* CustomUserLocationAnnotationView.swift */,
@@ -506,6 +508,7 @@
 		7AE3755D2037C51D00CA9946 /* Custom Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				7A3B468B202AB3FC001D19B6 /* EdgeShadowLayer.swift */,
 				7A5878492030D25900F36A56 /* triomphe-bold-autoinstr.ttf */,
 				7A58784D2030D25900F36A56 /* triomphe-bold-italic-autoinstr.ttf */,
 				7A58784B2030D25900F36A56 /* triomphe-italic-autoinstr.ttf */,
@@ -783,6 +786,8 @@
 				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
 				"${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework",
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkyFloatingLabelTextField/SkyFloatingLabelTextField.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
@@ -812,6 +817,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pageboy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkyFloatingLabelTextField.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
@@ -838,6 +845,7 @@
 				7A120DD12041F4B50003EE1F /* ImageButtonDelegate.swift in Sources */,
 				7A3C5538207AFDDD009A8036 /* HorizontalDial.swift in Sources */,
 				7386257421B8B2F30036930F /* CustomUserLocationAnnotationView.swift in Sources */,
+				73BBA7BD21E695D30059361A /* MapPopulationManager.swift in Sources */,
 				345FB83920363BE300C59FDB /* SignInVC.swift in Sources */,
 				7A5358B0205B77DE0047F410 /* MapVC.swift in Sources */,
 				347B20FE2058C935001B72A0 /* PhotoTimelineVC.swift in Sources */,

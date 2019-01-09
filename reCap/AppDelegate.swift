@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 import SwiftLocation
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,20 +22,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         //Firebase initialization
         FirebaseApp.configure()
-        //Database.database().isPersistenceEnabled = true
         UIApplication.shared.statusBarStyle = .lightContent
         
+        // Set the new schema version. This must be greater than the previously used
+        // version (if you've never set a schema version before, the version is 0).
+        let schemaVersion: UInt64 = 4
+        
+        // Set the block which will be called automatically when opening a Realm with
+        // a schema version lower than the one set above
+        let config = Realm.Configuration(
+            schemaVersion: schemaVersion,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < schemaVersion) {
+                    Log.s("Outdated schema version detected.")
+                    Log.s("Updating Realm Schema version to v\(schemaVersion)")
+                    MapPopulationManager.shouldWaitForAppDelegate()
+                }
+        })
+        
+        // Tell Realm to use this new configuration object for the default Realm
+        Realm.Configuration.defaultConfiguration = config
+        completeSetup()
+        
+        return true
+    }
+    
+    private func completeSetup() {
         if let user = Auth.auth().currentUser {
             FirebaseHandler.getUserData { (userData) in
                 DataManager.currentFBUser = user
                 DataManager.currentAppUser = userData
                 AppManager.user = userData
+                MapPopulationManager.initializeMapDataSource()
                 self.setRootAsPageView()
             }
         } else {
             setRootAsSignIn()
         }
-        return true
     }
     
     private func setRootAsPageView() {
