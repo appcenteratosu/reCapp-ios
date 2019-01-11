@@ -442,19 +442,29 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         let lat = annotation.coordinate.latitude
         let long = annotation.coordinate.longitude
         Log.d("Starting data grab for callout")
-        getImage(lat: lat, long: long) { (imageView) -> (UIView?) in
-            if let image = imageView {
-                return image
+        if let photo = RealmHelper.getPhotoFor(lat: lat, lon: long) {
+            if let imageData = photo.image {
+                if let image = imageData.convertToUIImage() {
+                    let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+                    imageView.contentMode = .scaleAspectFit
+                    imageView.image = image
+                    return imageView
+                } else {
+                    Log.e("Could not convert data to image")
+                    return nil
+                }
             } else {
+                Log.d("No data for image exists. Should fetch image data")
                 return nil
             }
+        } else {
+            return nil
         }
-        return nil
     }
     
     func getImage(lat: Double, long: Double, completion: @escaping (UIImageView?)->(UIView?)) {
         FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true) { (picture) in
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 50))
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 100))
             if let picture = picture {
                 FirebaseHandler.downloadPicture(pictureData: picture, completion: { (image) in
                     if let realImage = image {
@@ -548,9 +558,14 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     func mapView(_ mapView: MGLMapView, tapOnCalloutFor annotation: MGLAnnotation) {
         print("Tapped on image")
-        //Present user to full screen image
-        self.performSegue(withIdentifier: "ChallengeViewSegue", sender: self)
         
+        let photo = RealmHelper.getPhotoFor(lat: annotation.coordinate.latitude, lon: annotation.coordinate.longitude)
+        guard photo != nil else {
+            Log.s("Photo did not exists for coords")
+            return
+        }
+        
+        self.performSegue(withIdentifier: "ChallengeViewSegue", sender: photo)
     }
     
     func calculateRoute(from origin: CLLocationCoordinate2D,
@@ -660,14 +675,21 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         if segueID == "ChallengeViewSegue" {
             let nav = segue.destination as! UINavigationController
             let destination = nav.topViewController as! PhotoTimelineVC
-            #error("Data not actually being passed here.")
-            //let destination = segue.destination as! ChallengeViewVC
-            if let pictureData = pictureDataToPass {
-                let picture = imageToPass
-                destination.pictureData = pictureData
-                destination.image = picture
-                print("Segue Done")
+            
+            if let photo = sender as? RCPicture {
+                destination.pictureData = photo
+                destination.image = photo.image?.convertToUIImage()
+            } else {
+                Log.s("Could not get photo from segue sender")
             }
+            
+//            //let destination = segue.destination as! ChallengeViewVC
+//            if let pictureData = pictureDataToPass {
+//                let picture = imageToPass
+//                destination.pictureData = pictureData
+//                destination.image = picture
+//                print("Segue Done")
+//            }
         }
     }
     

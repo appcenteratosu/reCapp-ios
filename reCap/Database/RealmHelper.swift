@@ -37,6 +37,30 @@ public class RealmHelper {
         }
     }
     
+    static func getPhotoFor(lat: Double, lon: Double) -> RCPicture? {
+        guard let realm = realm else { return nil }
+        if let photo = realm.objects(PictureData.self).filter("latitude == \(lat) AND longitude == \(lon)").first {
+            let converted = photo.convertToRCPicture()
+            return converted
+        } else {
+            return nil
+        }
+    }
+    
+    static func getPhotos(in group: String) -> [RCPicture]? {
+        guard let realm = realm else { return nil }
+        let realmPhotos = realm.objects(PictureData.self).filter("groupID = '\(group)'").sorted(byKeyPath: "time", ascending: false)
+        if realmPhotos.count > 0 {
+            var photos = [RCPicture]()
+            for photo in realmPhotos {
+                let converted = photo.convertToRCPicture()
+                photos.append(converted)
+            }
+            return photos
+        } else {
+            return nil
+        }
+    }
     
 }
 

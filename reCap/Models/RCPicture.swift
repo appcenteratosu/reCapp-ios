@@ -92,7 +92,7 @@ class RCPicture: Codable {
         }
     }
     
-    func convertToRealm(with image: UIImage? = nil) {
+    func convertToRealm(with image: UIImage? = nil, dataImage: Data? = nil) {
         let realmImage = PictureData()
         realmImage.id = self.id
         realmImage.name = self.name
@@ -107,6 +107,7 @@ class RCPicture: Codable {
         realmImage.isMostRecentPicture = self.isMostRecent
         realmImage.groupID = self.groupID
         realmImage.info = self.info
+        realmImage.image = dataImage
         
         if let image = image {
             let data = UIImagePNGRepresentation(image)

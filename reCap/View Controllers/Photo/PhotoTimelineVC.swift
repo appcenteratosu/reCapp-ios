@@ -108,29 +108,27 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         self.collectionView.dataSource = self
         //self.pictureArray = []
         let groupID = pictureData!.groupID
-//        let realm = try! Realm()
-//        self.pictureArray = realm.objects(PictureData.self).filter("groupID = '\(groupID.description)'").sorted(byKeyPath: "time", ascending: false)
-        /*for data in results {
-            self.pictureArray.append(data)
-        }*/
-        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "groupID").queryEqual(toValue: groupID.description).observeSingleEvent(of: .value) { (snap) in
-            if let objects = snap.children.allObjects as? [DataSnapshot] {
-                var pictures: [RCPicture] = []
-                for object in objects {
-                    let pictureData = RCPicture(snapshot: object)
-                    pictures.append(pictureData)
-                }
-                
-                pictures.sort(by: { (p1, p2) -> Bool in
-                    return p1.time > p2.time
-                })
-                
-                self.pictureArray = pictures
-                
-                self.collectionView.reloadData()
-                self.setupUI(index: 0)
-            }
-        }
+        self.pictureArray = RealmHelper.getPhotos(in: groupID)
+        
+        self.collectionView.reloadData()
+        self.setupUI(index: 0)
+        
+//        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "groupID").queryEqual(toValue: groupID.description).observeSingleEvent(of: .value) { (snap) in
+//            if let objects = snap.children.allObjects as? [DataSnapshot] {
+//                var pictures: [RCPicture] = []
+//                for object in objects {
+//                    let pictureData = RCPicture(snapshot: object)
+//                    pictures.append(pictureData)
+//                }
+//
+//                pictures.sort(by: { (p1, p2) -> Bool in
+//                    return p1.time > p2.time
+//                })
+//
+//                self.pictureArray = pictures
+//
+//            }
+//        }
     }
     
     // MARK: - Collection View Methods
