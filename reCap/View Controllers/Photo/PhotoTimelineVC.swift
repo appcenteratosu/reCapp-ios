@@ -64,7 +64,6 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         setupCollectionView()
         applyBlurEffect(image: image)
         
-        
         self.navigationController?.toolbar.isHidden = false
         self.navigationController?.navigationBar.isHidden = true
     }
@@ -73,9 +72,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         self.navigationController?.setToolbarHidden(false, animated: true)
     }
     
-    
     func setupUI(index: Int) {
-        
         if let pictures = self.pictureArray {
             let coordinatesToPass = [pictures[index].latitude, pictures[index].longitude]
             locationOutlet.text = String.convertGPSCoordinatesToOutput(coordinates: coordinatesToPass)
@@ -88,9 +85,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             }
             titleOutlet.text = pictureArray?[index].name
             descriptionOutlet.text = pictureArray?[index].info
-            
         }
-        
     }
     
     func applyBlurEffect(image: UIImage){
@@ -100,7 +95,6 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         let resultImage = blurfilter?.value(forKey: "outputImage") as! CIImage
         let blurredImage = UIImage(ciImage: resultImage)
         self.imageBackground.image = blurredImage
-        
     }
     
     func setupCollectionView() {
@@ -112,23 +106,6 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         
         self.collectionView.reloadData()
         self.setupUI(index: 0)
-        
-//        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "groupID").queryEqual(toValue: groupID.description).observeSingleEvent(of: .value) { (snap) in
-//            if let objects = snap.children.allObjects as? [DataSnapshot] {
-//                var pictures: [RCPicture] = []
-//                for object in objects {
-//                    let pictureData = RCPicture(snapshot: object)
-//                    pictures.append(pictureData)
-//                }
-//
-//                pictures.sort(by: { (p1, p2) -> Bool in
-//                    return p1.time > p2.time
-//                })
-//
-//                self.pictureArray = pictures
-//
-//            }
-//        }
     }
     
     // MARK: - Collection View Methods
@@ -145,20 +122,9 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         let cellPictureData = pictureArray?[row]
         //print(cellPictureData)
         cell.pictureData = cellPictureData
-//        FBDatabase.getPicture(pictureData: cellPictureData!, with_progress: {(progress, total) in
-//            
-//        }, with_completion: {(image) in
-//            if let realImage = image {
-//                print("Got image in PhotoLibChal VC")
-//                cell.imageView.image = realImage
-//            }
-//            else {
-//                print("Did not get image in PhotoLibChal VC")
-//            }
-//        })
+        
         return cell
     }
-    
     
     
 //    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
@@ -189,7 +155,6 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             collectionView.scrollToItem(at: centerIndexPath, at: .centeredHorizontally, animated: true)
             setupUI(index: centerIndexPath.row)
         }
-        
     }
 
     // MARK: - ImageButton Methods

@@ -399,7 +399,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     
     var spinner: UIActivityIndicatorView?
     func setupSpinner() {
-        spinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinner = UIActivityIndicatorView(style: .whiteLarge)
         spinner?.center = self.view.center
         spinner?.hidesWhenStopped = true
         self.view.addSubview(spinner!)

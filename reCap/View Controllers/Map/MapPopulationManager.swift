@@ -65,4 +65,9 @@ class MapPopulationManager {
         }
         
     }
+    
+    public static func added(new photo: RCPicture) {
+        photo.convertToRealm()
+    }
+    
 }

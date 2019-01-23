@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import FCAlertView
 
 class FirebaseHandler {
     static var auth = Auth.auth()
@@ -22,6 +23,25 @@ class FirebaseHandler {
     
     public static var DatabaseHandles: [DatabaseHandle] = []
 
+    static func findAccount(for email: String, completion: @escaping (RCUser?, Bool?)->()) {
+        let ref = database.child(UserDataString)
+        let query = ref.queryOrdered(byChild: "email").queryEqual(toValue: email)
+        query.observeSingleEvent(of: .value) { (snapshot) in
+            guard let data = snapshot.children.allObjects as? [DataSnapshot] else {
+                completion(nil, false)
+                return
+            }
+            for item in data {
+                let user = RCUser(snapshot: item)
+                if user.email == email {
+                    completion(user, true)
+                } else {
+                    completion(nil, false)
+                }
+            }
+            
+        }
+    }
     
     static func createAccount(name: String, email: String, password: String, completion: @escaping (Error?, User?)->()) {
         auth.createUser(withEmail: email, password: password) { (result, error) in
@@ -64,15 +84,16 @@ class FirebaseHandler {
     
     static func createUserDataReference(userData user: RCUser, completion: @escaping (Error?)->()) {
         var data: [String: Any?] = ["name": user.name,
-                                   "points": user.points,
-                                   "pictures": nil,
-                                   "friends": nil,
-                                   "activeChallenge": nil,
-                                   "activeChallengePoints": 0,
-                                   "state": user.state,
-                                   "country": user.country,
-                                   "longitude": user.longitude,
-                                   "latitude": user.latitude]
+                                    "email": user.email,
+                                    "points": user.points,
+                                    "pictures": nil,
+                                    "friends": nil,
+                                    "activeChallenge": nil,
+                                    "activeChallengePoints": 0,
+                                    "state": user.state,
+                                    "country": user.country,
+                                    "longitude": user.longitude,
+                                    "latitude": user.latitude]
         
         database.child(UserDataString).child(user.id).setValue(data) { (error, ref) in
             completion(error)
@@ -81,7 +102,8 @@ class FirebaseHandler {
     
     static func storeProfilePicture(image: UIImage, userID uid: String, completion: @escaping (Error?)->()) {
         let reference  = storage.child(ProfilePictures).child(uid)
-        if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+        
+        if let imageData = image.jpegData(compressionQuality: 1.0) {
             let task = reference.putData(imageData, metadata: nil) { (meta, error) in
                 if error != nil {
                     completion(error)
@@ -92,18 +114,21 @@ class FirebaseHandler {
         }
     }
     
-    static func storeImage(image: UIImage, picture: RCPicture, whenDone: @escaping ()->()) {
-        let ref = storage.child("Pictures").child(picture.id)
-        if let data = UIImageJPEGRepresentation(image, 1.0) {
-            let task = ref.putData(data, metadata: nil) { (meta, error) in
-                if error != nil {
-                    Log.e(error!.localizedDescription)
-                } else {
-                    Log.i("No error")
-                    whenDone()
+    static func storeImage(image: UIImage, picture: RCPicture, view: UIViewController, whenDone: @escaping ()->()) {
+        FCAlertView.showProgressAlert(title: "Uploading Image", message: "Please Wait", view: view, blur: true, completion: { (alert) in
+            let ref = storage.child("Pictures").child(picture.id)
+            if let data = image.jpegData(compressionQuality: 1.0) {
+                let task = ref.putData(data, metadata: nil) { (meta, error) in
+                    alert.dismiss()
+                    if error != nil {
+                        Log.e(error!.localizedDescription)
+                    } else {
+                        Log.i("No error")
+                        whenDone()
+                    }
                 }
             }
-        }
+        })
     }
     
     static func deleteImage(picture: RCPicture) {

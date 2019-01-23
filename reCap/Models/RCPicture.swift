@@ -12,7 +12,8 @@ import FirebaseDatabase
 class RCPicture: Codable {
 
     static let ORIENTATION_PORTRAIT = 0
-    static let ORIENTATION_LANDSCAPE = 1
+    static let ORIENTATION_LANDSCAPE_LEFT = 1
+    static let ORIENTATION_LANDSCAPE_RIGHT = 2
     static let LONGITUDE_INDEX = 1
     static let LATTITUDE_INDEX = 0
 
@@ -21,7 +22,10 @@ class RCPicture: Codable {
     var latitude: Double
     var longitude: Double
     var bearing: Double
+    
+    /// Uses UIImage.Orientation
     var orientation: Int
+    
     var time: Int
     var owner: String
     var locationName: String
@@ -110,8 +114,9 @@ class RCPicture: Codable {
         realmImage.image = dataImage
         
         if let image = image {
-            let data = UIImagePNGRepresentation(image)
-            realmImage.image = data
+            if let data = image.pngData() {
+                realmImage.image = data
+            }
         }
         
         guard let realm = RealmHelper.realm else { return }

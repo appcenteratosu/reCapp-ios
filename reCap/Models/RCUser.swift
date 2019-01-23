@@ -204,11 +204,15 @@ class RCUser: Codable {
     }
     
     func add(friend: RCUser) {
+        self.friends.append(friend.id)
         FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(true)
     }
     
     func remove(friend: RCUser) {
-        FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(friend)
+        self.friends.removeAll { (id) -> Bool in
+            return id == friend.id
+        }
+        FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(nil)
     }
     
     enum Properties {

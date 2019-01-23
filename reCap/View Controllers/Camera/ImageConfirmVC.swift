@@ -19,11 +19,10 @@ class ImageConfirmVC: UIViewController {
     var isAtChallengeLocation: Bool!
     var previousPic: RCPicture!
     var userData: RCUser!
+    var orientation: UIImage.Orientation?
 
     @IBOutlet weak var imageView: UIImageView!
     @IBAction func cancelButton(_ sender: Any) {
-//        self.navigationController?.setToolbarHidden(true, animated: true)
-//        self.navigationController?.popViewController(animated: true)
         self.navigationController?.setToolbarHidden(true, animated: true)
         self.navigationController?.popToRootViewController(animated: true)
     }
@@ -38,7 +37,6 @@ class ImageConfirmVC: UIViewController {
         let duration: TimeInterval = TimeInterval(exactly: 1.0)!
         imageView.hero.modifiers = [.forceNonFade, .duration(duration)]
         self.navigationController?.toolbar.barStyle = .blackTranslucent
-        // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -83,6 +81,7 @@ class ImageConfirmVC: UIViewController {
             vc.long = self.longToPass
             vc.bearing = self.bearingToPass
             vc.location = self.locationToPass
+            vc.orientation = self.orientation
             //vc.user = self.user
             vc.userData = self.userData
             vc.previousPic = self.previousPic

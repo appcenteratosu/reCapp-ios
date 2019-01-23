@@ -51,11 +51,11 @@ class TutorialWelcomeVC: UIViewController {
     func setupGestures() {
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-        swipeRight.direction = UISwipeGestureRecognizerDirection.right
+        swipeRight.direction = .right
         self.view.addGestureRecognizer(swipeRight)
         
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-        swipeLeft.direction = UISwipeGestureRecognizerDirection.left
+        swipeLeft.direction = .left
         self.view.addGestureRecognizer(swipeLeft)
         
     }
@@ -63,15 +63,15 @@ class TutorialWelcomeVC: UIViewController {
     @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             switch swipeGesture.direction {
-            case UISwipeGestureRecognizerDirection.right:
+            case .right:
                 print("Swiped right")
                 self.performSegue(withIdentifier: "backward", sender: self)
-            case UISwipeGestureRecognizerDirection.down:
+            case .down:
                 print("Swiped down")
-            case UISwipeGestureRecognizerDirection.left:
+            case .left:
                 print("Swiped left")
                 self.performSegue(withIdentifier: "forward", sender: self)
-            case UISwipeGestureRecognizerDirection.up:
+            case .up:
                 print("Swiped up")
             default:
                 break

@@ -127,6 +127,32 @@ extension FCAlertView
                         andButtons: nil)
     }
     
+    static func showProgressAlert(title: String, message: String, view: UIViewController, blur: Bool = false, completion: (FCAlertView)->()) {
+        let alert = FCAlertView()
+        alert.dismissOnOutsideTouch = true
+        alert.darkTheme = true
+        alert.bounceAnimations = true
+        
+        if blur == true {
+            alert.blurBackground = true
+        }
+        
+        alert.makeAlertTypeProgress()
+        alert.blurBackground = true
+        
+        let titleString = title
+        let subtitleString = message
+        
+        alert.showAlert(inView: view,
+                        withTitle: titleString,
+                        withSubtitle: subtitleString,
+                        withCustomImage: nil,
+                        withDoneButtonTitle: "",
+                        andButtons: nil)
+        
+        completion(alert)
+        
+    }
     
 }
 
@@ -222,7 +248,7 @@ extension FloatingPoint {
 
 extension UIImage {
     func convertToData() -> Data? {
-        if let data = UIImagePNGRepresentation(self) {
+        if let data = self.pngData() {
             return data
         } else {
             return nil

@@ -43,22 +43,16 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     let locationManager = CLLocationManager()
     var destinationAngle: Double? = nil
     private var rcUser: RCUser!
-//    private var realm: Realm!
     private var hasUpdateUserLocation = false
-    
     var profileImage: UIImage?
-    
-    
     var session: AVCaptureSession?
     var stillImageOutput: AVCapturePhotoOutput?
     var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    
     var photoSetting = AVCapturePhotoSettings()
-    
     var captureDevice: AVCaptureDevice?
-    
+    var captureDeviceInput: AVCaptureDeviceInput?
     var previousImageView: UIImageView?
-    var previousImageContentMode: UIViewContentMode?
+    var previousImageContentMode: UIView.ContentMode?
     
     var motionManager = CMMotionManager()
     
@@ -80,6 +74,11 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         configureButton()
         setupGestures()
         setupDial()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.rcUser = DataManager.currentAppUser
+        self.setupActiveChallenge()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -110,21 +109,17 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         })
         
         if self.previousImageContentMode == .scaleToFill {
-            
             if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
                 
                 self.previousImageView?.frame = self.previewView.frame
                 self.previousImageView?.contentMode = .center
                 self.previousOutlet.isEnabled = false
                 
-            }
-            else {
+            } else {
                 self.previousImageView?.contentMode = .scaleToFill
                 self.previousOutlet.isEnabled = true
             }
-            
         }
-        
         
         let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
@@ -143,7 +138,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         } else {
             Log.d("Did not get user data")
         }
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        
+        DispatchQueue.main.async {
             if self.videoPreviewLayer != nil {
                 self.setupOrientation()
                 if self.session?.inputs.count == 0 {
@@ -274,7 +270,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     func setupGestures() {
         
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-        swipeDown.direction = UISwipeGestureRecognizerDirection.down
+        swipeDown.direction = .down
         self.view.addGestureRecognizer(swipeDown)
         
     }
@@ -296,8 +292,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         backCamera?.isSmoothAutoFocusEnabled = true
         backCamera?.whiteBalanceMode = .continuousAutoWhiteBalance
         backCamera?.unlockForConfiguration()
-        
-        
         
         var error: NSError?
         var input: AVCaptureDeviceInput?
@@ -330,11 +324,9 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                     
                     if UIDevice.current.orientation == .portrait {
                         videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
-                    }
-                    else if UIDevice.current.orientation == .landscapeLeft {
+                    } else if UIDevice.current.orientation == .landscapeLeft {
                         videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
-                    }
-                    else if UIDevice.current.orientation == .landscapeRight {
+                    } else if UIDevice.current.orientation == .landscapeRight {
                         videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeRight
                     }
                     
@@ -416,6 +408,102 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         CameraContainerVC.requests.append(request)
     }
     
+    enum CameraControllerError: Swift.Error {
+        case captureSessionAlreadyRunning
+        case captureSessionIsMissing
+        case inputsAreInvalid
+        case invalidOperation
+        case noCamerasAvailable
+        case unknown
+    }
+    
+    func prepare(completionHandler: @escaping (Error?) -> Void) {
+        func createCaptureSession() {
+            session = AVCaptureSession()
+        }
+        func configureCaptureDevices() throws {
+            let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
+                                                           mediaType: AVMediaType.video,
+                                                           position: .unspecified)
+            
+            let cameras = (session.devices.map { $0 })
+            
+            for camera in cameras {
+                if camera.position == .back {
+                    captureDevice = camera
+                    try camera.lockForConfiguration()
+                    camera.focusMode = .continuousAutoFocus
+                    camera.unlockForConfiguration()
+                }
+            }
+        }
+        func configureDeviceInputs() throws {
+            guard let captureSession = self.session else {
+                throw CameraControllerError.captureSessionIsMissing
+            }
+            
+            if let frontCamera = self.captureDevice {
+                self.captureDeviceInput = try AVCaptureDeviceInput(device: frontCamera)
+                
+                if captureSession.canAddInput(self.captureDeviceInput!) {
+                    captureSession.addInput(self.captureDeviceInput!)
+                } else {
+                    throw CameraControllerError.inputsAreInvalid
+                }
+            } else {
+                throw CameraControllerError.noCamerasAvailable
+            }
+        }
+        func configurePhotoOutput() throws {
+            guard let captureSession = self.session else {
+                throw CameraControllerError.captureSessionIsMissing
+            }
+            
+            self.stillImageOutput = AVCapturePhotoOutput()
+            let settings = [AVCapturePhotoSettings(format: [AVVideoCodecKey : AVVideoCodecJPEG])]
+            self.stillImageOutput!.setPreparedPhotoSettingsArray(settings, completionHandler: nil)
+            
+            if captureSession.canAddOutput(self.stillImageOutput!) {
+                captureSession.addOutput(self.stillImageOutput!)
+            }
+            
+            captureSession.startRunning()
+        }
+        
+        DispatchQueue(label: "prepare").async {
+            do {
+                createCaptureSession()
+                try configureCaptureDevices()
+                try configureDeviceInputs()
+                try configurePhotoOutput()
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(error)
+                }
+                
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completionHandler(nil)
+            }
+        }
+    }
+    
+    func displayPreview(on view: UIView) throws {
+        guard let captureSession = self.session, captureSession.isRunning else {
+            throw CameraControllerError.captureSessionIsMissing
+        }
+        
+        self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        self.videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        self.videoPreviewLayer?.connection?.videoOrientation = .portrait
+        
+        view.layer.insertSublayer(self.videoPreviewLayer!, at: 0)
+        self.videoPreviewLayer!.frame = view.frame
+    }
+    
+    
     // MARK: - Actions
     
     @IBAction func buttonPressed(_ sender: Any) {
@@ -441,7 +529,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         } else {
             self.stillImageOutput?.capturePhoto(with: self.photoSetting, delegate: self)
             
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
+            DispatchQueue.main.async {
                 
                 let inputs = self.session?.inputs
                 for oldInput:AVCaptureInput in inputs! {
@@ -456,7 +544,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                 self.session?.stopRunning()
                 self.locationManager.stopUpdatingHeading()
                 print("Camera Session Stopping")
-            
             }
         }
         
@@ -471,13 +558,16 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             self.previewView.addSubview(self.previousImageView!)
             
             if self.previousImageContentMode == .scaleToFill {
-//                if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .faceDown || UIDevice.current.orientation == .faceUp || UIDevice.current.orientation == .portraitUpsideDown {
-                    UIView.animate(withDuration: 0.25, animations: {
-                        self.previousImageView?.alpha = 0.8
-                        self.bearingOutlet.isHidden = true
-                        self.bearingPickerOutlet.isHidden = true
-                    })
-//                }
+                if UIDevice.current.orientation == .portrait ||
+                    UIDevice.current.orientation == .faceDown ||
+                    UIDevice.current.orientation == .faceUp ||
+                    UIDevice.current.orientation == .portraitUpsideDown {
+                        UIView.animate(withDuration: 0.25, animations: {
+                            self.previousImageView?.alpha = 0.8
+                            self.bearingOutlet.isHidden = true
+                            self.bearingPickerOutlet.isHidden = true
+                        })
+                }
             } else {
                 UIView.animate(withDuration: 0.25, animations: {
                     self.previousImageView?.alpha = 0.9
@@ -497,9 +587,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         })
         
         //self.previousImageView?.removeFromSuperview()
-        
-        
     }
+    
     @IBAction func previousUpOutside(_ sender: Any) {
         
         UIView.animate(withDuration: 0.25, animations: {
@@ -508,7 +597,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             self.bearingPickerOutlet.isHidden = false
         })
     }
-    
     
     // MARK: - Class Methods
     func locationManagerShouldDisplayHeadingCalibration(_ manager: CLLocationManager) -> Bool {
@@ -524,7 +612,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             return true
         }
     }
-    
     
     func horizontalDialDidValueChanged(_ horizontalDial: HorizontalDial) {
         
@@ -583,8 +670,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         bearingPickerOutlet.value = value
     }
     
-    
-    
     let geocoder = CLGeocoder()
     func geocode(location: CLLocation, completion: @escaping (_ state: String, _ country: String)->()) {
         geocoder.reverseGeocodeLocation(location) { (places, error) in
@@ -610,26 +695,17 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         geocoder.cancelGeocode()
     }
     
-    /*
-     Gets the GPS coordinates of the active
-     picture challenges. Used to change the color
-     of the gps coordinates when on the exact location
-     */
-    
-    
-    
-    
     @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             switch swipeGesture.direction {
-            case UISwipeGestureRecognizerDirection.right:
+            case .right:
                 print("Swiped right")
-            case UISwipeGestureRecognizerDirection.down:
+            case .down:
                 print("Swiped down")
                 self.performSegue(withIdentifier: "toProfileSegue", sender: self)
-            case UISwipeGestureRecognizerDirection.left:
+            case .left:
                 print("Swiped left")
-            case UISwipeGestureRecognizerDirection.up:
+            case .up:
                 print("Swiped up")
             default:
                 break
@@ -678,7 +754,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
         
     }
-    
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
         updateHorizontalDialValue(value: heading.magneticHeading)
@@ -742,60 +817,64 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
     }
     
-    
     func setupOrientation() {
         
-        if UIDevice.current.orientation == .portrait {
-            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
+        NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { (notification) in
+            switch UIDevice.current.orientation {
+            case .portrait:
+                self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
+            case .landscapeRight:
+                self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
+            case .landscapeLeft:
+                self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeRight
+            default:
+                Log.e("Irrelevant")
+            }
         }
-        else if UIDevice.current.orientation == .landscapeLeft {
-            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeRight
-        }
-        else if UIDevice.current.orientation == .landscapeRight {
-            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
-        }
+        
+//        if UIDevice.current.orientation == .portrait {
+//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
+//        } else if UIDevice.current.orientation == .landscapeLeft {
+//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeRight
+//        } else if UIDevice.current.orientation == .landscapeRight {
+//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
+//        }
 
         videoPreviewLayer!.frame = previewView.bounds
         
-        
     }
-    
-    
     
     @available(iOS 11.0, *)
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if error == nil {
             
-            let imageData = photo.fileDataRepresentation()
+            guard let imageData = photo.fileDataRepresentation() else { return }
+            guard let img = UIImage(data: imageData) else { return }
+            guard let rep = img.jpegData(compressionQuality: 1.0) else { return }
             
-            var orientation: UIImageOrientation? = UIImageOrientation.right
             
+            var orientation: UIImage.Orientation?
             if UIDevice.current.orientation == .portrait {
-                orientation = UIImageOrientation.right
-            }
-            else if UIDevice.current.orientation == .landscapeLeft {
-                orientation = UIImageOrientation.up
-            }
-            else if UIDevice.current.orientation == .landscapeRight {
-                orientation = UIImageOrientation.down
-            }
-            else if UIDevice.current.orientation == .portraitUpsideDown {
-                orientation = UIImageOrientation.left
-            }
-            else if UIDevice.current.orientation == .faceDown {
-                orientation = UIImageOrientation.down
-            }
-            else if UIDevice.current.orientation == .faceUp {
-                orientation = UIImageOrientation.up
+                orientation = .right
+            } else if UIDevice.current.orientation == .landscapeLeft {
+                orientation = .up
+            } else if UIDevice.current.orientation == .landscapeRight {
+                orientation = .down
+            } else if UIDevice.current.orientation == .portraitUpsideDown {
+                orientation = .left
+            } else if UIDevice.current.orientation == .faceDown {
+                orientation = .down
+            } else if UIDevice.current.orientation == .faceUp {
+                orientation = .up
             }
             
-            let newImage = UIImage(data: imageData!)!
+            guard let newImage = UIImage(data: rep) else { return }
             
             let orientedImage = UIImage(cgImage: newImage.cgImage!, scale: newImage.scale, orientation: orientation!)
             
             self.imageToPass = orientedImage
             
-            self.performSegue(withIdentifier: "confirmPictureSegue", sender: self)
+            self.performSegue(withIdentifier: "confirmPictureSegue", sender: orientation)
         }
         
         
@@ -823,8 +902,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         return radiansToDegrees(radians: radiansBearing)
     }
     
-    
-    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -835,6 +912,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         let segueID = segue.identifier
         
         if segueID == "confirmPictureSegue" {
+            guard let orientation = sender as? UIImage.Orientation else { return }
             let vc = segue.destination as! ImageConfirmVC
             vc.isAtChallengeLocation = self.isAtChallengeLocation
             vc.image = self.imageToPass
@@ -842,9 +920,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             vc.longToPass = self.longToPass
             vc.bearingToPass = self.bearingToPass
             vc.locationToPass = self.locationToPass
-            //vc.user = self.user
-
             vc.userData = AppManager.user
+            vc.orientation = orientation
             AppManager.user.getActiveChallenge { (picture) in
                 if picture != nil {
                     vc.previousPic = picture!
@@ -861,6 +938,3 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
 }
-
-
-

@@ -15,7 +15,7 @@ class ProfileImageCacher {
     public static func AddNewProfilePicture(uid: String, image: UIImage) {
         let nsUID = NSString(string: uid)
 
-        guard let data = UIImagePNGRepresentation(image) else {
+        guard let data = image.jpegData(compressionQuality: 1.0) else {
             Log.e("Could not parse UIImage to Data")
             return
         }

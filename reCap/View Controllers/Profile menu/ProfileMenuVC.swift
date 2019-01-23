@@ -94,7 +94,7 @@ class ProfileMenuVC: UIViewController {
     func setupGestures() {
         
         let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-        swipeUp.direction = UISwipeGestureRecognizerDirection.up
+        swipeUp.direction = .up
         self.view.addGestureRecognizer(swipeUp)
         
     }
@@ -102,13 +102,13 @@ class ProfileMenuVC: UIViewController {
     @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             switch swipeGesture.direction {
-            case UISwipeGestureRecognizerDirection.right:
+            case .right:
                 print("Swiped right")
-            case UISwipeGestureRecognizerDirection.down:
+            case .down:
                 print("Swiped down")
-            case UISwipeGestureRecognizerDirection.left:
+            case .left:
                 print("Swiped left")
-            case UISwipeGestureRecognizerDirection.up:
+            case .up:
                 print("Swiped up")
                 print("Back to Camera")
                 self.navigationController?.setToolbarHidden(true, animated: true)

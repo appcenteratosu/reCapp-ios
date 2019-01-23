@@ -46,7 +46,7 @@ class FBDatabase {
      Saves the given image in the database
      */
     private class func savePicture(storageRef: StorageReference, image: UIImage, completion: @escaping (_ error: String?) -> ()) {
-        if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+        if let imageData = image.jpegData(compressionQuality: 1.0) {
             storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
                     // Image was not written to database

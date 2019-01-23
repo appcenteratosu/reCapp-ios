@@ -163,7 +163,7 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func selectImagePressed(_ sender: Any) {
         let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+        imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
         imagePicker.delegate = self
         self.present(imagePicker, animated: true, completion: nil)
     }
@@ -173,25 +173,31 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
     /*
      Called when an image is picked
     */
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            // A valid image was picked
-            //imageOutlet.setBackgroundImage(pickedImage, for: .normal)
-            
-            imageView.image = pickedImage
-            imageView.layer.borderWidth = 1
-            imageView.layer.borderColor = UIColor.white.cgColor
-            imageView.layer.cornerRadius = imageView.layer.frame.width / 2
-            imageView.layer.masksToBounds = false
-            imageView.clipsToBounds = true
-            imageView.contentMode = .scaleAspectFill
-            
-            imageOutlet.setTitle("", for: .normal)
-            
-            let imageData:NSData = UIImagePNGRepresentation(pickedImage)! as NSData
-            UserDefaults.standard.set(imageData, forKey: "profileImage")
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let pickedImage = info[.originalImage] as? UIImage else {
+            return
         }
+        // A valid image was picked
+        //imageOutlet.setBackgroundImage(pickedImage, for: .normal)
+        
+        imageView.image = pickedImage
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.cornerRadius = imageView.layer.frame.width / 2
+        imageView.layer.masksToBounds = false
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        
+        imageOutlet.setTitle("", for: .normal)
+        
+        guard let imageData = pickedImage.pngData() else { return }
+        UserDefaults.standard.set(imageData, forKey: "profileImage")
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
     }
     
     // MARK: - Table View Methods

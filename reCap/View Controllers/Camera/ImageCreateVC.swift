@@ -26,6 +26,7 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
     var previousPic: RCPicture!
     var userData: RCUser!
     var challengePoints: String?
+    var orientation: UIImage.Orientation?
     
     @IBOutlet weak var imageBackground: UIImageView!
     @IBOutlet weak var imageView: UIImageView!
@@ -72,27 +73,26 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
         
         let picture = RCPicture()
         picture.name = self.titleOutlet.text!
-        picture.name = self.titleOutlet.text!
         picture.info = self.descriptionOutlet.text!
         picture.owner = self.userData.id
         picture.latitude = self.lat!
         picture.longitude = self.long!
         picture.bearing = self.bearing!
-        picture.orientation = RCPicture.ORIENTATION_PORTRAIT
         picture.time = currentDate
         picture.locationName = self.locationNameOutlet.text!
         picture.isRoot = isRoot
         picture.isMostRecent = true
+        picture.orientation = orientation!.rawValue
         
         Log.d("Starting database reference creation for new image")
         FirebaseHandler.createPictureDataReference(pictureData: picture) { (updatedPic) in
             if let picData = updatedPic {
                 
-                FirebaseHandler.storeImage(image: self.image!, picture: picData, whenDone: {
+                FirebaseHandler.storeImage(image: self.image!, picture: picData, view: self, whenDone: {
                     if self.isAtChallengeLocation {
                         self.displayChallengeComplete()
-                    }
-                    else {
+                    } else {
+                        picture.convertToRealm(with: self.image!, dataImage: nil)
                         self.displayPictureAdded(pictureData: picture)
                     }
                     self.navigationController?.setToolbarHidden(true, animated: true)

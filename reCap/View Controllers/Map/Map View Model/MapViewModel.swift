@@ -23,7 +23,7 @@ class MapViewModel {
     }
 
     func cache(image: UIImage, id: String) {
-        if let data = UIImageJPEGRepresentation(image, 1.0) {
+        if let data = image.jpegData(compressionQuality: 1.0) {
             let nsdata = data as NSData
             let nsString = NSString(string: id)
             

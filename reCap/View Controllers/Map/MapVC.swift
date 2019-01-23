@@ -12,6 +12,7 @@ import MapboxCoreNavigation
 import MapboxNavigation
 import MapboxDirections
 import Firebase
+import RealmSwift
 
 class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
@@ -51,9 +52,10 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     var pictureDataToPass: RCPicture?
     
     let darkColor = UIColor(red: 48/255, green: 48/255, blue: 48/255, alpha: 1.0)
-    
-    
+
     var viewModel: MapViewModel!
+    
+    var token: NotificationToken?
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -62,7 +64,14 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         self.user = DataManager.currentAppUser
         
         // 1. Check for cached data OR Get all data and cache it
-        RealmHelper.getCachedPhotoData { (error, cachedData) in
+        
+        RealmHelper.getCachedPhotoData(token: { (token) in
+            self.token = token
+        }, updates: { (added, deleted) in
+            if added != nil {
+                self.photos.append(contentsOf: added!)
+            }
+        }) { (error, cachedData) in
             if error != nil {
                 Log.e(error!.localizedDescription)
                 // No cached Data
@@ -75,7 +84,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                 })
             } else {
                 if let data = cachedData {
-                    completeSetup(data: data)
+                    self.completeSetup(data: data)
                 }
             }
         }
@@ -89,6 +98,8 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        
         
         user.getActiveChallenge(updated: hasUpdatedchallenge) { (challenge) in
             if let challenge = challenge {
@@ -110,6 +121,15 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
     // MARK: - Setup
     
+    var photos: [RCPicture] = [] {
+        didSet {
+            completeSetup(data: photos)
+        }
+    }
+    
+    /// Finshes the setup of the map page, given data has been downloaded and parsed
+    ///
+    /// - Parameter data: A list of RCPicture objects
     func completeSetup(data: [RCPicture]) {
         if self.pins.count > 0 {
             self.mapView.removeAnnotations(self.pins)
@@ -160,7 +180,8 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             // Animate the camera movement over 5 seconds.
-            self.mapView.setCamera(camera, withDuration: 2, animationTimingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
+            self.mapView.setCamera(camera, withDuration: 2,
+                                   animationTimingFunction: CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut))
             
         }
     }
@@ -190,8 +211,8 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         }
         
         view.addSubview(mapView)
-        view.bringSubview(toFront: styleControl)
-        view.bringSubview(toFront: centerButton)
+        view.bringSubviewToFront(styleControl)
+        view.bringSubviewToFront(centerButton)
         
         setupPictures()
         self.setupPins()
@@ -445,9 +466,15 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         if let photo = RealmHelper.getPhotoFor(lat: lat, lon: long) {
             if let imageData = photo.image {
                 if let image = imageData.convertToUIImage() {
+                    let orientation = UIImage.Orientation(rawValue: photo.orientation)!
+                    
+                    guard image.cgImage != nil else { return nil }
+                    let img = UIImage(cgImage: image.cgImage!, scale: image.scale, orientation: orientation)
+                    
                     let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
                     imageView.contentMode = .scaleAspectFit
-                    imageView.image = image
+                    imageView.image = img
+                    
                     return imageView
                 } else {
                     Log.e("Could not convert data to image")
@@ -678,7 +705,13 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
             
             if let photo = sender as? RCPicture {
                 destination.pictureData = photo
-                destination.image = photo.image?.convertToUIImage()
+
+                guard let image = photo.image?.convertToUIImage() else { return }
+                guard let cg = image.cgImage else { return }
+                guard let orientation = UIImage.Orientation(rawValue: photo.orientation) else { return }
+                let img = UIImage(cgImage: cg, scale: image.scale, orientation: orientation)
+                
+                destination.image = img
             } else {
                 Log.s("Could not get photo from segue sender")
             }

@@ -223,18 +223,25 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                 FCAlertView.displayAlert(title: "Adding...", message: "Adding friend to your friends list...", buttonTitle: "Dismiss", type: "progress", view: self)
                 
                 if let email = email {
-                    FirebaseHandler.database.child("UserData").child(email).observeSingleEvent(of: .value, with: { (snap) in
-                        if snap.value != nil {
-                            let friend = RCUser(snapshot: snap)
-                            self.friendsList.append(friend)
-                            self.tableView.beginUpdates()
-                            let index = IndexPath(row: self.friendsList.count-1, section: 0)
-                            self.tableView.insertRows(at: [index], with: .automatic)
-                            self.tableView.endUpdates()
-                            self.userData.add(friend: friend)
-                        } else {
-                            FCAlertView.displayAlert(title: "Oops!", message: "That email doesn't exist", buttonTitle: "Okay", type: "warning", view: self)
+                    
+                    FirebaseHandler.findAccount(for: email, completion: { (user, done) in
+                        guard let user = user else {
+                            FCAlertView.displayAlert(title: "Oops!",
+                                                     message: "That email doesn't exist",
+                                                     buttonTitle: "OK",
+                                                     type: "warning",
+                                                     view: self)
+                            return
                         }
+                        
+                        self.friendsList.append(user)
+                        self.tableView.beginUpdates()
+                        let index = IndexPath(row: self.friendsList.count-1, section: 0)
+                        self.tableView.insertRows(at: [index], with: .automatic)
+                        self.tableView.endUpdates()
+                        
+                        self.userData.add(friend: user)
+                        
                     })
                 }
             }
