@@ -17,47 +17,24 @@ public class RealmHelper {
         case NoCachedData
     }
     
-    static func getCachedPhotoData(token: (NotificationToken)->(),
-                                   updates: @escaping ([RCPicture]?, [RCPicture]?)->(),
-                                   completion: @escaping (Error?, [RCPicture]?)->()) {
+    static func getCachedPhotoData(completion: @escaping (Error?, [RCPicture]?)->()) {
         guard let realm = realm else { return }
         let photoData = realm.objects(PictureData.self)
-        let notificationToken = photoData.observe { (changes) in
-            switch changes {
-            case .initial(let photos):
-                if photoData.count > 0 {
-                    // We have cached data
-                    let results = Array(photoData)
-                    
-                    var converted: [RCPicture] = []
-                    results.forEach { (picture) in
-                        let convert = picture.convertToRCPicture()
-                        converted.append(convert)
-                    }
-                    
-                    completion(nil, converted)
-                } else {
-                    // No cached data available
-                    completion(PictureDataError.NoCachedData, nil)
-                }
-            case .update(let photos, deletions: let deleted, insertions: let added, modifications: let changed):
-                Log.i(photos.count)
-                Log.i(deleted)
-                let del: [RCPicture] = deleted.map({
-                    return photos[$0].convertToRCPicture()
-                })
-                Log.i(added)
-                let add: [RCPicture] = added.map({
-                    return photos[$0].convertToRCPicture()
-                })
-                updates(add, del)
-            case .error(let error):
-                Log.e(error.localizedDescription)
-                break
+        if photoData.count > 0 {
+            // We have cached data
+            let results = Array(photoData)
+            
+            var converted: [RCPicture] = []
+            results.forEach { (picture) in
+                let convert = picture.convertToRCPicture()
+                converted.append(convert)
             }
+            
+            completion(nil, converted)
+        } else {
+            // No cached data available
+            completion(PictureDataError.NoCachedData, nil)
         }
-        
-        token(notificationToken)
     }
     
     static func getPhotoFor(lat: Double, lon: Double) -> RCPicture? {

@@ -89,13 +89,15 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         // #warning Incomplete implementation, return the number of rows
         if mode == LeaderboardsFriendsVC.FRIENDS_LIST_MODE {
             return friendsList.count
-        }
-        else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
+        } else if mode == LeaderboardsFriendsVC.LEADERBOARD_MODE {
             return leaderboardsList.count
-        }
-        else {
+        } else {
             return 0
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
     }
     
     // MARK: - Setup Methods
@@ -149,7 +151,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                 var global = [RCUser]()
                 for child in snaps {
                     let rcuser = RCUser(snapshot: child)
-                    self.globalLeaderboards.append(rcuser)
+                    global.append(rcuser)
                 }
                 
                 global.sort(by: { (p1, p2) -> Bool in
@@ -198,8 +200,8 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
                     cell.imageOutlet.image = pic
                     ProfileImageCacher.AddNewProfilePicture(uid: user.id, image: pic)
                 } else {
-                    print("Could not get Image")
-                    Log.e("Couldn't get image from FirebaseHandler.getProfilePicture()")
+                    Log.e("Defaulting - Couldn't get image from FirebaseHandler.getProfilePicture()")
+                    cell.imageOutlet.image = #imageLiteral(resourceName: "icons8-user-30 (1)")
                 }
             }) { (progress) in
                 print("Profile Image Progress:", progress)

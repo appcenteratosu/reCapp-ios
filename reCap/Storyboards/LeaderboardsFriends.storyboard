@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14105" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dwl-M5-2nk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dwl-M5-2nk">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -63,49 +61,47 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CustomCell" rowHeight="74" id="CG6-g2-jXr" customClass="LeaderboardFriendsTableCell" customModule="reCap" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="74"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CustomCell" rowHeight="80" id="CG6-g2-jXr" customClass="LeaderboardFriendsTableCell" customModule="reCap" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CG6-g2-jXr" id="Aab-IE-Rf6">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="73.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="79.666666666666671"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Full Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XvV-TF-trV">
-                                            <rect key="frame" x="85.666666666666657" y="10.000000000000002" width="90.666666666666657" height="28.666666666666671"/>
+                                            <rect key="frame" x="88" y="10" width="90.666666666666686" height="29"/>
                                             <fontDescription key="fontDescription" name="Triomphe-Regular" family="Triomphe" pointSize="20"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Points" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iZH-eN-wy2">
-                                            <rect key="frame" x="290.66666666666669" y="24.333333333333329" width="50.333333333333314" height="25"/>
+                                            <rect key="frame" x="290.66666666666669" y="27.333333333333329" width="50.333333333333314" height="25"/>
                                             <fontDescription key="fontDescription" name="Triomphe-Regular" family="Triomphe" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVY-pA-cqF">
-                                            <rect key="frame" x="85.666666666666671" y="38.666666666666664" width="67.000000000000014" height="21"/>
+                                            <rect key="frame" x="88" y="47" width="67" height="21"/>
                                             <fontDescription key="fontDescription" name="Triomphe-Regular" family="Triomphe" pointSize="14"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8jZ-95-JUn">
-                                            <rect key="frame" x="15.999999999999996" y="5.9999999999999964" width="61.666666666666657" height="61.666666666666657"/>
+                                            <rect key="frame" x="16" y="10" width="60" height="60"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="61.670000000000002" id="3jz-e3-zv6"/>
-                                                <constraint firstAttribute="width" secondItem="8jZ-95-JUn" secondAttribute="height" multiplier="1:1" id="R0b-pO-ciW"/>
+                                                <constraint firstAttribute="width" constant="60" id="cUe-Bb-Lrj"/>
+                                                <constraint firstAttribute="height" constant="60" id="rLm-Cc-6M6"/>
                                             </constraints>
                                         </imageView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="8jZ-95-JUn" secondAttribute="bottom" constant="6" id="04m-ft-yeK"/>
-                                        <constraint firstItem="8jZ-95-JUn" firstAttribute="top" secondItem="Aab-IE-Rf6" secondAttribute="top" constant="6" id="9mX-Se-aZ6"/>
-                                        <constraint firstItem="8jZ-95-JUn" firstAttribute="centerY" secondItem="Aab-IE-Rf6" secondAttribute="centerY" id="E1c-P5-Su2"/>
+                                        <constraint firstItem="MVY-pA-cqF" firstAttribute="leading" secondItem="XvV-TF-trV" secondAttribute="leading" id="2J7-y9-h2y"/>
                                         <constraint firstItem="iZH-eN-wy2" firstAttribute="centerY" secondItem="Aab-IE-Rf6" secondAttribute="centerY" id="IN9-8P-byq"/>
-                                        <constraint firstItem="MVY-pA-cqF" firstAttribute="top" secondItem="XvV-TF-trV" secondAttribute="bottom" id="KJL-h1-toe"/>
-                                        <constraint firstItem="MVY-pA-cqF" firstAttribute="leading" secondItem="XvV-TF-trV" secondAttribute="leading" id="Zsi-s7-YfA"/>
-                                        <constraint firstItem="XvV-TF-trV" firstAttribute="leading" secondItem="8jZ-95-JUn" secondAttribute="trailing" constant="8.0000000000000142" id="aXT-qy-lMf"/>
-                                        <constraint firstItem="XvV-TF-trV" firstAttribute="top" secondItem="Aab-IE-Rf6" secondAttribute="top" constant="10" id="eFN-MF-nbx"/>
-                                        <constraint firstItem="8jZ-95-JUn" firstAttribute="leading" secondItem="Aab-IE-Rf6" secondAttribute="leading" constant="16" id="mkn-5B-kGy"/>
+                                        <constraint firstItem="8jZ-95-JUn" firstAttribute="centerY" secondItem="Aab-IE-Rf6" secondAttribute="centerY" id="LUw-qv-s3z"/>
+                                        <constraint firstItem="XvV-TF-trV" firstAttribute="leading" secondItem="8jZ-95-JUn" secondAttribute="trailing" constant="12" id="SbO-jv-9Xg"/>
+                                        <constraint firstItem="XvV-TF-trV" firstAttribute="top" secondItem="8jZ-95-JUn" secondAttribute="top" id="bMx-Ib-pc5"/>
+                                        <constraint firstItem="8jZ-95-JUn" firstAttribute="leading" secondItem="Aab-IE-Rf6" secondAttribute="leading" constant="16" id="fOZ-Xl-hMx"/>
+                                        <constraint firstItem="MVY-pA-cqF" firstAttribute="top" secondItem="XvV-TF-trV" secondAttribute="bottom" constant="8" id="gSR-Ge-6Ch"/>
                                         <constraint firstAttribute="trailing" secondItem="iZH-eN-wy2" secondAttribute="trailing" id="wh3-RN-qNg"/>
                                     </constraints>
                                 </tableViewCellContentView>

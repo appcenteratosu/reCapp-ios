@@ -55,7 +55,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
 
     var viewModel: MapViewModel!
     
-    var token: NotificationToken?
+    var rawPhotoObjects: [RCPicture]?
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -65,25 +65,19 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         
         // 1. Check for cached data OR Get all data and cache it
         
-        RealmHelper.getCachedPhotoData(token: { (token) in
-            self.token = token
-        }, updates: { (added, deleted) in
-            if added != nil {
-                self.photos.append(contentsOf: added!)
-            }
-        }) { (error, cachedData) in
+        RealmHelper.getCachedPhotoData { (error, cachedData) in
             if error != nil {
                 Log.e(error!.localizedDescription)
-                // No cached Data
                 FirebaseHandler.getAllPictureData(onlyRecent: true, completion: { (pictureData) in
                     for picture in pictureData {
                         picture.convertToRealm()
                     }
-                    
+                    self.rawPhotoObjects = pictureData
                     self.completeSetup(data: pictureData)
                 })
             } else {
                 if let data = cachedData {
+                    self.rawPhotoObjects = data
                     self.completeSetup(data: data)
                 }
             }
@@ -99,19 +93,29 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
+//        user.getActiveChallenge(updated: hasUpdatedchallenge) { (challenge) in
+//            if let challenge = challenge {
+//                self.centerButton.isHidden = false
+//            } else {
+//                self.centerButton.isHidden = true
+//            }
+//
+//            if self.hasUpdatedchallenge {
+//                self.hasUpdatedchallenge = false
+//            }
+//        }
         
-        
-        user.getActiveChallenge(updated: hasUpdatedchallenge) { (challenge) in
-            if let challenge = challenge {
-                self.centerButton.isHidden = false
-            } else {
-                self.centerButton.isHidden = true
-            }
-            
-            if self.hasUpdatedchallenge {
-                self.hasUpdatedchallenge = false
-            }
+        if let challenge = user.activeChallengeObj {
+            Log.d("User has Challenge")
+            self.activeChallengePicData = challenge
+//            guard rawPhotoObjects != nil else { return }
+////            self.completeSetup(data: self.rawPhotoObjects!)
         }
+        
+    }
+    
+    func waitForNewChallengeNotification() {
+        
     }
     
     deinit {
@@ -138,15 +142,25 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         
         // 2. Set MapView DataSource
         if data.count > 0 {
+            var roots = [RCPicture]()
+            
             for picture in data {
-                
+                if picture.isRoot {
+                    roots.append(picture)
+                    Log.i("ROOT: \(picture.name)")
+                } else {
+                    Log.i("RETAKE: \(picture.name)")
+                }
+            }
+            
+            for root in roots {
                 let pin = MGLPointAnnotation()
-                pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
-                pin.title = picture.name
-                pin.subtitle = picture.locationName
+                pin.coordinate = CLLocationCoordinate2D(latitude: (root.latitude), longitude: (root.longitude))
+                pin.title = root.name
+                pin.subtitle = root.locationName
                 
-                self.pictureIDArray.append(picture.id)
-                self.pictureDataArray.append(picture)
+                self.pictureIDArray.append(root.id)
+                self.pictureDataArray.append(root)
                 
                 self.pins.append(pin)
             }
@@ -172,7 +186,6 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     }
     
     func setupCamera() {
-        
         let user = self.mapView.userLocation?.coordinate
         self.mapView.setCenter(user!, zoomLevel: 2, direction: 0, animated: true)
 //        let camera = MGLMapCamera(lookingAtCenter: user!, fromDistance: 500, pitch: 0, heading: 0)
@@ -180,10 +193,18 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             // Animate the camera movement over 5 seconds.
-            self.mapView.setCamera(camera, withDuration: 2,
+            self.mapView.setCamera(camera,
+                                   withDuration: 2,
                                    animationTimingFunction: CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut))
             
         }
+    }
+    
+    func setMapFor(challenge: RCPicture) {
+        locations = []
+        locationDictionary = [:]
+        self.mapView.addAnnotations(self.pins)
+        
     }
     
     func setupMap() {
@@ -222,30 +243,6 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         
         locations = []
         locationDictionary = [:]
-        
-//        if self.pins.count > 0 {
-//            self.mapView.removeAnnotations(self.pins)
-//            self.pins.removeAll()
-//        }
-//        
-//        FirebaseHandler.getAllPictureData(onlyRecent: true) { (pictures) in
-//            if pictures.count > 0 {
-//                for picture in pictures {
-//
-//                    let pin = MGLPointAnnotation()
-//                    pin.coordinate = CLLocationCoordinate2D(latitude: (picture.latitude), longitude: (picture.longitude))
-//                    pin.title = picture.name
-//                    pin.subtitle = picture.locationName
-//
-//                    self.pictureIDArray.append(picture.id)
-//                    self.pictureDataArray.append(picture)
-//
-//                    self.pins.append(pin)
-//                }
-//
-//                self.setupPins()
-//            }
-//        }
         
         
     }
@@ -393,8 +390,8 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         
         // Assign a reuse identifier to be used by both of the annotation views, taking advantage of their similarities.
-//        let reuseIdentifier = "\(annotation.coordinate.longitude)"
-        let reuseIdentifier = "reuse"
+        let reuseIdentifier = "\(annotation.coordinate.longitude)"
+//        let reuseIdentifier = "reuse"
         
         // For better performance, always try to reuse existing annotations.
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
@@ -410,13 +407,11 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
             let long = annotation.coordinate.longitude
             
             annotationView = CustomAnnotationView(reuseIdentifier: reuseIdentifier)
-            annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+            annotationView!.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
             
             if self.activeChallengePicData?.latitude == lat && self.activeChallengePicData?.longitude == long {
-                annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
                 annotationView!.backgroundColor = redColor
             } else {
-                annotationView!.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
                 annotationView!.backgroundColor = greenColor
             }
             return annotationView
@@ -458,6 +453,12 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         return true
     }
     
+    /// Left view for the left side of the popup that appears when a user taps on a point
+    ///
+    /// - Parameters:
+    ///   - mapView: The mapview handling the data points
+    ///   - annotation: The data point containing information about the specific location
+    /// - Returns: The view to be shown on the left of the callout
     func mapView(_ mapView: MGLMapView, leftCalloutAccessoryViewFor annotation: MGLAnnotation) -> UIView? {
         
         let lat = annotation.coordinate.latitude
@@ -523,18 +524,18 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         // Hide the callout view.
         //mapView.deselectAnnotation(annotation, animated: true)
         
-        self.calculateRoute(from: (mapView.userLocation!.coordinate), to: annotation.coordinate) { (route, error) in
-            if error != nil {
-                print("Error calculating route")
-            }
-        }
-        
         // Ask user if they want to navigate to the pin.
         let alert = UIAlertController(title: "What would you like to do?", message: nil , preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "Navigate Here", style: .default, handler: { (action) in
             // Calculate the route from the user's location to the set destination
-            self.beginNavigation()
+            self.calculateRoute(from: (mapView.userLocation!.coordinate), to: annotation.coordinate) { (route, error) in
+                if error != nil {
+                    print("Error calculating route")
+                } else {
+                    self.beginNavigation()
+                }
+            }
         }))
         
         var title = ""
@@ -545,21 +546,16 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                 
                 self.user.update(values: [.activeChallenge: "",
                                           .activeChallengePoints: 0])
-                
-                self.user.getActiveChallenge(updated: true) { (challenge) in
-                    if let challenge = challenge {
-                        self.centerButton.isHidden = false
-                    } else {
-                        self.centerButton.isHidden = true
-                    }
-                    
-                    self.setupCamera()
-                    self.setupPictures()
-                    
-                    if self.hasUpdatedchallenge {
-                        self.hasUpdatedchallenge = false
-                    }
-                }
+                self.activeChallengePicData = nil
+
+                let ann = annotation
+                mapView.removeAnnotation(annotation)
+                mapView.addAnnotation(ann)
+                mapView.centerCoordinate = mapView.userLocation!.coordinate
+                mapView.setCamera(MGLMapCamera(lookingAtCenter: mapView.userLocation!.coordinate,
+                                               acrossDistance: CLLocationDistance(exactly: 500)!,
+                                               pitch: 30,
+                                               heading: 0), animated: true)
             }))
         } else {
             title = "Set as Active Challenge"
@@ -568,14 +564,21 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
                 let lat = annotation.coordinate.latitude
                 let long = annotation.coordinate.longitude
                 
-                FirebaseHandler.getPictureData(lat: lat, long: long, onlyRecent: true, compltion: { (picture) in
-                    if let pic = picture {
-                        self.addChallengeToUser(pictureData: pic)
-                        self.setupPictures()
-                        self.centerButton.isHidden = false
-                    }
-                })
+                guard let challenge = RealmHelper.getPhotoFor(lat: lat, lon: long) else {
+                    return
+                }
                 
+                self.addChallengeToUser(pictureData: challenge)
+                self.activeChallengePicData = challenge
+                
+                let ann = annotation
+                mapView.removeAnnotation(annotation)
+                mapView.addAnnotation(ann)
+                mapView.centerCoordinate = ann.coordinate
+                mapView.setCamera(MGLMapCamera(lookingAtCenter: ann.coordinate,
+                                               acrossDistance: CLLocationDistance(exactly: 500)!,
+                                               pitch: 30,
+                                               heading: 0), animated: true)
             }))
         }
         
@@ -715,14 +718,6 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
             } else {
                 Log.s("Could not get photo from segue sender")
             }
-            
-//            //let destination = segue.destination as! ChallengeViewVC
-//            if let pictureData = pictureDataToPass {
-//                let picture = imageToPass
-//                destination.pictureData = pictureData
-//                destination.image = picture
-//                print("Segue Done")
-//            }
         }
     }
     
