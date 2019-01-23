@@ -118,9 +118,8 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PictureCell", for: indexPath) as! PhotoChalColCell
         cell.setImageViewDelegate(delegate: self)
         let row = indexPath.row
-        cell.imageView.image = image
         let cellPictureData = pictureArray?[row]
-        //print(cellPictureData)
+        cell.imageView.image = cellPictureData?.image?.convertToUIImage()
         cell.pictureData = cellPictureData
         
         return cell

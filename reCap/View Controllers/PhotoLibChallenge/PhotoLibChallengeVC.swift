@@ -244,8 +244,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
             alert.addAction(viewChallenge)
             alert.addAction(cancel)
             self.present(alert, animated: true, completion: nil)
-        }
-        else if mode == PhotoLibChallengeVC.PHOTO_LIB_MODE {
+        } else if mode == PhotoLibChallengeVC.PHOTO_LIB_MODE {
             self.performSegue(withIdentifier: "PhotoSegue", sender: [pictureData, image])
         }
     }
@@ -309,7 +308,8 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         
         challengeDelegate?.userDidAddNewChallenge(picture: pictureData)
         
-        self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id, .activeChallengePoints: points])
+        self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id,
+                                      .activeChallengePoints: points])
         
     }
     

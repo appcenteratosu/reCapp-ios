@@ -81,10 +81,10 @@ class RCPicture: Codable {
             if let info = data["locationName"] as? String {
                 self.locationName = info
             }
-            if let info = data["isRoot"] as? Bool {
+            if let info = data["isRootPicture"] as? Bool {
                 self.isRoot = info
             }
-            if let info = data["isMostRecent"] as? Bool {
+            if let info = data["isMostRecentPicture"] as? Bool {
                 self.isMostRecent = info
             }
             if let info = data["groupID"] as? String {

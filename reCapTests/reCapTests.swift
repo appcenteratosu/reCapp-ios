@@ -7,7 +7,6 @@
 //
 
 import XCTest
-@testable import reCap
 
 class reCapTests: XCTestCase {
     

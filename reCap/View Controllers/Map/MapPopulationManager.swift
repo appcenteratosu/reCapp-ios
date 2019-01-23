@@ -33,16 +33,20 @@ class MapPopulationManager {
                 Log.d("Requesting New photos")
                 FirebaseHandler.getAllNewPhotos(newerThan: recent.time) { (newData) in
                     Log.d("Caching \(newData.count) new photos")
-                    for picture in newData {
-                        let path = FirebaseHandler.storage.child("Pictures").child(picture.id)
-                        path.getData(maxSize: 1024 * 10, completion: { (data, error) in
-                            guard error == nil else { return }
-                            guard let data = data else { return }
-                            if path.fullPath.contains(picture.id) {
-                                picture.image = data
-                                picture.convertToRealm()
-                            }
-                        })
+                    if newData.count > 0 {
+                        for picture in newData {
+                            let path = FirebaseHandler.storage.child("Pictures").child(picture.id)
+                            path.getData(maxSize: 1024 * 10, completion: { (data, error) in
+                                guard error == nil else { return }
+                                guard let data = data else { return }
+                                if path.fullPath.contains(picture.id) {
+                                    picture.image = data
+                                    picture.convertToRealm()
+                                }
+                            })
+                        }
+                    } else {
+                        Log.i("No New Data to Cache")
                     }
                 }
             } else {
