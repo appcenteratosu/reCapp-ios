@@ -357,54 +357,56 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             locationManager.startUpdatingHeading()
         }
         
-        let request = Locator.subscribePosition(accuracy: .room, onUpdate: { (location) -> (Void) in
-            let lat = location.coordinate.latitude.truncate(places: 6)
-            let long = location.coordinate.longitude.truncate(places: 6)
-//            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
-            DataManager.currentAppUser.latitude = lat
-            DataManager.currentAppUser.longitude = long
-            
-            let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
-            self.locationOutlet.text = gpsString
-            self.latToPass = lat
-            self.longToPass = long
-            self.locationToPass = gpsString
-            
-            self.geocode(location: location) { (state, country) in
-                FirebaseHandler.updateUserLocation(state: state, country: country)
-                FirebaseHandler.updateUserLocation(lat: lat, lon: long)
-            }
-            
-            if self.activeChallengePicData != nil {
-                let picLong = self.activeChallengePicData.longitude
-                let picLat = self.activeChallengePicData.latitude
-                var destination: CLLocation? = CLLocation(latitude: 0, longitude: 0)
-                var angle: Double = 0
-                destination = CLLocation(latitude: picLat, longitude: picLong)
-                angle = self.getBearingBetweenTwoPoints1(point1: location, point2: destination!)
-                self.destinationAngle = angle
-                let longDiff = abs(picLong - long)
-                let latDiff = abs(picLat - lat)
-                if longDiff > self.chalCloseCoordThreshold || latDiff > self.chalCloseCoordThreshold {
+        let request = LocationManager.shared.locateFromGPS(.continous, accuracy: .room) { (result) in
+            switch result {
+            case .success(let location):
+                let lat = location.coordinate.latitude.truncate(places: 6)
+                let long = location.coordinate.longitude.truncate(places: 6)
+                //            FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+                DataManager.currentAppUser.latitude = lat
+                DataManager.currentAppUser.longitude = long
+                
+                let gpsString = String.convertGPSCoordinatesToOutput(coordinates: [lat, long])
+                self.locationOutlet.text = gpsString
+                self.latToPass = lat
+                self.longToPass = long
+                self.locationToPass = gpsString
+                
+                self.geocode(location: location) { (state, country) in
+                    FirebaseHandler.updateUserLocation(state: state, country: country)
+                    FirebaseHandler.updateUserLocation(lat: lat, lon: long)
+                }
+                
+                if self.activeChallengePicData != nil {
+                    let picLong = self.activeChallengePicData.longitude
+                    let picLat = self.activeChallengePicData.latitude
+                    var destination: CLLocation? = CLLocation(latitude: 0, longitude: 0)
+                    var angle: Double = 0
+                    destination = CLLocation(latitude: picLat, longitude: picLong)
+                    angle = self.getBearingBetweenTwoPoints1(point1: location, point2: destination!)
+                    self.destinationAngle = angle
+                    let longDiff = abs(picLong - long)
+                    let latDiff = abs(picLat - lat)
+                    if longDiff > self.chalCloseCoordThreshold || latDiff > self.chalCloseCoordThreshold {
+                        self.locationOutlet.textColor = UIColor.white
+                        self.isAtChallengeLocation = false
+                    }
+                    else if longDiff < self.chalBestCoordThreshold && latDiff < self.chalBestCoordThreshold {
+                        self.locationOutlet.textColor = UIColor.green
+                        self.isAtChallengeLocation = true
+                    }
+                    else if longDiff <= self.chalCloseCoordThreshold && latDiff <= self.chalCloseCoordThreshold {
+                        self.locationOutlet.textColor = UIColor.yellow
+                        self.isAtChallengeLocation = true
+                    }
+                }
+                else {
                     self.locationOutlet.textColor = UIColor.white
                     self.isAtChallengeLocation = false
                 }
-                else if longDiff < self.chalBestCoordThreshold && latDiff < self.chalBestCoordThreshold {
-                    self.locationOutlet.textColor = UIColor.green
-                    self.isAtChallengeLocation = true
-                }
-                else if longDiff <= self.chalCloseCoordThreshold && latDiff <= self.chalCloseCoordThreshold {
-                    self.locationOutlet.textColor = UIColor.yellow
-                    self.isAtChallengeLocation = true
-                }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
-            else {
-                self.locationOutlet.textColor = UIColor.white
-                self.isAtChallengeLocation = false
-            }
-            
-        }) { (error, last) -> (Void) in
-            
         }
         
         CameraContainerVC.requests.append(request)
