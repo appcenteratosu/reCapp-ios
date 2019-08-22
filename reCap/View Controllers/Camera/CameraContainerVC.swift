@@ -347,7 +347,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     
     static var requests: [LocationRequest] = []
     func setupLocation() {
-        Locator.requestAuthorizationIfNeeded(.whenInUse)
+        
+        LocationManager.shared.requireUserAuthorization(.whenInUse)
         // Azimuth
         if (CLLocationManager.headingAvailable()) {
             locationManager.delegate = self
