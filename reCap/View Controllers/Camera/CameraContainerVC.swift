@@ -87,7 +87,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         for request in CameraContainerVC.requests {
             request.stop()
         }
-        Locator.completeAllLocationRequests()
+        
+        LocationManager.shared.completeAllLocationRequest()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
