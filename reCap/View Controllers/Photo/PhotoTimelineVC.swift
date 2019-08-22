@@ -77,12 +77,17 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
             let coordinatesToPass = [pictures[index].latitude, pictures[index].longitude]
             locationOutlet.text = String.convertGPSCoordinatesToOutput(coordinates: coordinatesToPass)
             let coordinates = CLLocationCoordinate2D(latitude: coordinatesToPass[0], longitude: coordinatesToPass[1])
-            Locator.location(fromCoordinates: coordinates, using: .apple, onSuccess: { places in
-                print(places)
-                self.locationNameOutlet.text = "\(places[0])"
-            }) { err in
-                print(err)
+            
+            LocationManager.shared.locateFromCoordinates(coordinates, timeout: nil, service: .apple(nil)) { (result) in
+                switch result {
+                case .success(let places):
+                    print(places)
+                    self.locationNameOutlet.text = "\(places[0])"
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
             }
+            
             titleOutlet.text = pictureArray?[index].name
             descriptionOutlet.text = pictureArray?[index].info
         }
