@@ -134,13 +134,16 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
         
         
         let coordinates = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
-        Locator.location(fromCoordinates: coordinates, using: .apple, onSuccess: { places in
-            print(places)
-            self.locationNameOutlet.text = "\(places[0])"
-        }) { err in
-            print(err)
-        }
         
+        LocationManager.shared.locateFromCoordinates(coordinates, timeout: nil, service: .apple(nil)) { (result) in
+            switch result {
+            case .success(let places):
+                print(places)
+                self.locationNameOutlet.text = "\(places[0])"
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
         
         
         imageView.image = image
