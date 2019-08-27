@@ -51,6 +51,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func completeSetup() {
         if let user = Auth.auth().currentUser {
             FirebaseHandler.getUserData { (userData) in
+                // TODO: - If the user has not agreed to the EULA, then show the EULA Screen as a popover, otherwise, proceed as usual.
+//                #error("User has to agree to the EULA")
                 DataManager.currentFBUser = user
                 DataManager.currentAppUser = userData
                 AppManager.user = userData

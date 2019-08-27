@@ -85,6 +85,7 @@
 		7AF10F552058A49800019C70 /* CameraContainerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF10F542058A49800019C70 /* CameraContainerVC.swift */; };
 		7AF10F572058DA7D00019C70 /* SnappingCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF10F562058DA7D00019C70 /* SnappingCollectionViewLayout.swift */; };
 		7AF3594A2038CDE500713EA3 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF359492038CDE500713EA3 /* SettingsVC.swift */; };
+		84C47DA823136957005EB4AE /* EULAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C47DA723136957005EB4AE /* EULAViewController.swift */; };
 		A1651C35A8D14F35D904FC8D /* Pods_reCap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32C154EC1946B88E3554888D /* Pods_reCap.framework */; };
 		D3072FF6F4F7A8AC994E6CE1 /* Pods_reCapUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E795DFCEF164970B26D248C7 /* Pods_reCapUITests.framework */; };
 		E632BA6D34779B32B4971AA9 /* Pods_reCapTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74603023074B9DA2002A640E /* Pods_reCapTests.framework */; };
@@ -201,6 +202,7 @@
 		7AF10F562058DA7D00019C70 /* SnappingCollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnappingCollectionViewLayout.swift; sourceTree = "<group>"; };
 		7AF359492038CDE500713EA3 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		7FE533A001C1191CC30F9C06 /* Pods-reCapTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCapTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-reCapTests/Pods-reCapTests.debug.xcconfig"; sourceTree = "<group>"; };
+		84C47DA723136957005EB4AE /* EULAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EULAViewController.swift; sourceTree = "<group>"; };
 		9FC413CBCCA1DA78F28226EC /* Pods-reCapTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCapTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-reCapTests/Pods-reCapTests.release.xcconfig"; sourceTree = "<group>"; };
 		A02B48BF89EE8588788A40C5 /* Pods-reCap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-reCap/Pods-reCap.debug.xcconfig"; sourceTree = "<group>"; };
 		E795DFCEF164970B26D248C7 /* Pods_reCapUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCapUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -282,6 +284,7 @@
 				34A7ACA62027878E00ACFB12 /* Storyboards */,
 				7A4D8A3820277DFF0043878E /* View Controllers */,
 				344C93F320226E280025E4C5 /* Assets.xcassets */,
+				84C47DA523136941005EB4AE /* Custom */,
 				344C93F820226E280025E4C5 /* Info.plist */,
 				73553B762190E56000D1F3E1 /* GoogleService-Info.plist */,
 				344C93F020226E280025E4C5 /* reCap.xcdatamodeld */,
@@ -526,6 +529,22 @@
 				7AE3756A2037C8E100CA9946 /* LeaderboardFriendsTableCell.swift */,
 			);
 			path = LeaderboardFriends;
+			sourceTree = "<group>";
+		};
+		84C47DA523136941005EB4AE /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				84C47DA623136947005EB4AE /* EULA */,
+			);
+			path = Custom;
+			sourceTree = "<group>";
+		};
+		84C47DA623136947005EB4AE /* EULA */ = {
+			isa = PBXGroup;
+			children = (
+				84C47DA723136957005EB4AE /* EULAViewController.swift */,
+			);
+			path = EULA;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -881,6 +900,7 @@
 				7A494E5F208D48EB00A72AA8 /* RealmHelper.swift in Sources */,
 				7AF10F532058A48B00019C70 /* TutorialContainerVC.swift in Sources */,
 				7A3C553C207B0949009A8036 /* UserData.swift in Sources */,
+				84C47DA823136957005EB4AE /* EULAViewController.swift in Sources */,
 				7AE375672037C6DA00CA9946 /* FBDatabase.swift in Sources */,
 				7A5358AD205B6EE10047F410 /* TutorialTransitionVC.swift in Sources */,
 				7A3C553A207B029D009A8036 /* RealmConstants.swift in Sources */,
@@ -1064,7 +1084,7 @@
 				CURRENT_PROJECT_VERSION = 575;
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;
@@ -1086,7 +1106,7 @@
 				CURRENT_PROJECT_VERSION = 575;
 				DEVELOPMENT_TEAM = 5UM5ZRED5X;
 				INFOPLIST_FILE = reCap/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.okstate.reCapp;

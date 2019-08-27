@@ -13,7 +13,7 @@ import Firebase
 import FCAlertView
 
 
-class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
     
     // MARK: - Outlets
     @IBOutlet weak var fullNameOutlet: SkyFloatingLabelTextField!
@@ -26,19 +26,18 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
     // MARK: - Properties
     var gradientLayer: CAGradientLayer!
     var pickedImageUrl: URL!
+    var pickedImage: UIImage!
     
     // MARK: - Contansts
     private static let PAGE_VIEW_SEGUE = "PageViewSegue"
     
     // MARK: - View Controller Methods
-
     override func viewDidLoad() {
         super.viewDidLoad()
         let duration: TimeInterval = TimeInterval(exactly: 0.5)!
         setup()
         // Do any additional setup after loading the view.
     }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AppUtility.lockOrientation(.portrait)
@@ -47,28 +46,75 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
         super.viewWillDisappear(animated)
         AppUtility.lockOrientation(.all)
     }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
     // MARK: - Setup Methods
-    
     private func setup() {
         createGradientLayer()
         setupNavigationController()
         self.hideKeyboard()
         self.title = "Create Account"
         self.tableView.allowsSelection = false
+        
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.cornerRadius = imageView.layer.frame.width / 2
+        
+        fullNameOutlet.delegate = self
+        emailOutlet.delegate = self
+        passwordOutlet.delegate = self
+        verifyPasswordOutlet.delegate = self
+    }
+    
+    private func setupNavigationController() {
+        let logo = #imageLiteral(resourceName: "Logo Text Wide")
+        let imageView = UIImageView(image:logo)
+        imageView.hero.id = "logoID"
+        let duration: TimeInterval = TimeInterval(exactly: 0.5)!
+        imageView.hero.modifiers = [.forceNonFade, .duration(duration)]
+        
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        let bannerWidth = self.navigationController?.navigationBar.frame.size.width
+        let bannerHeight = self.navigationController?.navigationBar.frame.size.height
+        let bannerx = bannerWidth! / 2 - logo.size.width / 2
+        let bannery = bannerHeight! / 2 - logo.size.height / 2
+        imageView.frame = CGRect(x: bannerx, y: bannery, width: bannerWidth!, height: bannerHeight!)
+        
+        imageView.contentMode = .scaleAspectFit
+        
+        self.navigationItem.titleView = imageView
+    }
+
+    private func createGradientLayer() {
+        gradientLayer = CAGradientLayer()
+        
+        gradientLayer.frame = self.view.bounds
+        
+        let bottomColor = UIColor(displayP3Red: 99/255, green: 207/255, blue: 155/255, alpha: 1).cgColor
+        let topColor = UIColor(displayP3Red: 9/255, green: 85/255, blue: 95/255, alpha: 1).cgColor
+        
+        gradientLayer.colors = [topColor, bottomColor]
+        
+        //self.tableView.layer.insertSublayer(gradientLayer, at: 0)
+        //self.tableView.backgroundView?.layer.insertSublayer(gradientLayer, at: 1)
+        //self.view.layer.insertSublayer(gradientLayer, at: 0)
+        let background: UIView? = UIView(frame: self.view.frame)
+        background?.layer.insertSublayer(gradientLayer, at: 0)
+        self.tableView.backgroundView = background
     }
     
     // MARK: - Outlet Actions
-    
     @IBAction func addPressed(_ sender: Any) {
         let name = fullNameOutlet.text
         let email = emailOutlet.text
@@ -142,7 +188,13 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
                                     self.displayErrorAlert(message: error!.localizedDescription)
                                 } else {
                                     progressAlert.dismiss()
-                                    self.performSegue(withIdentifier: CreateAccountVC.PAGE_VIEW_SEGUE, sender: image)
+                                    
+                                    // MARK: - TODO: This is where the segue to the EULA wil go. Move the line below to the confirm action of the EULA to finish creating an account. If the User does not agree to the EULA, mark the account as incomplete on Firebase and locally in UserDefaults.
+//                                    #error("Check EULA")
+                                    let eula = EULAViewController()
+                                    eula.delegate = self
+                                    self.pickedImage = image
+                                    self.present(eula, animated: true, completion: nil)
                                 }
                             })
                         })
@@ -160,7 +212,6 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
         }
     }
     
-    
     @IBAction func selectImagePressed(_ sender: Any) {
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
@@ -168,12 +219,50 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
         self.present(imagePicker, animated: true, completion: nil)
     }
     
-    // MARK: - Image Picker Methods
+    // MARK: - Class Methods
+    private func displayErrorAlert(message: String) {
+        let alert = FCAlertView()
+        alert.makeAlertTypeWarning()
+        alert.dismissOnOutsideTouch = true
+        
+        
+        let titleString = "Oops!"
+        let subtitleString = message
+        
+        alert.showAlert(inView: self,
+                        withTitle: titleString,
+                        withSubtitle: subtitleString,
+                        withCustomImage: nil,
+                        withDoneButtonTitle: "Try Again",
+                        andButtons: nil)
+    }
     
-    /*
-     Called when an image is picked
-    */
+    /// validate an email for the right format
+    private func isValidEmail(email:String?) -> Bool {
+        
+        guard email != nil else { return false }
+        
+        let regEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        
+        let pred = NSPredicate(format:"SELF MATCHES %@", regEx)
+        let evaluate = pred.evaluate(with: email)
+        return evaluate
+    }
     
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        if segue.identifier == CreateAccountVC.PAGE_VIEW_SEGUE {
+            let image = sender as! UIImage
+            let destination = segue.destination as! PageViewController
+            destination.profileImage = image
+        }
+    }
+}
+
+// MARK: - Image Picker Methods
+extension CreateAccountVC: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let pickedImage = info[.originalImage] as? UIImage else {
             return
@@ -195,12 +284,10 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
         UserDefaults.standard.set(imageData, forKey: "profileImage")
         picker.dismiss(animated: true, completion: nil)
     }
-    
-    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
-    }
-    
-    // MARK: - Table View Methods
+}
+
+// MARK: - Table View Methods
+extension CreateAccountVC {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -208,109 +295,36 @@ class CreateAccountVC: UITableViewController, UIImagePickerControllerDelegate, U
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
+}
+
+// MARK: - EULA Delegate
+extension CreateAccountVC: EULAViewControllerDelegate {
     
-    
-    
-//    override var preferredStatusBarStyle: UIStatusBarStyle {
-//        return .lightContent
-//    }
-    
-    
-    func createGradientLayer() {
-        gradientLayer = CAGradientLayer()
-        
-        gradientLayer.frame = self.view.bounds
-        
-        let bottomColor = UIColor(displayP3Red: 99/255, green: 207/255, blue: 155/255, alpha: 1).cgColor
-        let topColor = UIColor(displayP3Red: 9/255, green: 85/255, blue: 95/255, alpha: 1).cgColor
-        
-        gradientLayer.colors = [topColor, bottomColor]
-        
-        //self.tableView.layer.insertSublayer(gradientLayer, at: 0)
-        //self.tableView.backgroundView?.layer.insertSublayer(gradientLayer, at: 1)
-        //self.view.layer.insertSublayer(gradientLayer, at: 0)
-        let background: UIView? = UIView(frame: self.view.frame)
-        background?.layer.insertSublayer(gradientLayer, at: 0)
-        self.tableView.backgroundView = background
+    func didAgree(controller: EULAViewController) {
+        controller.dismiss(animated: true) {
+            self.performSegue(withIdentifier: CreateAccountVC.PAGE_VIEW_SEGUE, sender: self.pickedImage)
+        }
     }
     
-    func setupNavigationController() {
-        let logo = #imageLiteral(resourceName: "Logo Text Wide")
-        let imageView = UIImageView(image:logo)
-        imageView.hero.id = "logoID"
-        let duration: TimeInterval = TimeInterval(exactly: 0.5)!
-        imageView.hero.modifiers = [.forceNonFade, .duration(duration)]
-        
-        
-    self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
-        
-        let bannerWidth = self.navigationController?.navigationBar.frame.size.width
-        let bannerHeight = self.navigationController?.navigationBar.frame.size.height
-        let bannerx = bannerWidth! / 2 - logo.size.width / 2
-        let bannery = bannerHeight! / 2 - logo.size.height / 2
-        imageView.frame = CGRect(x: bannerx, y: bannery, width: bannerWidth!, height: bannerHeight!)
-        
-        imageView.contentMode = .scaleAspectFit
-        
-        self.navigationItem.titleView = imageView
+    func didCancel(controller: EULAViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool
-    {
-        // Try to find next responder
-        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? SkyFloatingLabelTextFieldWithIcon {
-            nextField.becomeFirstResponder()
-        } else {
-            // Not found, so remove keyboard.
+}
+
+// MARK: - UITextfield Delegate
+extension CreateAccountVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == fullNameOutlet {
+            emailOutlet.becomeFirstResponder()
+        } else if textField == emailOutlet {
+            passwordOutlet.becomeFirstResponder()
+        } else if textField == passwordOutlet {
+            verifyPasswordOutlet.becomeFirstResponder()
+        } else if textField == verifyPasswordOutlet {
             textField.resignFirstResponder()
         }
-        // Do not add a line break
-        return false
-    }
-    
-    
-    private func displayErrorAlert(message: String) {
-        let alert = FCAlertView()
-        alert.makeAlertTypeWarning()
-        alert.dismissOnOutsideTouch = true
         
-        
-        let titleString = "Oops!"
-        let subtitleString = message
-        
-        alert.showAlert(inView: self,
-                        withTitle: titleString,
-                        withSubtitle: subtitleString,
-                        withCustomImage: nil,
-                        withDoneButtonTitle: "Try Again",
-                        andButtons: nil)
-    }
-    
-    // validate an email for the right format
-    func isValidEmail(email:String?) -> Bool {
-        
-        guard email != nil else { return false }
-        
-        let regEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        
-        let pred = NSPredicate(format:"SELF MATCHES %@", regEx)
-        let evaluate = pred.evaluate(with: email)
-        return evaluate
-    }
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == CreateAccountVC.PAGE_VIEW_SEGUE {
-            let image = sender as! UIImage
-            let destination = segue.destination as! PageViewController
-            destination.profileImage = image
-        }
+        return true
     }
 }
