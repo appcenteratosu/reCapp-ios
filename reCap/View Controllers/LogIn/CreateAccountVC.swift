@@ -189,11 +189,13 @@ class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
                                 } else {
                                     progressAlert.dismiss()
                                     
-                                    // MARK: - TODO: This is where the segue to the EULA wil go. Move the line below to the confirm action of the EULA to finish creating an account. If the User does not agree to the EULA, mark the account as incomplete on Firebase and locally in UserDefaults.
-//                                    #error("Check EULA")
+                                    DataManager.currentAppUser = newUser
+                                    DataManager.currentFBUser = user
+                                    
                                     let eula = EULAViewController()
                                     eula.delegate = self
                                     self.pickedImage = image
+                                    
                                     self.present(eula, animated: true, completion: nil)
                                 }
                             })
