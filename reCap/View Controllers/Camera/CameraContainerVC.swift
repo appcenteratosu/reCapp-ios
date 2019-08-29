@@ -55,7 +55,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     var previousImageContentMode: UIView.ContentMode?
     
     var motionManager = CMMotionManager()
-    
+    let geocoder = CLGeocoder()
+    var firstRun = true
     
     let blackColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
     var user: User!
@@ -151,7 +152,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
     }
     
-    func setupProfileImage() {
+    private func setupProfileImage() {
         if self.profileImage != nil {
             self.profileOutlet.image = self.profileImage
             self.profileOutlet.layer.borderWidth = 1
@@ -228,7 +229,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
     }
     
-    func setupDial() {
+    private func setupDial() {
         
         bearingPickerOutlet?.delegate = self
         bearingPickerOutlet?.animateOption = .easeOutElastic
@@ -252,7 +253,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
     
-    func setupHero() {
+    private func setupHero() {
         
         let duration: TimeInterval = TimeInterval(exactly: 0.5)!
         
@@ -268,7 +269,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         
     }
     
-    func setupGestures() {
+    private func setupGestures() {
         
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
         swipeDown.direction = .down
@@ -613,7 +614,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                 return false
             }
         } else {
-            return true
+            return false
         }
     }
     
@@ -674,7 +675,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         bearingPickerOutlet.value = value
     }
     
-    let geocoder = CLGeocoder()
     func geocode(location: CLLocation, completion: @escaping (_ state: String, _ country: String)->()) {
         geocoder.reverseGeocodeLocation(location) { (places, error) in
             if error != nil {
@@ -768,7 +768,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         }
     }
     
-    var firstRun = true
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             let lat = location.coordinate.latitude.truncate(places: 8)
@@ -858,18 +857,22 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             
             
             var orientation: UIImage.Orientation?
-            if UIDevice.current.orientation == .portrait {
+            
+            switch UIDevice.current.orientation {
+            case .portrait:
                 orientation = .right
-            } else if UIDevice.current.orientation == .landscapeLeft {
+            case .landscapeLeft:
                 orientation = .up
-            } else if UIDevice.current.orientation == .landscapeRight {
+            case .landscapeRight:
                 orientation = .down
-            } else if UIDevice.current.orientation == .portraitUpsideDown {
+            case .portraitUpsideDown:
                 orientation = .left
-            } else if UIDevice.current.orientation == .faceDown {
+            case .faceDown:
                 orientation = .down
-            } else if UIDevice.current.orientation == .faceUp {
+            case .faceUp:
                 orientation = .up
+            case .unknown:
+                orientation = .right
             }
             
             guard let newImage = UIImage(data: rep) else { return }
