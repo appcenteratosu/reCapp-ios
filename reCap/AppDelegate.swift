@@ -16,7 +16,7 @@ import RealmSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var orientationLock = UIInterfaceOrientationMask.all
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -47,48 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
-    
-    private func completeSetup() {
-        if let user = Auth.auth().currentUser {
-            FirebaseHandler.getUserData { (userData) in
-                // TODO: - If the user has not agreed to the EULA, then show the EULA Screen as a popover, otherwise, proceed as usual.
-//                #error("User has to agree to the EULA")
-                DataManager.currentFBUser = user
-                DataManager.currentAppUser = userData
-                AppManager.user = userData
-                MapPopulationManager.initializeMapDataSource()
-                self.setRootAsPageView()
-            }
-        } else {
-            setRootAsSignIn()
-        }
-    }
-    
-    private func setRootAsPageView() {
-        let pageViewStoryboard = UIStoryboard(name: "PageView", bundle: nil)
-        let pageViewVC = pageViewStoryboard.instantiateInitialViewController() as! PageViewController
-        self.window?.rootViewController = pageViewVC
-    }
-    
-    private func setRootAsSignIn() {
-        
-        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
-        if launchedBefore  {
-            print("Not first launch.")
-            let signInStoryboard = UIStoryboard(name: "SignIn", bundle: nil)
-            self.window?.rootViewController = signInStoryboard.instantiateInitialViewController()
-        } else {
-            print("First launch, setting UserDefault.")
-            
-            let signInStoryboard = UIStoryboard(name: "Tutorial", bundle: nil)
-            self.window?.rootViewController = signInStoryboard.instantiateInitialViewController()
-        }
-        
-        
-    }
-    
-    /// set orientations you want to be allowed in this property by default
-    var orientationLock = UIInterfaceOrientationMask.all
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.orientationLock
@@ -129,21 +87,59 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.saveContext()
     }
 
-    // MARK: - Core Data stack
-
+    // MARK: - Setup
+    private func completeSetup() {
+        if let user = Auth.auth().currentUser {
+            FirebaseHandler.getUserData { (userData) in
+                // TODO: - If the user has not agreed to the EULA, then show the EULA Screen as a popover, otherwise, proceed as usual.
+                //                #error("User has to agree to the EULA")
+                DataManager.currentFBUser = user
+                DataManager.currentAppUser = userData
+                AppManager.user = userData
+                MapPopulationManager.initializeMapDataSource()
+                self.setRootAsPageView()
+            }
+        } else {
+            setRootAsSignIn()
+        }
+    }
+    
+    private func setRootAsPageView() {
+        let pageViewStoryboard = UIStoryboard(name: "PageView", bundle: nil)
+        let pageViewVC = pageViewStoryboard.instantiateInitialViewController() as! PageViewController
+        self.window?.rootViewController = pageViewVC
+    }
+    
+    private func setRootAsSignIn() {
+        
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        if launchedBefore  {
+            print("Not first launch.")
+            let signInStoryboard = UIStoryboard(name: "SignIn", bundle: nil)
+            self.window?.rootViewController = signInStoryboard.instantiateInitialViewController()
+        } else {
+            print("First launch, setting UserDefault.")
+            let signInStoryboard = UIStoryboard(name: "Tutorial", bundle: nil)
+            self.window?.rootViewController = signInStoryboard.instantiateInitialViewController()
+        }
+        
+        
+    }
+    
+    // MARK: - Core Data
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
          creates and returns a container, having loaded the store for the
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
-        */
+         */
         let container = NSPersistentContainer(name: "reCap")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                 
+                
                 /*
                  Typical reasons for an error here include:
                  * The parent directory does not exist, cannot be created, or disallows writing.
@@ -158,8 +154,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return container
     }()
 
-    // MARK: - Core Data Saving support
+}
 
+
+extension AppDelegate {
+    // MARK: - Core Data Saving support
     func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -173,6 +172,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
 }
 
