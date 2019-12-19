@@ -283,7 +283,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         photoSetting.isAutoStillImageStabilizationEnabled = true
         photoSetting.flashMode = .off
         
-        
         session = AVCaptureSession()
         session!.sessionPreset = AVCaptureSession.Preset.high
         
@@ -409,6 +408,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                 print(error.localizedDescription)
             }
         }
+        
         
         CameraContainerVC.requests.append(request)
     }
@@ -834,14 +834,6 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
                 Log.e("Irrelevant")
             }
         }
-        
-//        if UIDevice.current.orientation == .portrait {
-//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
-//        } else if UIDevice.current.orientation == .landscapeLeft {
-//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeRight
-//        } else if UIDevice.current.orientation == .landscapeRight {
-//            self.videoPreviewLayer!.connection?.videoOrientation = AVCaptureVideoOrientation.landscapeLeft
-//        }
 
         videoPreviewLayer!.frame = previewView.bounds
         

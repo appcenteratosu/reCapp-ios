@@ -31,6 +31,7 @@ class EULAViewController: UIViewController, UITextViewDelegate, UIScrollViewDele
             EULAView.text = newValue
         }
     }
+    
     public var EULAAttributedText: NSAttributedString? {
         willSet {
             EULAView.attributedText = newValue
@@ -131,6 +132,7 @@ class EULAViewController: UIViewController, UITextViewDelegate, UIScrollViewDele
             confirmButton.backgroundColor = UIColor.green
         }
     }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if reachedBottom == false {
             if scrollView.contentOffset.y >= scrollView.contentSize.height - scrollView.frame.size.height {
