@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C5D4906240F107600B31046 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0C5D4905240F107600B31046 /* .gitignore */; };
 		344C93EA20226E280025E4C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C93E920226E280025E4C5 /* AppDelegate.swift */; };
 		344C93EF20226E280025E4C5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 344C93ED20226E280025E4C5 /* Main.storyboard */; };
 		344C93F220226E280025E4C5 /* reCap.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 344C93F020226E280025E4C5 /* reCap.xcdatamodeld */; };
@@ -110,6 +111,7 @@
 
 /* Begin PBXFileReference section */
 		00648E03B216AAF8A45F25FF /* Pods-reCapUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCapUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-reCapUITests/Pods-reCapUITests.release.xcconfig"; sourceTree = "<group>"; };
+		0C5D4905240F107600B31046 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		1B0F0EE3BD2DAF8A7FF6B271 /* Pods-reCapUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCapUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-reCapUITests/Pods-reCapUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		32C154EC1946B88E3554888D /* Pods_reCap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reCap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		344C93E620226E280025E4C5 /* reCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -252,6 +254,7 @@
 		344C93DD20226E280025E4C5 = {
 			isa = PBXGroup;
 			children = (
+				0C5D4905240F107600B31046 /* .gitignore */,
 				344C93E820226E280025E4C5 /* reCap */,
 				344C940020226E280025E4C5 /* reCapTests */,
 				344C940B20226E280025E4C5 /* reCapUITests */,
@@ -694,6 +697,7 @@
 				7A5878512030D25900F36A56 /* triomphe-italic-autoinstr.ttf in Resources */,
 				7A58784F2030D25900F36A56 /* triomphe-bold-autoinstr.ttf in Resources */,
 				7A120DC7203E6EB10003EE1F /* Tutorial.storyboard in Resources */,
+				0C5D4906240F107600B31046 /* .gitignore in Resources */,
 				7ABF80CE203A63F800BCE787 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -798,8 +802,8 @@
 				"${BUILT_PRODUCTS_DIR}/IHKeyboardAvoiding/IHKeyboardAvoiding.framework",
 				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework",
 				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework.dSYM",
-				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/1BF93521-4C77-3633-A539-01336F1D64E9.bcsymbolmap",
-				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/9D189C8A-78FE-3297-847F-34B05A3A6906.bcsymbolmap",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/B8CEDF0B-90B7-325D-BA23-1B44AB41FEC9.bcsymbolmap",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/1182BB8D-8A58-30EC-8D04-5E89575ED646.bcsymbolmap",
 				"${BUILT_PRODUCTS_DIR}/MapboxCoreNavigation/MapboxCoreNavigation.framework",
 				"${BUILT_PRODUCTS_DIR}/MapboxDirections.swift/MapboxDirections.framework",
 				"${BUILT_PRODUCTS_DIR}/MapboxGeocoder.swift/MapboxGeocoder.framework",
@@ -810,6 +814,7 @@
 				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
 				"${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework",
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkyFloatingLabelTextField/SkyFloatingLabelTextField.framework",
@@ -830,8 +835,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IHKeyboardAvoiding.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
 				"${DWARF_DSYM_FOLDER_PATH}/Mapbox.framework.dSYM",
-				"${BUILT_PRODUCTS_DIR}/1BF93521-4C77-3633-A539-01336F1D64E9.bcsymbolmap",
-				"${BUILT_PRODUCTS_DIR}/9D189C8A-78FE-3297-847F-34B05A3A6906.bcsymbolmap",
+				"${BUILT_PRODUCTS_DIR}/B8CEDF0B-90B7-325D-BA23-1B44AB41FEC9.bcsymbolmap",
+				"${BUILT_PRODUCTS_DIR}/1182BB8D-8A58-30EC-8D04-5E89575ED646.bcsymbolmap",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCoreNavigation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxDirections.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxGeocoder.framework",
@@ -842,6 +847,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pageboy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkyFloatingLabelTextField.framework",

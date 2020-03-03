@@ -122,7 +122,7 @@ class RCPicture: Codable {
         guard let realm = RealmHelper.realm else { return }
         
         try! realm.write {
-            realm.add(realmImage, update: true)
+            realm.add(realmImage, update: .error)
         }
     }
     
