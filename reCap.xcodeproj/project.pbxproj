@@ -279,14 +279,21 @@
 			isa = PBXGroup;
 			children = (
 				344C93E920226E280025E4C5 /* AppDelegate.swift */,
-				7AE3755D2037C51D00CA9946 /* Custom Fonts */,
 				7A5878462030D22600F36A56 /* Extensions.swift */,
-				730657B5219F76AE00DB3B2F /* Models */,
-				7A4D8A53202782DB0043878E /* Realm Objects */,
-				7A4D8A50202782480043878E /* Database */,
-				34A7ACA62027878E00ACFB12 /* Storyboards */,
-				7A4D8A3820277DFF0043878E /* View Controllers */,
+				730657BA219F858300DB3B2F /* AppManager.swift */,
+				344C93ED20226E280025E4C5 /* Main.storyboard */,
+				7A16B8C5209B9DEF0058BC16 /* Startup */,
+				348591FA203A7971003E3704 /* Tutorial */,
+				7A16B8C4209B9DB20058BC16 /* LogIn */,
+				7A16B8C3209B9D7B0058BC16 /* Photo */,
+				7A16B8C2209B9BA40058BC16 /* Profile menu */,
+				348591F9203A795D003E3704 /* Map */,
+				348591F8203A7942003E3704 /* Camera */,
+				7A38A273202AB54800DF239F /* PhotoLibChallenge */,
+				34A7ACAA2027886800ACFB12 /* PageViewControllers */,
+				7AE375682037C8E100CA9946 /* LeaderboardFriends */,
 				344C93F320226E280025E4C5 /* Assets.xcassets */,
+				7AE3755D2037C51D00CA9946 /* Custom Fonts */,
 				84C47DA523136941005EB4AE /* Custom */,
 				344C93F820226E280025E4C5 /* Info.plist */,
 				73553B762190E56000D1F3E1 /* GoogleService-Info.plist */,
@@ -320,6 +327,9 @@
 		348591F8203A7942003E3704 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				34A7ACB52027A4F500ACFB12 /* Camera.storyboard */,
+				7A3C553D207B1082009A8036 /* PictureData.swift */,
+				730657B8219F7A8E00DB3B2F /* RCPicture.swift */,
 				7A3C5537207AFDDD009A8036 /* HorizontalDial.swift */,
 				7AF10F542058A49800019C70 /* CameraContainerVC.swift */,
 				7AA8EE912055A5000043B73C /* ImageCreateVC.swift */,
@@ -331,6 +341,7 @@
 		348591F9203A795D003E3704 /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				34A7ACB32027A4EB00ACFB12 /* Map.storyboard */,
 				7A5358AF205B77DE0047F410 /* MapVC.swift */,
 				73BBA7BC21E695D30059361A /* MapPopulationManager.swift */,
 				7A4D8A432027801E0043878E /* NavigationVC.swift */,
@@ -344,6 +355,7 @@
 		348591FA203A7971003E3704 /* Tutorial */ = {
 			isa = PBXGroup;
 			children = (
+				7A120DC6203E6EB10003EE1F /* Tutorial.storyboard */,
 				7A5358A9205B6EE00047F410 /* CustomPage.swift */,
 				7A5358AA205B6EE00047F410 /* TutorialTransitionVC.swift */,
 				7A5358AB205B6EE10047F410 /* TutorialWelcomeVC.swift */,
@@ -355,31 +367,10 @@
 			path = Tutorial;
 			sourceTree = "<group>";
 		};
-		34A7ACA62027878E00ACFB12 /* Storyboards */ = {
-			isa = PBXGroup;
-			children = (
-				7AF10F4E2058A46C00019C70 /* AppLoading.storyboard */,
-				7A120DC6203E6EB10003EE1F /* Tutorial.storyboard */,
-				7A120DC2203E6BBB0003EE1F /* Profile.storyboard */,
-				7AE3755E2037C56000CA9946 /* Launch Screen.storyboard */,
-				7A3B468D202AB407001D19B6 /* SignIn.storyboard */,
-				7A58785D20310A0100F36A56 /* CreateAccount.storyboard */,
-				7A3C60102027B99A00ABC9E1 /* PageView.storyboard */,
-				344C93ED20226E280025E4C5 /* Main.storyboard */,
-				34A7ACB32027A4EB00ACFB12 /* Map.storyboard */,
-				34A7ACB52027A4F500ACFB12 /* Camera.storyboard */,
-				7A38A278202AB57600DF239F /* PhotoLibChallenge.storyboard */,
-				34A7ACB72027A51700ACFB12 /* LeaderboardsFriends.storyboard */,
-				7ABF80CD203A63F800BCE787 /* Settings.storyboard */,
-				7ABF80CF203A64D300BCE787 /* Photo.storyboard */,
-				7AA8EE8B2054AD3F0043B73C /* PhotoTimeline.storyboard */,
-			);
-			path = Storyboards;
-			sourceTree = "<group>";
-		};
 		34A7ACAA2027886800ACFB12 /* PageViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				7A3C60102027B99A00ABC9E1 /* PageView.storyboard */,
 				34A7ACA7202787DA00ACFB12 /* PageViewController.swift */,
 			);
 			path = PageViewControllers;
@@ -395,16 +386,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		730657B5219F76AE00DB3B2F /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				730657B6219F76D100DB3B2F /* RCUser.swift */,
-				730657B8219F7A8E00DB3B2F /* RCPicture.swift */,
-				730657BA219F858300DB3B2F /* AppManager.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		73B3C09F21DD60AE00874015 /* Map View Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -417,8 +398,17 @@
 		7A16B8C2209B9BA40058BC16 /* Profile menu */ = {
 			isa = PBXGroup;
 			children = (
-				7AF10F502058A47B00019C70 /* ProfileMenuVC.swift */,
+				7ABF80CD203A63F800BCE787 /* Settings.storyboard */,
 				7AF359492038CDE500713EA3 /* SettingsVC.swift */,
+				7AF10F502058A47B00019C70 /* ProfileMenuVC.swift */,
+				7A120DC2203E6BBB0003EE1F /* Profile.storyboard */,
+				730657B6219F76D100DB3B2F /* RCUser.swift */,
+				7A3C553B207B0949009A8036 /* UserData.swift */,
+				7A494E5E208D48EB00A72AA8 /* RealmHelper.swift */,
+				7AE375662037C6D900CA9946 /* FBDatabase.swift */,
+				734840FA219A6E7D0065E472 /* DataManager.swift */,
+				73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */,
+				7A3C5539207B029D009A8036 /* RealmConstants.swift */,
 			);
 			path = "Profile menu";
 			sourceTree = "<group>";
@@ -435,6 +425,8 @@
 		7A16B8C4209B9DB20058BC16 /* LogIn */ = {
 			isa = PBXGroup;
 			children = (
+				7A3B468D202AB407001D19B6 /* SignIn.storyboard */,
+				7A58785D20310A0100F36A56 /* CreateAccount.storyboard */,
 				345FB83820363BE300C59FDB /* SignInVC.swift */,
 				7A4D8A3920277E4F0043878E /* CreateAccountVC.swift */,
 				347A06A3202A14BB00961024 /* SignInTransitionVC.swift */,
@@ -445,6 +437,8 @@
 		7A16B8C5209B9DEF0058BC16 /* Startup */ = {
 			isa = PBXGroup;
 			children = (
+				7AE3755E2037C56000CA9946 /* Launch Screen.storyboard */,
+				7AF10F4E2058A46C00019C70 /* AppLoading.storyboard */,
 				7A5358A3205ADF150047F410 /* AppLoadingVC.swift */,
 			);
 			path = Startup;
@@ -453,6 +447,9 @@
 		7A38A273202AB54800DF239F /* PhotoLibChallenge */ = {
 			isa = PBXGroup;
 			children = (
+				7ABF80CF203A64D300BCE787 /* Photo.storyboard */,
+				7AA8EE8B2054AD3F0043B73C /* PhotoTimeline.storyboard */,
+				7A38A278202AB57600DF239F /* PhotoLibChallenge.storyboard */,
 				7AF10F562058DA7D00019C70 /* SnappingCollectionViewLayout.swift */,
 				7A5358B3205C8ACB0047F410 /* PhotoLibChallengeVC.swift */,
 				7386257121B886240036930F /* RCPictureChallengeProtocol.swift */,
@@ -461,44 +458,6 @@
 				7A38A274202AB56100DF239F /* PhotoChallengeTableCell.swift */,
 			);
 			path = PhotoLibChallenge;
-			sourceTree = "<group>";
-		};
-		7A4D8A3820277DFF0043878E /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				7A16B8C5209B9DEF0058BC16 /* Startup */,
-				348591FA203A7971003E3704 /* Tutorial */,
-				7A16B8C4209B9DB20058BC16 /* LogIn */,
-				7A16B8C3209B9D7B0058BC16 /* Photo */,
-				7A16B8C2209B9BA40058BC16 /* Profile menu */,
-				348591F9203A795D003E3704 /* Map */,
-				348591F8203A7942003E3704 /* Camera */,
-				7A38A273202AB54800DF239F /* PhotoLibChallenge */,
-				34A7ACAA2027886800ACFB12 /* PageViewControllers */,
-				7AE375682037C8E100CA9946 /* LeaderboardFriends */,
-			);
-			path = "View Controllers";
-			sourceTree = "<group>";
-		};
-		7A4D8A50202782480043878E /* Database */ = {
-			isa = PBXGroup;
-			children = (
-				7A494E5E208D48EB00A72AA8 /* RealmHelper.swift */,
-				7AE375662037C6D900CA9946 /* FBDatabase.swift */,
-				73553B74218F7FCD00D1F3E1 /* FirebaseHandler.swift */,
-				734840FA219A6E7D0065E472 /* DataManager.swift */,
-				7A3C5539207B029D009A8036 /* RealmConstants.swift */,
-			);
-			path = Database;
-			sourceTree = "<group>";
-		};
-		7A4D8A53202782DB0043878E /* Realm Objects */ = {
-			isa = PBXGroup;
-			children = (
-				7A3C553B207B0949009A8036 /* UserData.swift */,
-				7A3C553D207B1082009A8036 /* PictureData.swift */,
-			);
-			path = "Realm Objects";
 			sourceTree = "<group>";
 		};
 		7AB6A142203E698000933F30 /* Recovered References */ = {
@@ -528,6 +487,7 @@
 		7AE375682037C8E100CA9946 /* LeaderboardFriends */ = {
 			isa = PBXGroup;
 			children = (
+				34A7ACB72027A51700ACFB12 /* LeaderboardsFriends.storyboard */,
 				7A5358A7205B6E670047F410 /* LeaderboardsFriendsVC.swift */,
 				7AE3756A2037C8E100CA9946 /* LeaderboardFriendsTableCell.swift */,
 			);
