@@ -137,7 +137,7 @@
 		34B359A520583F940093D02C /* CustomOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomOverlay.swift; sourceTree = "<group>"; };
 		34B359A720583F980093D02C /* CustomPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomPage.xib; sourceTree = "<group>"; };
 		34B359A820583F9A0093D02C /* CustomOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomOverlay.xib; sourceTree = "<group>"; };
-		34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageConfirmVC.swift; path = "reCap/View Controllers/Camera/ImageConfirmVC.swift"; sourceTree = SOURCE_ROOT; };
+		34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageConfirmVC.swift; path = reCap/Camera/ImageConfirmVC.swift; sourceTree = SOURCE_ROOT; };
 		3C4B8964350E05059DCB1788 /* Pods-reCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-reCap/Pods-reCap.release.xcconfig"; sourceTree = "<group>"; };
 		730657B6219F76D100DB3B2F /* RCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCUser.swift; sourceTree = "<group>"; };
 		730657B8219F7A8E00DB3B2F /* RCPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCPicture.swift; sourceTree = "<group>"; };
