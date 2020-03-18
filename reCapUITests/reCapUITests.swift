@@ -3,7 +3,7 @@
 //  reCapUITests
 //
 //  Created by Kaleb Cooper on 1/31/18.
-//  Copyright © 2018 Kaleb Cooper. All rights reserved.
+//  Copyright © 2020 OSU App Center. All rights reserved.
 //
 
 import XCTest

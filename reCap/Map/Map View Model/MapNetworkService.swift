@@ -3,7 +3,7 @@
 //  HealthApp
 //
 //  Created by App Center on 12/28/18.
-//  Copyright © 2018 rlukedavis. All rights reserved.
+//  Copyright © 2020 OSU App Center. All rights reserved.
 //
 
 import Foundation

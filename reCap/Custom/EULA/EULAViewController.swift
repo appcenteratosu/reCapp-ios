@@ -3,7 +3,7 @@
 //  reCap
 //
 //  Created by Luke Davis on 8/25/19.
-//  Copyright © 2019 Kaleb Cooper. All rights reserved.
+//  Copyright © 2020 OSU App Center. All rights reserved.
 //
 
 import Foundation

@@ -3,7 +3,7 @@
 //  reCap
 //
 //  Created by Kaleb Cooper on 2/18/18.
-//  Copyright © 2018 Kaleb Cooper. All rights reserved.
+//  Copyright © 2020 OSU App Center. All rights reserved.
 //
 
 import UIKit
