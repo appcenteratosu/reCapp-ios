@@ -18,6 +18,8 @@ class LeaderboardFriendsTableCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        // TODO: Create/use extension to simplify
         // Initialization code
         self.imageOutlet.layer.borderWidth = 1
         self.imageOutlet.layer.borderColor = UIColor.white.cgColor
@@ -32,5 +34,4 @@ class LeaderboardFriendsTableCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
 }

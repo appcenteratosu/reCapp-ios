@@ -15,9 +15,11 @@ import FCAlertView
 
 class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     
+    // TODO: rename to remove redundancy
     @IBOutlet weak var backButtonOutlet: UIBarButtonItem!
     @IBOutlet weak var locationControl: UISegmentedControl!
     
+    // TODO: reformat
     @IBAction func locationFilterChanged(_ sender: Any) {
         let currentLocationIndex = self.locationControl.selectedSegmentIndex
         if currentLocationIndex == LeaderboardsFriendsVC.STATE_FILTER {
@@ -32,6 +34,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         self.tableView.reloadData()
     }
     
+    // TODO: separate and document variable uses
     // MARK: - Properties
     static var LEADERBOARD_MODE = 0
     static var FRIENDS_LIST_MODE = 1
@@ -43,7 +46,9 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     private var stateLeaderboards: [RCUser]!
     private var countryLeaderboards: [RCUser]!
     private var globalLeaderboards: [RCUser]!
+    // TODO: use raw type instead of unsafe
     
+    // TODO: convert to enum
     private static let STATE_FILTER = 0
     private static let COUNTRY_FILTER = 1
     private static let GLOBAL_FILTER = 2
@@ -57,6 +62,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         super.viewWillAppear(animated)
         self.userData = DataManager.currentAppUser
         
+        // TODO: remove redundant instantiation
         friendsList = []
         leaderboardsList = []
         stateLeaderboards = []
@@ -97,7 +103,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 80 // TODO: remove magic number
     }
     
     // MARK: - Setup Methods
@@ -176,7 +182,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         }
     }
     
-    
+    // TODO: fix formatting and comment
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! LeaderboardFriendsTableCell
         let user: RCUser!
@@ -304,6 +310,8 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
             photoLibVC.userData = friend
             photoLibVC.mode = PhotoLibChallengeVC.PHOTO_LIB_MODE
         }
+        
+        // TODO: use if let
     }
     
     
