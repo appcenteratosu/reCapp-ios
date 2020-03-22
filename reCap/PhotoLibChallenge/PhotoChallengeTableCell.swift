@@ -29,6 +29,8 @@ class PhotoChallengeTableCell: UITableViewCell {
         <D: UICollectionViewDataSource & UICollectionViewDelegate>
         (dataSourceDelegate: D, forSection section: Int) {
         
+        // TODO: document purpose - consider binding elsewise
+        
         pictureCollection.delegate = dataSourceDelegate
         pictureCollection.dataSource = dataSourceDelegate
         pictureCollection.allowsSelection = true

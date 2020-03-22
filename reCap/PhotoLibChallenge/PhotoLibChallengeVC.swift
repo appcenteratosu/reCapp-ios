@@ -15,8 +15,7 @@ import CoreLocation
 
 class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, ImageButtonDelegate {
     
-    // MARK: - Outlets
-    
+    // TODO: URGENT Remove unsafe references
     // MARK: - Properties
     private var tableSectionArray: [String]!
     private var collectionDictionaryData: [String : [RCPicture]]!
@@ -29,6 +28,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     var userLong: Double!
     let locationManager = CLLocationManager()
     
+    // TODO: declare as enums for assignment type-safety
     // MARK: - Constants
     private static let PHOTO_SEGUE = "PhotoSegue"
     private static let VIEW_CHALLENGE_SEGUE = "ViewChallengeSegue"
@@ -80,6 +80,8 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         setupSpinner()
         tableSectionArray = []
         collectionDictionaryData = [:]
+        
+        // TODO: replace with switch on enum type
         if self.mode == PhotoLibChallengeVC.PHOTO_LIB_MODE {
             self.setupPhotoLib()
         } else if mode == PhotoLibChallengeVC.CHALLENGE_MODE  {
@@ -112,14 +114,16 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
 
     
     private func setupPhotoLib() {
+        
         let username = self.userData.name
         self.title = "\(username)'s Photos"
         self.tableView.allowsSelection = false
         var groupIDArray: [String] = []
         // Get all user pictures and sort them by time, the most recent will be at the start
         
-        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "owner").queryEqual(toValue: userData.id).observeSingleEvent(of: .value) { (snap) in
-            if let objects = snap.children.allObjects as? [DataSnapshot] {
+        FirebaseHandler.database.child("PictureData").queryOrdered(byChild: "owner").queryEqual(toValue: userData.id).observeSingleEvent(of: .value) { (snapshot) in
+            
+            if let objects = snapshot.children.allObjects as? [DataSnapshot] {
                 var pictures: [RCPicture] = []
                 for object in objects {
                     let picture = RCPicture(snapshot: object)
@@ -143,25 +147,26 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     }
     
     private func getFiftyChallenges(results: [RCPicture]) -> [RCPicture] {
-        var count = 0
+        
         let max = 50
         var pictureArray: [RCPicture] = []
         for pictureData in results {
-            if count < max {
-                pictureArray.append(pictureData)
-                count = count + 1
-            }
-            else {
-                break
+            pictureArray.append(pictureData)
+            if pictureArray.size() >= max {
+                break;
             }
         }
         return pictureArray
     }
     
     private func setupChallenge() {
+        // TODO: organize code - potentially move all setup code to Challenge class
         self.title = "Challenges"
         self.dispatchGroup = DispatchGroup()
+        // TODO: replace with enum type array
         self.collectionDictionaryData = [PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT : [], PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK : [], PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH : [], PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR : []]
+        
+        // TODO: replace with google geo classes
         self.tableView.allowsSelection = false
         print("Part 2")
         let lat = self.userData.latitude
@@ -207,7 +212,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
                 self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_MONTH] = monthResults
                 self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_YEAR] = yearResults
 
-                
+                // TODO: abstract redundant access to function
                 if self.collectionDictionaryData[PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT]?.count != 0 {
                     self.tableSectionArray.append(PhotoLibChallengeVC.TAKE_PIC_FROM_RECENT)
                 }
@@ -227,7 +232,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     
     // MARK: - ImageButton Methods
     func imageButtonPressed(image: UIImage, pictureData: RCPicture) {
+        
         print("Image Pressed")
+        
+        // TODO: replace with enum switch
         if mode == PhotoLibChallengeVC.CHALLENGE_MODE {
             let alert = UIAlertController(title: nil, message: "What would you like to do with this challenge?", preferredStyle: .actionSheet)
             let withoutNav = UIAlertAction(title: "Make Active", style: .default, handler: {(action) in
@@ -250,6 +258,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     }
     
     private func displaySuccessAlert(message: String) {
+        
         let alert = FCAlertView()
         alert.makeAlertTypeSuccess()
         alert.dismissOnOutsideTouch = true
@@ -273,6 +282,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
      falls into
      */
     private func getPicChallengeCategory(pictureData: RCPicture, currentDate: Date) -> String {
+        
         //let pictureDate = DateGetter.getDateFromString(string: pictureData.time)
         let dateDiffSec = Int(abs(TimeInterval(pictureData.time) - currentDate.timeIntervalSince1970))
         //let dateDiffSec = Int(abs(pictureDate.timeIntervalSince(currentDate)))
@@ -293,6 +303,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     private func addChallengeToUser(pictureData: RCPicture) {
         let challengeCategory = getPicChallengeCategory(pictureData: pictureData, currentDate: Date())
         var points = 0
+        // TODO: replace with enum switch
         if challengeCategory == PhotoLibChallengeVC.TAKE_PIC_FROM_WEEK {
             points = PhotoLibChallengeVC.CHALLENGE_WEEK_POINTS
         }
@@ -375,8 +386,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PictureCell", for: indexPath) as! PhotoChalColCell
         cell.setImageViewDelegate(delegate: self)
+        
         let sectionIndex = collectionView.tag
         let row = indexPath.row
         var pictureData: RCPicture?
@@ -384,6 +397,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         let collectionDataArray = self.collectionDictionaryData[sectionTitle]
         pictureData = collectionDataArray?[row]
         cell.pictureData = pictureData
+        
         if let realPictureData = pictureData {
             FirebaseHandler.downloadPicture(pictureData: realPictureData) { (image) in
                 if let image = image {
@@ -413,47 +427,6 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         }
     }
     
-    
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    
-    
-    
-    
     func applyBlurEffect(image: UIImage){
         let imageToBlur = CIImage(image: image)
         let blurfilter = CIFilter(name: "CIGaussianBlur")
@@ -464,11 +437,10 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         let blurredView = UIImageView(image: blurredImage)
         blurredView.contentMode = .center
         self.tableView.backgroundView = blurredView
-        
-        
     }
     
     @IBAction func photoDeletedUnwindSegue(segue: UIStoryboardSegue) {
+        // TODO: does not appear to do what the existing documentation says it does
         // Determines if a photo has been deleted, updates the view if one has
         self.setup()
     }

@@ -23,6 +23,7 @@ class PhotoChalColCell: UICollectionViewCell {
         // Initialization code
 
         //Attempting to add shadow for 3D effect
+        // TODO: use UIView extensions
         self.contentView.layer.borderWidth = 2.0
         self.contentView.layer.borderColor = UIColor.clear.cgColor
         self.contentView.layer.masksToBounds = true
@@ -46,11 +47,13 @@ class PhotoChalColCell: UICollectionViewCell {
 
     }
 
-    
+    // TODO: make property setter
     func setImageViewDelegate(delegate: ImageButtonDelegate) {
         self.delegate = delegate
     }
+    
     @IBAction func imageButtonPressed(_ sender: Any) {
+        // TODO: remove unsafe access
         delegate.imageButtonPressed(image: imageView.image!, pictureData: pictureData)
     }
 }
