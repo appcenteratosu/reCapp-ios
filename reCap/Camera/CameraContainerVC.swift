@@ -33,6 +33,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     @IBOutlet weak var bearingPickerOutlet: HorizontalDial!
     @IBOutlet weak var bearingOutlet: UILabel!
     
+    // TODO: remove unsafe properties
     // MARK: - Properties
     var imageToPass: UIImage?
     var latToPass: Double?
@@ -153,6 +154,8 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     }
     
     private func setupProfileImage() {
+        
+        // TODO: create UIVIew extensions for following repetitive tasks
         if self.profileImage != nil {
             self.profileOutlet.image = self.profileImage
             self.profileOutlet.layer.borderWidth = 1
@@ -413,6 +416,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
         CameraContainerVC.requests.append(request)
     }
     
+    // TODO: move elsewhere this file is cluttered enough as is
     enum CameraControllerError: Swift.Error {
         case captureSessionAlreadyRunning
         case captureSessionIsMissing
@@ -500,6 +504,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
             throw CameraControllerError.captureSessionIsMissing
         }
         
+        // TODO: assign to local var first to avoid unnecessary safe access
         self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         self.videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         self.videoPreviewLayer?.connection?.videoOrientation = .portrait

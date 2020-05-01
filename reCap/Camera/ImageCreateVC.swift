@@ -17,6 +17,7 @@ import Pageboy
 // remove PageboyViewControllerDelegate
 class ImageCreateVC: UIViewController, UITextFieldDelegate {
     
+    // TODO: remove unsafe references
     var image: UIImage?
     var lat: Double?
     var long: Double?
@@ -47,7 +48,9 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func confirmPressed(_ sender: Any) {
+        
         print("Confirmed Pressed")
+        // TODO: remove MORE unsafe references WHYY
         var isRoot: Bool!
         var groupID: String!
         let currentDate = Int((Date().timeIntervalSince1970))
@@ -71,6 +74,7 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
             groupID = ""
         }
         
+        // TODO: consider convenience constructor
         let picture = RCPicture()
         picture.name = self.titleOutlet.text!
         picture.info = self.descriptionOutlet.text!
@@ -89,6 +93,7 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
             if let picData = updatedPic {
                 
                 FirebaseHandler.storeImage(image: self.image!, picture: picData, view: self, whenDone: {
+                    
                     if self.isAtChallengeLocation {
                         self.displayChallengeComplete()
                     } else {
@@ -97,7 +102,9 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
                     }
                     self.navigationController?.setToolbarHidden(true, animated: true)
                     self.navigationController?.popToRootViewController(animated: true)
+                    
                 })
+                
             } else {
                 Log.e("Could not get updated RCPicture. Will Not be storing Image")
             }

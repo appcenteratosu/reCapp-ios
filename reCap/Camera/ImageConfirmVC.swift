@@ -16,6 +16,8 @@ class ImageConfirmVC: UIViewController {
     var longToPass: Double?
     var bearingToPass: Double?
     var locationToPass: String?
+    
+    // TODO: remove unsafe references
     var isAtChallengeLocation: Bool!
     var previousPic: RCPicture!
     var userData: RCUser!
