@@ -9,6 +9,7 @@
 import Foundation
 
 class MapPopulationManager {
+    
     private static var willWait: Bool = false
     public static func shouldWaitForAppDelegate() {
         willWait = true

@@ -16,6 +16,7 @@ import RealmSwift
 
 class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
+    // TODO: define constants as enum types
     private static let TAKE_PIC_FROM_RECENT = "Recent Photos (+1 point)"
     private static let TAKE_PIC_FROM_WEEK = "Photos over a week ago (+5 points)"
     private static let TAKE_PIC_FROM_MONTH = "Photos over a month ago (+15 points)"
@@ -32,6 +33,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     private var locations: [String]!
     private var locationDictionary: [String : [RCPicture]]!
     
+    // TODO: remove unsafe properties
 //    var user: User!
     var user: RCUser!
     let ref = Database.database().reference()
