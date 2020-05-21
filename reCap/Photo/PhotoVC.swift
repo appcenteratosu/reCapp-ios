@@ -16,16 +16,20 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var imageBackground: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var deleteButton: UIButton!
+    
     var mode: Int!
+    // TODO: swap with enums
     static let PHOTO_LIB_MODE = 0
     static let CHALLENGE_MODE = 1
     
     // MARK: - Properties
+    // TODO: remove unsafe properties jeez
     var image: UIImage!
     var selectedPictureData: RCPicture!
     var nextPictureData: RCPicture!
     
     var userData: RCUser!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setToolbarHidden(true, animated: true)
@@ -64,13 +68,14 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     }
     
     func applyBlurEffect(image: UIImage){
+        
         let imageToBlur = CIImage(image: image)
         let blurfilter = CIFilter(name: "CIGaussianBlur")
         blurfilter?.setValue(imageToBlur, forKey: "inputImage")
+        
         let resultImage = blurfilter?.value(forKey: "outputImage") as! CIImage
         let blurredImage = UIImage(ciImage: resultImage)
         self.imageBackground.image = blurredImage
-        
     }
 
     override func didReceiveMemoryWarning() {

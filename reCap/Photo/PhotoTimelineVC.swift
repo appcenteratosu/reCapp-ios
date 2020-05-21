@@ -17,6 +17,7 @@ import Firebase
 class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, ImageButtonDelegate {
     
     // Parameters
+    // TODO: remove unsafe properties again
     var image: UIImage!
     var pictureData: RCPicture?
     var userData: RCUser!
@@ -25,6 +26,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     var pictureDataToPass: RCPicture?
     var mode: Int!
     
+    // TODO: use enums again
     static let PHOTO_LIB_MODE = 0
     static let CHALLENGE_MODE = 1
     
@@ -116,6 +118,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     // MARK: - Collection View Methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
         return pictureArray?.count ?? 0
     }
     
@@ -187,10 +190,12 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
         // Pass the selected object to the new view controller.
         let segueID = segue.identifier
         if segueID == "PhotoSegue" {
+            
             let destination = segue.destination as! PhotoVC
             let infoArray = sender as! [Any]
             let pictureData = infoArray[0] as! RCPicture
             let image = infoArray[1] as! UIImage
+            
             if pictureData.owner == DataManager.currentAppUser!.id, self.mode == PhotoTimelineVC.PHOTO_LIB_MODE {
                 if let index = self.pictureArray?.firstIndex(where: { (picture) -> Bool in
                     if picture.id == pictureData.id {
