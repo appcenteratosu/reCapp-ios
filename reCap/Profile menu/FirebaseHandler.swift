@@ -10,6 +10,9 @@ import Foundation
 import Firebase
 import FCAlertView
 
+/**
+ Defines collection of functions that we can use to interact with the Firebase Database without worrying about asynchronous calls
+ */
 class FirebaseHandler {
     static var auth = Auth.auth()
     static var database = Database.database().reference()
@@ -24,8 +27,10 @@ class FirebaseHandler {
     public static var DatabaseHandles: [DatabaseHandle] = []
 
     static func findAccount(for email: String, completion: @escaping (RCUser?, Bool?)->()) {
+        
         let ref = database.child(UserDataString)
         let query = ref.queryOrdered(byChild: "email").queryEqual(toValue: email)
+        
         query.observeSingleEvent(of: .value) { (snapshot) in
             guard let data = snapshot.children.allObjects as? [DataSnapshot] else {
                 completion(nil, false)
@@ -82,6 +87,10 @@ class FirebaseHandler {
         }
     }
     
+    /**
+     Creates a new user in the database
+     TODO: this should probably be replaced with a function that reads and writes according to the user class
+     */
     static func createUserDataReference(userData user: RCUser, completion: @escaping (Error?)->()) {
         var data: [String: Any?] = ["name": user.name,
                                     "email": user.email,
@@ -148,6 +157,7 @@ class FirebaseHandler {
     }
     
     static func getProfilePicture(userID uid: String, completion: @escaping (UIImage?)->(), progress: @escaping (Double)->()) {
+        
         let ref = storage.child(ProfilePictures).child(uid)
         let downloadTask = ref.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
             if let data = data {
@@ -171,6 +181,10 @@ class FirebaseHandler {
         }
     }
     
+    /**
+     Same as user function - creates a picture in the database. Instead of arbitrary strings, the keys should be defined by the
+     picture class to improve consistency
+     */
     static func createPictureDataReference(pictureData: RCPicture, completion: @escaping (RCPicture?)->()) {
         guard let id = database.child("PictureData").childByAutoId().key else { return }
         let picture = pictureData
@@ -238,6 +252,7 @@ class FirebaseHandler {
     }
     
     static func getAllPictureData(onlyRecent: Bool, completion: @escaping ([RCPicture])->()) {
+        
         if onlyRecent == true {
             let ref = database.child("PictureData")
             ref.observeSingleEvent(of: .value) { (snap) in
@@ -267,6 +282,7 @@ class FirebaseHandler {
     }
     
     static func getAllNewPhotos(newerThan time: Int, completion: @escaping ([RCPicture])->()) {
+        
         let start = Double(time) + 0.1
         let now = Date().timeIntervalSince1970
         let buffer = 60.0 * 10.0
@@ -289,6 +305,7 @@ class FirebaseHandler {
     }
     
     static func getPictureData(lat: Double, long: Double, onlyRecent: Bool, compltion: @escaping (RCPicture?)->()) {
+        
         database.child("PictureData").queryOrdered(byChild: "isMostRecentPicture").queryEqual(toValue: onlyRecent).observeSingleEvent(of: .value) { (snap) in
             if let children = snap.children.allObjects as? [DataSnapshot] {
                 let best = 0.0001
@@ -317,6 +334,7 @@ class FirebaseHandler {
     }
     
     static func downloadPicture(pictureData: RCPicture, completion: @escaping (UIImage?)->()) {
+        
         storage.child("Pictures").child(pictureData.id).getData(maxSize: 1024 * 1024 * 20) { (data, error) in
             if error != nil {
                 Log.e(error!.localizedDescription)
@@ -338,6 +356,7 @@ class FirebaseHandler {
     }
     
     static func removePhotoFromAllUsers(picture: RCPicture, completion: @escaping (Bool)->()) {
+        
         let ref = database.child("UserData")
         let query = ref.queryOrdered(byChild: "activeChallenge").queryEqual(toValue: picture.id)
         query.observeSingleEvent(of: .value) { (snap) in

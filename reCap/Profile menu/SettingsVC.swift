@@ -13,6 +13,7 @@ import FCAlertView
 
 class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegate {
     
+    // TODO: should not be unsafe
     var userDataValues: [String]!
     let limitLength = 18
     

@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseDatabase
 
+// TODO: appears to be replacement for UserData class
 class RCUser: Codable {
     var id: String
     var name: String

@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseDatabase
 
+// TODO: class was obsoleted for some reason. should be revived after review
 //class UserData: Object {
 //    // MARK: - Properties
 //    @objc dynamic var id: String!

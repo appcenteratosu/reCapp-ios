@@ -8,6 +8,9 @@
 import Foundation
 import Firebase
 
+/**
+ Appears to duplicate behaviors of FirebaseHandler
+ */
 class FBDatabase {
     
     // MARK: - Constants
