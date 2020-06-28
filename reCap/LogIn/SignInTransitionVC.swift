@@ -11,6 +11,11 @@ import UIKit
 class SignInTransitionVC: UIViewController {
     
     var gradientLayer: CAGradientLayer!
+    
+    // region UIViewController
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,10 +28,8 @@ class SignInTransitionVC: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    
+    // endregion
 
     func createGradientLayer() {
         gradientLayer = CAGradientLayer()
@@ -40,15 +43,5 @@ class SignInTransitionVC: UIViewController {
         
         self.view.layer.insertSublayer(gradientLayer, at: 0)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

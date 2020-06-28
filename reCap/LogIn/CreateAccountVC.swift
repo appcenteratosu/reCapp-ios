@@ -12,7 +12,9 @@ import SkyFloatingLabelTextField
 import Firebase
 import FCAlertView
 
-
+/**
+ Manages creation of new accounts
+ */
 class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
     
     // MARK: - Outlets
@@ -27,6 +29,7 @@ class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
     var gradientLayer: CAGradientLayer!
     var pickedImageUrl: URL!
     var pickedImage: UIImage!
+    // TODO: move into struct and make instance optional
     
     // MARK: - Contansts
     private static let PAGE_VIEW_SEGUE = "PageViewSegue"
@@ -34,22 +37,27 @@ class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
     // MARK: - View Controller Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        let duration: TimeInterval = TimeInterval(exactly: 0.5)!
+        let duration = TimeInterval(exactly: 0.5)!
         setup()
         // Do any additional setup after loading the view.
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // TODO: 
         AppUtility.lockOrientation(.portrait)
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         AppUtility.lockOrientation(.all)
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
