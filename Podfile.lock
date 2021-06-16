@@ -142,7 +142,7 @@ DEPENDENCIES:
   - SwiftyOnboard
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - ClusterKit
     - FCAlertView
     - Firebase
@@ -205,7 +205,7 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   Mapbox-iOS-SDK: 3e095b305126d52ba166fe215d847b15b6fbee63
   MapboxCoreNavigation: 41f550b9e22bf92c0adff2784881441d363ffb1c
-  MapboxDirections.swift: 1c6df988c24b753888ebd9976d7c98632501a413
+  MapboxDirections.swift: 6be6f756176b2c16f308093cc4724fa82ce33b12
   MapboxGeocoder.swift: b78a3d2f42bef7d51edbb2444768634e5de722db
   MapboxMobileEvents: f6c21b2e59066c5c7093585de7c15adae3b63da0
   MapboxNavigation: 76b39a959d8213b81a88267f086393ab4166d098
@@ -224,4 +224,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 457f4ce8e86d52cab4386c54f105750294f1a802
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.10.1
