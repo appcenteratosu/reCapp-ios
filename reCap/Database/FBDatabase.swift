@@ -29,7 +29,7 @@ class FBDatabase {
     /*
      Puts a profile image in the database
      */
-    class func addProfilePicture(with_image image: UIImage, for_user user: RCUser, with_completion completion: @escaping (_ error: String?) -> ()) {
+    class func addProfilePicture(with_image image: UIImage, for_user user: ChallengeSetup, with_completion completion: @escaping (_ error: String?) -> ()) {
         let storageRef = Storage.storage().reference().child(PROFILE_PICTURE_NODE).child(user.id)
         savePicture(storageRef: storageRef, image: image, completion: completion)
     }
@@ -72,7 +72,7 @@ class FBDatabase {
         }
     }
     
-    class func getProfilePicture(for_user user: RCUser, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
+    class func getProfilePicture(for_user user: ChallengeSetup, with_progress progress: @escaping (_ progress: Int64, _ total: Int64) -> (), with_completion completion: @escaping (_ image: UIImage?) -> ()) {
         if let image = imageCache.object(forKey: user.id as NSString) {
             completion(image)
         } else {

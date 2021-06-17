@@ -25,7 +25,7 @@ class PhotoVC: UIViewController, UIScrollViewDelegate {
     var selectedPictureData: RCPicture!
     var nextPictureData: RCPicture!
     
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setToolbarHidden(true, animated: true)

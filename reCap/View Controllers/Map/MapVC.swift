@@ -33,7 +33,7 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     private var locationDictionary: [String : [RCPicture]]!
     
 //    var user: User!
-    var user: RCUser!
+    var user: ChallengeSetup!
     let ref = Database.database().reference()
     var mapView: NavigationMapView!
     var progressView: UIProgressView!

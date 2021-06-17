@@ -37,12 +37,12 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     static var FRIENDS_LIST_MODE = 1
     var mode: Int!
     var user: User!
-    var userData: RCUser!
-    private var friendsList: [RCUser]!
-    private var leaderboardsList: [RCUser]!
-    private var stateLeaderboards: [RCUser]!
-    private var countryLeaderboards: [RCUser]!
-    private var globalLeaderboards: [RCUser]!
+    var userData: ChallengeSetup!
+    private var friendsList: [ChallengeSetup]!
+    private var leaderboardsList: [ChallengeSetup]!
+    private var stateLeaderboards: [ChallengeSetup]!
+    private var countryLeaderboards: [ChallengeSetup]!
+    private var globalLeaderboards: [ChallengeSetup]!
     
     private static let STATE_FILTER = 0
     private static let COUNTRY_FILTER = 1
@@ -111,9 +111,9 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         
         usersDataRef.queryOrdered(byChild: "state").queryEqual(toValue: userData.state).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
-                var state: [RCUser] = []
+                var state: [ChallengeSetup] = []
                 for child in snaps {
-                    let rcuser = RCUser(snapshot: child)
+                    let rcuser = ChallengeSetup(snapshot: child)
                     state.append(rcuser)
                 }
                 
@@ -130,9 +130,9 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         
         usersDataRef.queryOrdered(byChild: "country").queryEqual(toValue: userData.country).observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
-                var country = [RCUser]()
+                var country = [ChallengeSetup]()
                 for child in snaps {
-                    let rcuser = RCUser(snapshot: child)
+                    let rcuser = ChallengeSetup(snapshot: child)
                     country.append(rcuser)
                 }
                 
@@ -148,9 +148,9 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
 
         usersDataRef.observeSingleEvent(of: .value) { (snap) in
             if let snaps = snap.children.allObjects as? [DataSnapshot] {
-                var global = [RCUser]()
+                var global = [ChallengeSetup]()
                 for child in snaps {
-                    let rcuser = RCUser(snapshot: child)
+                    let rcuser = ChallengeSetup(snapshot: child)
                     global.append(rcuser)
                 }
                 
@@ -169,7 +169,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         self.locationControl.isHidden = true
         for friend in self.userData.friends {
             FirebaseHandler.database.child("UserData").child(friend).observeSingleEvent(of: .value) { (snap) in
-                let friend = RCUser(snapshot: snap)
+                let friend = ChallengeSetup(snapshot: snap)
                 self.friendsList.append(friend)
             }
             self.tableView.reloadData()
@@ -179,7 +179,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! LeaderboardFriendsTableCell
-        let user: RCUser!
+        let user: ChallengeSetup!
         if mode == LeaderboardsFriendsVC.FRIENDS_LIST_MODE {
             user = friendsList[indexPath.row]
             cell.pointsOutlet.text = "\(user.points) points"
@@ -298,7 +298,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
         // Pass the selected object to the new view controller.
         let segueID = segue.identifier
         if segueID == "PhotoLibSegue" {
-            let friend = sender as! RCUser
+            let friend = sender as! ChallengeSetup
             let destination = segue.destination as! UINavigationController
             let photoLibVC = destination.topViewController as! PhotoLibChallengeVC
             photoLibVC.userData = friend

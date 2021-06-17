@@ -13,7 +13,7 @@ import Firebase
 class MapContainerVC: UIViewController {
     
     // MARK: - Properties
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     private static let CHALLENGE_SEGUE = "ChallengeSegue"
 
     override func viewDidLoad() {

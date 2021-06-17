@@ -10,5 +10,5 @@ import Foundation
 
 
 class AppManager {
-    static var user: RCUser!
+    static var user: ChallengeSetup!
 }

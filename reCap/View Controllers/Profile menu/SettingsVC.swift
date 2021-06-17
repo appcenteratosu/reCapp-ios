@@ -16,7 +16,7 @@ class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegat
     var userDataValues: [String]!
     let limitLength = 18
     
-    private var userData: RCUser? {
+    private var userData: ChallengeSetup? {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -102,7 +102,7 @@ class SettingsVC: UITableViewController, UITextFieldDelegate, FCAlertViewDelegat
                         return
                     }
                     
-                    DataManager.currentAppUser.update(values: [RCUser.Properties.name : name])
+                    DataManager.currentAppUser.update(values: [ChallengeSetup.Properties.name : name])
                     self.userData = DataManager.currentAppUser
                     self.tableView.reloadData()
                 }

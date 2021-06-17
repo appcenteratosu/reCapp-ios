@@ -12,7 +12,7 @@ import Firebase
 
 class DataManager {
     static var currentFBUser: User!
-    static var currentAppUser: RCUser!
+    static var currentAppUser: ChallengeSetup!
 //        didSet {
 //            var pictures: [String] = []
 //

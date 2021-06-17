@@ -19,7 +19,7 @@ class PhotoTimelineVC: UIViewController, UICollectionViewDelegate, UICollectionV
     // Parameters
     var image: UIImage!
     var pictureData: RCPicture?
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     var pictureArray: [RCPicture]?
     var imageToPass: UIImage?
     var pictureDataToPass: RCPicture?

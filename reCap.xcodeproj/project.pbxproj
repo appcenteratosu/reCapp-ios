@@ -24,7 +24,7 @@
 		34B359AB20583F9B0093D02C /* CustomPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34B359A720583F980093D02C /* CustomPage.xib */; };
 		34B359AC20583F9B0093D02C /* CustomOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34B359A820583F9A0093D02C /* CustomOverlay.xib */; };
 		34F60577203FD24C001A74E4 /* ImageConfirmVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */; };
-		730657B7219F76D100DB3B2F /* RCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657B6219F76D100DB3B2F /* RCUser.swift */; };
+		730657B7219F76D100DB3B2F /* ChallengeSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657B6219F76D100DB3B2F /* ChallengeSetup.swift */; };
 		730657B9219F7A8E00DB3B2F /* RCPicture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657B8219F7A8E00DB3B2F /* RCPicture.swift */; };
 		730657BB219F858300DB3B2F /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730657BA219F858300DB3B2F /* AppManager.swift */; };
 		734840FB219A6E7D0065E472 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734840FA219A6E7D0065E472 /* DataManager.swift */; };
@@ -137,7 +137,7 @@
 		34B359A820583F9A0093D02C /* CustomOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomOverlay.xib; sourceTree = "<group>"; };
 		34F60575203FD24C001A74E4 /* ImageConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageConfirmVC.swift; path = "reCap/View Controllers/Camera/ImageConfirmVC.swift"; sourceTree = SOURCE_ROOT; };
 		3C4B8964350E05059DCB1788 /* Pods-reCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-reCap/Pods-reCap.release.xcconfig"; sourceTree = "<group>"; };
-		730657B6219F76D100DB3B2F /* RCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCUser.swift; sourceTree = "<group>"; };
+		730657B6219F76D100DB3B2F /* ChallengeSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeSetup.swift; sourceTree = "<group>"; };
 		730657B8219F7A8E00DB3B2F /* RCPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCPicture.swift; sourceTree = "<group>"; };
 		730657BA219F858300DB3B2F /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		734840FA219A6E7D0065E472 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -395,7 +395,7 @@
 		730657B5219F76AE00DB3B2F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				730657B6219F76D100DB3B2F /* RCUser.swift */,
+				730657B6219F76D100DB3B2F /* ChallengeSetup.swift */,
 				730657B8219F7A8E00DB3B2F /* RCPicture.swift */,
 				730657BA219F858300DB3B2F /* AppManager.swift */,
 			);
@@ -871,7 +871,7 @@
 				7A4D8A442027801E0043878E /* NavigationVC.swift in Sources */,
 				7A5358A8205B6E680047F410 /* LeaderboardsFriendsVC.swift in Sources */,
 				730657B9219F7A8E00DB3B2F /* RCPicture.swift in Sources */,
-				730657B7219F76D100DB3B2F /* RCUser.swift in Sources */,
+				730657B7219F76D100DB3B2F /* ChallengeSetup.swift in Sources */,
 				7AA8EE922055A5000043B73C /* ImageCreateVC.swift in Sources */,
 				7A120DCF2041F0570003EE1F /* PhotoChalColCell.swift in Sources */,
 				7353C9B321A9DEC9009728DB /* Log.swift in Sources */,

@@ -19,11 +19,11 @@ class FirebaseHandler {
     private static var UserDataString = "UserData"
     private static var ProfilePictures = "ProfilePictures"
     
-    public static var CurrentUserData: RCUser?
+    public static var CurrentUserData: ChallengeSetup?
     
     public static var DatabaseHandles: [DatabaseHandle] = []
 
-    static func findAccount(for email: String, completion: @escaping (RCUser?, Bool?)->()) {
+    static func findAccount(for email: String, completion: @escaping (ChallengeSetup?, Bool?)->()) {
         let ref = database.child(UserDataString)
         let query = ref.queryOrdered(byChild: "email").queryEqual(toValue: email)
         query.observeSingleEvent(of: .value) { (snapshot) in
@@ -32,7 +32,7 @@ class FirebaseHandler {
                 return
             }
             for item in data {
-                let user = RCUser(snapshot: item)
+                let user = ChallengeSetup(snapshot: item)
                 if user.email == email {
                     completion(user, true)
                 } else {
@@ -82,7 +82,7 @@ class FirebaseHandler {
         }
     }
     
-    static func createUserDataReference(userData user: RCUser, completion: @escaping (Error?)->()) {
+    static func createUserDataReference(userData user: ChallengeSetup, completion: @escaping (Error?)->()) {
         var data: [String: Any?] = ["name": user.name,
                                     "email": user.email,
                                     "points": user.points,
@@ -207,11 +207,11 @@ class FirebaseHandler {
         }
     }
     
-    static func getUserData(completion: @escaping (RCUser)->()) {
+    static func getUserData(completion: @escaping (ChallengeSetup)->()) {
         if let user = auth.currentUser {
             database.child(UserDataString).child(user.uid).observeSingleEvent(of: .value) { (snap) in
                 
-                let rcUser = RCUser(snapshot: snap)
+                let rcUser = ChallengeSetup(snapshot: snap)
                 rcUser.id = user.uid
                 rcUser.email = user.email!
                 DataManager.currentFBUser = user
@@ -345,7 +345,7 @@ class FirebaseHandler {
                 var ids = [String]()
                 
                 for obj in objs {
-                    let user = RCUser(snapshot: obj)
+                    let user = ChallengeSetup(snapshot: obj)
                     ids.append(user.id)
                 }
                 

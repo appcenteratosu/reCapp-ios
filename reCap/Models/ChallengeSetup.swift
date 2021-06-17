@@ -9,7 +9,7 @@
 import Foundation
 import FirebaseDatabase
 
-class RCUser: Codable {
+class ChallengeSetup: Codable {
     var id: String
     var name: String
     var points: Int
@@ -203,12 +203,12 @@ class RCUser: Codable {
         FirebaseHandler.database.child("UserData").child(id).updateChildValues(data)
     }
     
-    func add(friend: RCUser) {
+    func add(friend: ChallengeSetup) {
         self.friends.append(friend.id)
         FirebaseHandler.database.child("UserData").child(id).child("friends").child(friend.id).setValue(true)
     }
     
-    func remove(friend: RCUser) {
+    func remove(friend: ChallengeSetup) {
         self.friends.removeAll { (id) -> Bool in
             return id == friend.id
         }

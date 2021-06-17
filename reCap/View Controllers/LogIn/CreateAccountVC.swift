@@ -177,7 +177,7 @@ class CreateAccountVC: UITableViewController, UINavigationControllerDelegate{
                     self.displayErrorAlert(message: error!.localizedDescription)
                 } else {
                     if let user = user {
-                        let newUser = RCUser()
+                        let newUser = ChallengeSetup()
                         newUser.id = user.uid
                         newUser.name = name!
                         newUser.email = email!

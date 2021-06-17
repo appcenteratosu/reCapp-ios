@@ -18,7 +18,7 @@ class ImageConfirmVC: UIViewController {
     var locationToPass: String?
     var isAtChallengeLocation: Bool!
     var previousPic: RCPicture!
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     var orientation: UIImage.Orientation?
 
     @IBOutlet weak var imageView: UIImageView!

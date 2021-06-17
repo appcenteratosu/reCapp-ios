@@ -24,7 +24,7 @@ class ImageCreateVC: UIViewController, UITextFieldDelegate {
     var location: String?
     var isAtChallengeLocation: Bool!
     var previousPic: RCPicture!
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     var challengePoints: String?
     var orientation: UIImage.Orientation?
     

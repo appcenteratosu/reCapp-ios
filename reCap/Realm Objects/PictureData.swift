@@ -48,7 +48,7 @@ class PictureData: Object {
     }
     
     // MARK: - Initializers
-    convenience required init(name: String!, info: String, owner: RCUser, latitude: Double, longitude: Double, bearing: Double, orientation: Int, time: Int, locationName: String, id: String, isRootPicture: Bool, groupID: String, isMostRecentPicture: Bool) {
+    convenience required init(name: String!, info: String, owner: ChallengeSetup, latitude: Double, longitude: Double, bearing: Double, orientation: Int, time: Int, locationName: String, id: String, isRootPicture: Bool, groupID: String, isMostRecentPicture: Bool) {
         self.init()
         self.name = name
         self.info = info

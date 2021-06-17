@@ -42,7 +42,7 @@ class CameraContainerVC: UIViewController, AVCapturePhotoCaptureDelegate, UINavi
     private var isAtChallengeLocation: Bool!
     let locationManager = CLLocationManager()
     var destinationAngle: Double? = nil
-    private var rcUser: RCUser!
+    private var rcUser: ChallengeSetup!
     private var hasUpdateUserLocation = false
     var profileImage: UIImage?
     var session: AVCaptureSession?

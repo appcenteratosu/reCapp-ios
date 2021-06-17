@@ -22,7 +22,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
     private var collectionDictionaryData: [String : [RCPicture]]!
     private var photoLibChalReference: DatabaseReference!
     var user: User!
-    var userData: RCUser!
+    var userData: ChallengeSetup!
     var mode: Int!
     
     var userLat: Double!
@@ -308,7 +308,7 @@ class PhotoLibChallengeVC: UITableViewController, UICollectionViewDelegate, UICo
         
         challengeDelegate?.userDidAddNewChallenge(picture: pictureData)
         
-        self.userData.update(values: [RCUser.Properties.activeChallenge : pictureData.id,
+        self.userData.update(values: [ChallengeSetup.Properties.activeChallenge : pictureData.id,
                                       .activeChallengePoints: points])
         
     }
