@@ -296,7 +296,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        let segueID = segue.identifier
+        if let segueID = segue.identifier {
         if segueID == "PhotoLibSegue" {
             let friend = sender as! ChallengeSetup
             let destination = segue.destination as! UINavigationController
@@ -304,6 +304,7 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
             photoLibVC.userData = friend
             photoLibVC.mode = PhotoLibChallengeVC.PHOTO_LIB_MODE
         }
+    }
     }
     
     
