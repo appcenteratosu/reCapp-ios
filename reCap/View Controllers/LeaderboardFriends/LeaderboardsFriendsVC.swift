@@ -20,13 +20,13 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     
     @IBAction func locationFilterChanged(_ sender: Any) {
         let currentLocationIndex = self.locationControl.selectedSegmentIndex
-        if currentLocationIndex == LeaderboardsFriendsVC.STATE_FILTER {
+        if currentLocationIndex == LeaderboardsFriendsVC.Filter.STATE_FILTER {
             self.leaderboardsList = self.stateLeaderboards
         }
-        else if currentLocationIndex == LeaderboardsFriendsVC.COUNTRY_FILTER {
+        else if currentLocationIndex == LeaderboardsFriendsVC.Filter.COUNTRY_FILTER {
             self.leaderboardsList = self.countryLeaderboards
         }
-        else if currentLocationIndex == LeaderboardsFriendsVC.GLOBAL_FILTER {
+        else if currentLocationIndex == LeaderboardsFriendsVC.Filter.GLOBAL_FILTER {
             self.leaderboardsList = self.globalLeaderboards
         }
         self.tableView.reloadData()
@@ -44,10 +44,11 @@ class LeaderboardsFriendsVC: UITableViewController, FCAlertViewDelegate {
     private var countryLeaderboards: [ChallengeSetup]!
     private var globalLeaderboards: [ChallengeSetup]!
     
-    private static let STATE_FILTER = 0
-    private static let COUNTRY_FILTER = 1
-    private static let GLOBAL_FILTER = 2
-    
+    enum Filter {
+     static let STATE_FILTER = 0
+     static let COUNTRY_FILTER = 1
+     static let GLOBAL_FILTER = 2
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         applyBlurEffect(image: #imageLiteral(resourceName: "Gradient"))

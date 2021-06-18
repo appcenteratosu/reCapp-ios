@@ -16,18 +16,23 @@ import RealmSwift
 
 class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
     
-    private static let TAKE_PIC_FROM_RECENT = "Recent Photos (+1 point)"
-    private static let TAKE_PIC_FROM_WEEK = "Photos over a week ago (+5 points)"
-    private static let TAKE_PIC_FROM_MONTH = "Photos over a month ago (+15 points)"
-    private static let TAKE_PIC_FROM_YEAR = "Photos from over a year ago (+50 points)"
-    private static let CHALLENGE_RECENT_POINTS = 1
-    private static let CHALLENGE_WEEK_POINTS = 5
-    private static let CHALLENGE_MONTH_POINTS = 10
-    private static let CHALLENGE_YEAR_POINTS = 20
+    enum TakePic {
+    static let TAKE_PIC_FROM_RECENT = "Recent Photos (+1 point)"
+    static let TAKE_PIC_FROM_WEEK = "Photos over a week ago (+5 points)"
+    static let TAKE_PIC_FROM_MONTH = "Photos over a month ago (+15 points)"
+    static let TAKE_PIC_FROM_YEAR = "Photos from over a year ago (+50 points)"
+    }
+    enum ChallengePoints {
+    static let CHALLENGE_RECENT_POINTS = 1
+    static let CHALLENGE_WEEK_POINTS = 5
+    static let CHALLENGE_MONTH_POINTS = 10
+    static let CHALLENGE_YEAR_POINTS = 20
+    }
+    enum SecondsIn {
     static let SECONDS_IN_WEEK = 604800
     static let SECONDS_IN_MONTH = PhotoLibChallengeVC.SECONDS_IN_WEEK * 4
     static let SECONDS_IN_YEAR = PhotoLibChallengeVC.SECONDS_IN_MONTH * 12
-    
+    }
     // MARK: - Properties
     private var locations: [String]!
     private var locationDictionary: [String : [RCPicture]]!
@@ -654,34 +659,34 @@ class MapVC: UIViewController, MGLMapViewDelegate, RCPictureChallengeDelegate {
         //let pictureDate = DateGetter.getDateFromString(string: pictureData.time)
         let dateDiffSec = Int(abs(TimeInterval(pictureData.time) - currentDate.timeIntervalSince1970))
         //let dateDiffSec = Int(abs(pictureDate.timeIntervalSince(currentDate)))
-        if dateDiffSec >= MapVC.SECONDS_IN_YEAR {
-            return MapVC.TAKE_PIC_FROM_YEAR
+        if dateDiffSec >= MapVC.SecondsIn.SECONDS_IN_YEAR {
+            return MapVC.TakePic.TAKE_PIC_FROM_YEAR
         }
-        else if dateDiffSec >= MapVC.SECONDS_IN_MONTH {
-            return MapVC.TAKE_PIC_FROM_MONTH
+        else if dateDiffSec >= MapVC.SecondsIn.SECONDS_IN_MONTH {
+            return MapVC.TakePic.TAKE_PIC_FROM_MONTH
         }
-        else if dateDiffSec >= MapVC.SECONDS_IN_WEEK {
-            return MapVC.TAKE_PIC_FROM_WEEK
+        else if dateDiffSec >= MapVC.SecondsIn.SECONDS_IN_WEEK {
+            return MapVC.TakePic.TAKE_PIC_FROM_WEEK
         }
         else {
-            return MapVC.TAKE_PIC_FROM_RECENT
+            return MapVC.TakePic.TAKE_PIC_FROM_RECENT
         }
     }
     
     private func addChallengeToUser(pictureData: RCPicture) {
         let challengeCategory = getPicChallengeCategory(pictureData: pictureData, currentDate: Date())
         var points = 0
-        if challengeCategory == MapVC.TAKE_PIC_FROM_WEEK {
-            points = MapVC.CHALLENGE_WEEK_POINTS
+        if challengeCategory == MapVC.TakePic.TAKE_PIC_FROM_WEEK {
+            points = MapVC.ChallengePoints.CHALLENGE_WEEK_POINTS
         }
-        else if challengeCategory == MapVC.TAKE_PIC_FROM_MONTH {
-            points = MapVC.CHALLENGE_MONTH_POINTS
+        else if challengeCategory == MapVC.TakePic.TAKE_PIC_FROM_MONTH {
+            points = MapVC.ChallengePoints.CHALLENGE_MONTH_POINTS
         }
-        else if challengeCategory == MapVC.TAKE_PIC_FROM_YEAR {
-            points = MapVC.CHALLENGE_YEAR_POINTS
+        else if challengeCategory == MapVC.TakePic.TAKE_PIC_FROM_YEAR {
+            points = MapVC.ChallengePoints.CHALLENGE_YEAR_POINTS
         }
-        else if challengeCategory == MapVC.TAKE_PIC_FROM_RECENT {
-            points = MapVC.CHALLENGE_RECENT_POINTS
+        else if challengeCategory == MapVC.TakePic.TAKE_PIC_FROM_RECENT {
+            points = MapVC.ChallengePoints.CHALLENGE_RECENT_POINTS
         }
         
         self.user.update(values: [.activeChallenge: pictureData.id,
